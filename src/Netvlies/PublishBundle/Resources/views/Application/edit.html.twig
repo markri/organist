@@ -1,0 +1,18 @@
+{% extends 'NetvliesPublishBundle::base2.html.twig' %}
+
+{% block content %}
+
+        <h2>{{application.name}}</h2>
+
+        <form action="" method="POST">
+
+            {{ form_errors(form) }}
+            Note: changing the git repository causes a new clone from the repository. So saving can take a while
+
+            {{ form_widget(form) }}
+
+            <input type="submit" value="Opslaan" />
+
+        </form>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Deployment scripts">
+
+	<target name="deploy_deployment_scripts" description="- Setup deployment scripts foreach environment">
+
+		<!-- @todo change settings file according to environment -->
+	
+		<!-- pack tar gz -->
+		<tar destfile="deployment.tar" compression="gzip">
+			<fileset dir=".">
+				<include name="*.sh" />
+				<include name="deploy_bridge" />
+				<include name="settings" />
+			</fileset>
+		</tar>		
+
+		<!-- upload scripts -->
+		<scp 
+		username="deploy" 
+		host="${hostname}" 
+		pubkeyfile="${pubkeyfile}" 
+		privkeyfile="${privkeyfile}" 
+		file="deployment.tar"
+		todir="${homedirsBase}/deploy/"
+		/>
+			
+		<!-- unpack tar -->
+		<ssh 
+		username="${username}" 
+		host="${hostname}" 
+		pubkeyfile="${pubkeyfile}" 
+		privkeyfile="${privkeyfile}" 
+		command="
+		mkdir -p ${homedirsBase}/deploy/bin; 
+		cd ${homedirsBase}/deploy/bin; 
+		tar -zxf ${homedirsBase}/deploy/deployment.tar;
+		chmod 700 ${homedirsBase}/deploy/bin/*
+		chmod 600 ${homedirsBase}/deploy/bin/settings;
+		sudo chown root:root
+		" />
+	
+		<!-- @todo finish -->
+	</target>
+	
+</project>

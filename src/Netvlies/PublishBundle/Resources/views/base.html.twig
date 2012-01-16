@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}Netvlies publishing{% endblock %}</title>
+        {% block stylesheets %}
+        <style type="text/css">
+                * {
+                    font-family: Arial,Helvetica,sans-serif;
+                    font-size: 11px;
+                }
+
+                h1{
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+
+                h2{
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                .warning{
+                    color: #ff0000;
+                    font-weight: bold;
+                }
+
+                #consoleMessage {
+                    background-color: #000000;
+                    border: 2px solid #CCCCCC;
+                    display: none;
+                    height: 624px;
+                    left: 50%;
+                    margin-left: -500px;
+                    margin-top: -325px;
+                    position: absolute;
+                    top: 50%;
+                    width: 1000px;
+                    z-index: 1400;
+                }
+                #consoleMelding {
+                    background-color: #1C3779;
+                    color: #FFFFFF;
+                    font-weight: bold;
+                    padding: 5px;
+                    position: relative;
+                }
+                #consoleClose {
+                    background-color: #FF0000;
+                    color: #FFFFFF;
+                    border: 1px;
+                    cursor: pointer;
+                    display: block;
+                    right: 3px;
+                    top: 3px;
+                    width: 8px;
+                    height: 8px;
+                    line-height: 8px;
+                    padding: 5px;
+                    position: absolute;
+                    text-align: center;                    
+                }
+                div#consoleMeldingen {
+                    font-family: courier;
+                    color: #FFFFFF;
+                    background-color: black;
+                    font-size: 8px !important;
+                    height: 600px;
+                    margin-left: 5px;
+                    overflow-x: hidden;
+                    overflow-y: scroll;
+                    position: relative;
+                }
+                div#consoleMeldingen h2, div#consoleMeldingen span {
+                    font-family: courier;
+                    font-size: 8px !important;
+                }
+                iframe#consoleMeldingenFrame {
+                    border-width: 0;
+                    height: 600px;
+                    margin: 0;
+                    overflow-x: auto;
+                    overflow-y: scroll;
+                    padding: 0;
+                    position: relative;
+                    width: 100%;
+                }
+                .consoleHeader {
+                    background-color: red;
+                    color: #FFFFFF;
+                    margin: 10px 0 0;
+                    padding: 0;
+                }
+
+            </style>
+        {% endblock %}
+            <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+        {% block head %}
+        {% endblock %}
+        </head>
+        
+    <body>
+        {% block body %}{% endblock %}
+            
+        {% block javascripts %}
+                <script type="text/javascript">
+                    function showConsole(url) {
+                        
+                        if(confirm('Weet u zeker dat u deze target wilt uitvoeren?')){
+                            document.getElementById("consoleMessage").style.display="block";
+                            document.getElementById("consoleMeldingen").style.display="none";
+                            document.getElementById("consoleMeldingenFrame").style.display="block";
+                            document.getElementById("consoleMeldingenFrame").src=url;
+
+                            return true;
+                        }
+                    }
+
+                    function hideConsole(){
+                        document.getElementById('consoleMessage').style.display="none";
+                        document.getElementById('consoleMeldingen').html="";
+                        document.getElementById('consoleMeldingenFrame').src="";
+                    }
+                    </script>                
+        {% endblock %}
+    </body>
+</html>
