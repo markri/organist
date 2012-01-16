@@ -1,0 +1,58 @@
+#!/usr/bin/php -q
+<?php
+// Be sure to have this script in file mode 700 and ownned by root:root
+// This script functions as a container for some commands to execute as root. So anything that isnt available in here cant be executed by user deploy
+    
+$arguments = $_SERVER['argv'];
+
+if(count($arguments)<2){
+	showhelp();
+	exit;
+}
+
+$filename = $arguments[0];
+$currentdir = dirname(__FILE__);
+$action  = $arguments[1];
+
+// Delete first two arguments to use later on
+array_shift($arguments);
+array_shift($arguments);
+
+switch($action){
+
+	case 'apache':
+		echo shell_exec($currentdir.'/apache.sh '.implode(' ',$arguments));
+		break;
+	case 'mysql':
+		echo shell_exec($currentdir.'/mysql.sh '.implode(' ',$arguments));
+		break;
+	case 'replaceinfile':
+		echo shell_exec($currentdir.'/replaceinfile.sh '.implode(' ',$arguments));
+		break;
+	case 'testsettings':
+		echo shell_exec($currentdir.'/testsettings.sh '.implode(' ',$arguments));
+		break;
+	default:
+		showhelp();
+		break;
+}
+	
+	
+	
+function showhelp(){
+	global $filename;
+	
+	echo "\n";
+	echo "Bridge tool available actions:\n";
+	echo " apache\n";
+	echo " mysql\n";
+	echo " replaceinfile\n";
+	echo " testsettings\n";
+	echo "\n";
+	echo "Please use '$filename <action> --help' to get suboptions\n";
+	
+}
+	
+	
+	
+?>

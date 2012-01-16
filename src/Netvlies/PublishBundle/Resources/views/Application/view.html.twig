@@ -1,0 +1,85 @@
+{% extends 'NetvliesPublishBundle::base2.html.twig' %}
+
+{% block content %}
+
+        <h2>{{application.name}}</h2>
+        Customer: {{application.customer}}<br>
+        Repository: <a href="https://bitbucket.org/{{application.gitrepo|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepo}}</a><br>
+        Type: {{application.type}}<br>
+        {% if application.gitrepo %}
+            <a href="{{ path('netvlies_publish_application_edit', {'id': application.id})}}">edit {{application.name}}</a><br>
+            <a href="{{path('netvlies_publish_console_exec', {'script': application.getGitUpdateScript()})}}" target="_blank">Update references</a>
+
+            <h2>Deployments</h2>
+
+            <form name="deploy" method="POST" action="{{ path('netvlies_publish_application_view', {'id': application.id})}}">
+                <table border="1" cellspacing="0">
+                    <thead>
+                        <th>Environment</th>
+                        <th>Link</th>
+                        <th>Phing target</th>
+                        <th>Current branch</th>
+                        <th>Current revision</th>
+                        <th>Actions</th>
+                    </thead>
+                {% for deployment in deployments %}
+                    <tr>
+                        <td>{{ deployment.environment.type }}</td>
+                        <td><a href="http://{{application.name}}.{{ deployment.environment.hostname }}">http://{{application.name}}.{{ deployment.environment.hostname }}</a></td>
+
+                    {% if deployment.phingTarget %}
+                        <td>{{deployment.phingTarget.name}} </td>
+                        <td>{{deployment.currentBranch}}&nbsp;</td>
+                        <td>{{deployment.currentRevision}}&nbsp;</td>
+                        <td>
+                            {% if (deployment.requiresrevision == false or application.lastRevisionId is not empty) %}
+                                <a href="{{ path('netvlies_publish_application_execute', {'id': application.id, 'deployid':deployment.id, 'revision':application.lastRevisionId }) }}">execute</a> |
+                            {%else%}
+                                -- choose branch/tag -- |
+                            {% endif %}
+
+                            <a href="{{path('netvlies_publish_deployment_edit', {'id': deployment.id})}}">edit</a> |
+                            <a href="{{path('netvlies_publish_deployment_delete', {'id': deployment.id})}}">delete</a>
+                        </td>
+                    {%else%}
+                        <td>Unbound action</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <a href="{{ path('netvlies_publish_deployment_edit', {'id': deployment.id }) }}">edit</a> |
+                            <a href="{{path('netvlies_publish_deployment_delete', {'id': deployment.id})}}">delete</a>
+                        </td>
+                    {%endif%}
+                    </tr>
+                {% endfor %}
+                </table>
+
+                <br/>
+                <br/>
+                {{ form_label(form.branchtodeploy) }}
+                {{ form_widget(form.branchtodeploy, { 'attr': {'onchange': 'onchange=document.forms[0].submit()'}}) }}
+                <br/>
+                <br/>
+                {% if application.lastRevisionId %}
+                    Last revision: {{ application.lastRevisionId }}<br>
+                    Author: {{ application.lastRevisionAuthor }}<br>
+                    Message: {{ application.lastRevisionMessage }}<br>
+                {% endif %}
+                <br>
+            </form>
+
+
+            <a href="{{path('netvlies_publish_deployment_create', {'id': application.id})}}">Add deployment</a>
+        {% else %}
+            <a href="{{ path('netvlies_publish_application_enrich', {'id': application.id})}}">initialize new project</a>
+        {% endif %}
+
+        {%block console%}
+            {% if deployid is defined %}
+               <h2>Output</h2>
+                <iframe src="{{path('netvlies_publish_console_exectarget', {'id': deployid, 'revision': revision})}}" width="1000" height="505"></iframe>
+            {%endif%}
+        {%endblock%}
+
+{% endblock %}
+
