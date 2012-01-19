@@ -1,0 +1,61 @@
+table.sortable {
+	width:100%;
+
+    thead {
+        border: solid #E1E1E1;
+        border-width: 1px 0;
+        background: mix(#f7f7f7, #fff);    
+        @include background(linear-gradient(#f7f7f7, #fff));
+    }
+    th {
+        text-align:left;
+        padding: 10px 5px 10px 10px;
+        position:relative;
+    }
+    th.sortable {
+        padding-left: 30px;
+        cursor:pointer;
+    
+        &:before,
+        &:after {
+            content: '';
+            position:absolute;
+            width:7px;
+            height:14px;
+            background:url('../img/sprite.png');
+            top:10px;
+        }
+        &:before,
+        &[data-sort-order=asc]:before {
+            background-position:-1px -25px;
+            left:10px;
+        }
+        &[data-sort-order=desc]:before {
+            background-position:-13px -25px;
+            left:10px;
+        }
+        &:after,
+        &[data-sort-order=desc]:after {
+            background-position:-25px -24px;
+            left:20px;	
+        }
+        &[data-sort-order=asc]:after {
+            background-position:-36px -24px;
+            left:20px;	
+        }
+    }
+    tbody tr {
+        background:#E1E1E1;
+        border: solid #E1E1E1;
+        border-width: 1px 0;
+        
+        &:nth-child(odd) {
+            background:#F5F5F5;
+        }
+    }
+    td{
+        padding: 10px 5px 10px 10px;
+    }
+    .icons { width: 80px; }
+    .icon { display:inline-block; margin-right:5px; }
+}

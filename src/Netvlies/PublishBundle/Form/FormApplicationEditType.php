@@ -14,7 +14,13 @@ class FormApplicationEditType extends AbstractType
             ->add('name', 'text', array('read_only' => true))
             ->add('customer', 'text', array('read_only' => true))
             ->add('mysqlpw', 'text', array('label'=>'MySQL password', 'read_only' => true))
-            ->add('type', 'choice', array('choices' => array('OMS'=>'OMS', 'symfony2'=>'Symfony2', 'custom'=>'Custom'), 'empty_value'=> '-- choose type --', 'required'=>true))
+            ->add('type', 'entity', array(
+                'class' => 'NetvliesPublishBundle:ApplicationType',
+                'property'=> 'label',
+                'expanded' => false,
+                'multiple' => false,
+                'required'=>true)
+            )
             ->add('gitrepo', 'text', array('required'=>true))
 
             ;

@@ -31,12 +31,12 @@
 		pubkeyfile="${pubkeyfile}" 
 		privkeyfile="${privkeyfile}" 
 		command="
-		mkdir -p ${homedirsBase}/deploy/bin; 
-		cd ${homedirsBase}/deploy/bin; 
-		tar -zxf ${homedirsBase}/deploy/deployment.tar;
-		chmod 700 ${homedirsBase}/deploy/bin/*
-		chmod 600 ${homedirsBase}/deploy/bin/settings;
-		sudo chown root:root
+			mkdir -p ${homedirsBase}/deploy/bin; 
+			cd ${homedirsBase}/deploy/bin; 
+			tar -zxf ${homedirsBase}/deploy/deployment.tar;
+			chmod 700 ${homedirsBase}/deploy/bin/*
+			chmod 600 ${homedirsBase}/deploy/bin/settings;
+			sudo chown root:root
 		" />
 	
 		<!-- @todo finish -->

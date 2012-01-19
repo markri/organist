@@ -1,6 +1,3 @@
-<h2>Applications</h2>
-<ul>
 {% for item in sites %}
        <li><a href="{{ path('netvlies_publish_application_view', {'id': item.id }) }}">{{ item.name }}</a></li>
 {% endfor %}
-</ul>

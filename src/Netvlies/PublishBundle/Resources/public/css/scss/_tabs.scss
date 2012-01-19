@@ -1,0 +1,58 @@
+.tabs {
+    @include resetList;
+    @include clearfix;
+    font-family: $DinRegular;
+    font-size: 14px;
+    color:$buttonColor;
+    border:solid 1px #bfbfbf;
+    border-radius:3px;
+    background:$sidenavBackground;
+    position:relative;
+
+    > li {
+        float:left;
+        height:26px;
+        line-height:26px;
+        border-right:solid 1px #bfbfbf;
+        position:relative;
+
+        &:last-child {
+            border-right:none;
+        }
+
+        &.current, &.opened {
+            > a, > button {
+                color: $buttonColorActive;
+                @include background(linear-gradient(rgba(236,234,229,.43), rgba(222,220,215,.43)));
+                @include box-shadow(inset 1px 1px 6px rgba(0,0,0,.18));
+            }
+        }
+        a, button {
+            &:active {
+                color: $buttonColorActive;
+                @include background(linear-gradient(rgba(236,234,229,.43), rgba(222,220,215,.43)));
+                @include box-shadow(inset 1px 1px 6px rgba(0,0,0,.18));
+            }
+            &:hover {
+                color: $buttonColorActive;
+                @include background(linear-gradient(rgba(236,234,229,.76), rgba(222,220,215,.76)), #fff);
+            }
+        }
+    }
+    a, button {
+        color:$buttonColor;
+        display:block;
+        text-decoration:none;
+        width:100%;
+        height:100%;
+        @include box-sizing(border-box);
+        padding:0 20px;
+        background:none;
+        border:none;
+    }
+    .drop {
+        display:none;
+        border-top:solid 1px #d8d8d8;
+        top:30px;
+    }
+}

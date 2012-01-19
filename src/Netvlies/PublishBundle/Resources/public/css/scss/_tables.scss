@@ -1,0 +1,19 @@
+table {
+    width: 100%;
+    padding: 0;
+    font-size: 13px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+th, td {
+    line-height:18px;
+    text-align:left;
+    padding:10px;
+}
+th {
+    font-weight: bold;
+    vertical-align: middle;
+}
+td {
+    border-top: 1px solid #ddd;
+}

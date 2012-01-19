@@ -1,0 +1,28 @@
+#toolkit header[role=banner] { position: fixed; top: 0; left: 0; width: 100%; }
+#toolkit header[role=banner] li { width: auto; height: auto; }
+#toolkit header[role=banner] li a { color: #bfbfbf; display: block; padding: 10px 10px 11px; line-height: 12px; text-decoration: none; font-size: 16px; }
+#toolkit header[role=banner] li a:hover { color: #ffffff; }
+
+#toolkit-main { margin: 0 40px 40px; font-size: 14px; }
+#toolkit-main h1 { font-size: 40px; border-bottom: double 5px black; }
+#toolkit-main h2 { font-size: 20px; margin: 0 0 1em 0; }
+#toolkit-main code, #toolkit-main pre { padding: 0 3px 2px; font-family: Monaco, Andale Mono, Courier New, monospace; font-size: 12px; border-radius: 3px; }
+#toolkit-main code { background-color: #fee9cc; color: rgba(0, 0, 0, 0.75); padding: 1px 3px; }
+#toolkit-main pre { background-color: #fefbf3; display: block; padding: 9px; margin: 0 0 18px; line-height: 18px; font-size: 12px; border: 1px solid #ccc; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 3px; white-space: pre; white-space: pre-wrap; word-wrap: break-word; border: 1px solid rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); -o-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); overflow: hidden; }
+#toolkit-main article { padding-top: 70px; }
+#toolkit-main section { zoom: 1; margin-bottom: 20px; }
+#toolkit-main section:before, #toolkit-main section:after { content: ''; display: table; }
+#toolkit-main section:after { clear: both; }
+#toolkit-main .com { color: #93a1a1; }
+#toolkit-main .lit { color: #195f91; }
+#toolkit-main .pun, #toolkit-main .opn, #toolkit-main .clo { color: #93a1a1; }
+#toolkit-main .fun { color: #dc322f; }
+#toolkit-main .str, #toolkit-main .atv { color: #268bd2; }
+#toolkit-main .kwd, #toolkit-main .tag { color: #195f91; }
+#toolkit-main .typ, #toolkit-main .atn, #toolkit-main .dec, #toolkit-main .var { color: #CB4B16; }
+#toolkit-main .pln { color: #93a1a1; }
+#toolkit-main .prettyprint ol { margin: 0 0 0 2%; }
+#toolkit-main .prettyprint ol li { padding: 0 5px; color: rgba(0, 0, 0, 0.15); line-height: 20px; border-radius: 2px; }
+#toolkit-main .explanation { float: left; width: 20%; margin-right: 5%; }
+#toolkit-main .examples { float: left; width: 75%; }
+#toolkit-main .example { background-color: #ffeaea; margin-bottom: 20px; padding: 19px; min-height: 20px; border: 1px solid #eee; border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 4px; -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); -o-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); }

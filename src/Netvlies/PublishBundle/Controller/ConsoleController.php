@@ -88,7 +88,10 @@ class ConsoleController extends Controller {
         $params[] = '-Dsudouser='.$this->container->getParameter('sudouser');
 		$params[] = '-Dhostname='.$environment->getHostname();
         $params[] = '-Drevision='.$revision;
-        $params[] = '-Ddocroot='.$deployment->getDocroot();
+        $params[] = '-Dwebroot='.$deployment->getWebroot();
+        $params[] = '-Dapproot='.$deployment->getApproot();
+		$params[] = '-Dotap='.$environment->getType();
+        $params[] = '-Dbridgebin='.$environment->getDeploybridgecommand();
 
 		// user files and dirs
         $userfiles = $oApp->getUserFiles();
@@ -127,6 +130,10 @@ class ConsoleController extends Controller {
         $log = new DeploymentLog();
         $log->setCommand($command);
         $log->setDatetimeStart(new \DateTime());
+
+        $log->setUser($_SERVER['PHP_AUTH_USER']);
+        $log->setDeploymentId($id);
+        $log->setRevision($revision);
         $log->setHost($environment->getHostname());
         $log->setType($environment->getType());
         $log->setUid($uid);

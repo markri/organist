@@ -1,0 +1,11 @@
+//header[role=banner] h1 li button
+@include headerButtonImage('.paginas', page, -3px, 9px);
+@include headerButtonImage('.paginas:hover', page-hover, -7px, 5px);
+@include headerButtonImage('.nieuws', news, -2px, 6px);
+@include headerButtonImage('.nieuws:hover', news-hover, -6px, 2px);
+@include headerButtonImage('.mailmarketing', email, -1px, 6px);
+@include headerButtonImage('.mailmarketing:hover', email-hover, -5px, 2px);
+@include headerButtonImage('.gebruikers', users, -2px, 6px);
+@include headerButtonImage('.gebruikers:hover', users-hover, -6px, 2px);
+@include headerButtonImage('.instellingen', cog, -4px, 6px);
+@include headerButtonImage('.instellingen:hover', cog-hover, -8px, 3px);

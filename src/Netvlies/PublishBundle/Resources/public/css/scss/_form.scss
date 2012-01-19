@@ -1,0 +1,34 @@
+﻿label {
+    display: block;
+    line-height: 1.5em;
+
+    span {
+        display: inline-block;
+        width: 10%;
+    }
+
+    input[type=text], textarea {
+        width: 90% * 0.35;
+        @include sizes(90%);
+    }
+}
+    
+input[type=text], textarea {
+    width: 35%;
+    @include box-sizing(border-box);
+    @include sizes(100%);
+    @include transition(border linear 0.2s, box-shadow linear 0.2s);
+    
+    border: solid 1px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    
+    &:focus {
+        outline: 0;
+        border-color: rgba(82, 168, 236, 0.8);
+        @include box-shadow(inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6));
+    }
+}
+
+textarea.resize {
+    resize: both;
+}

@@ -84,10 +84,16 @@ class Deployment
     private $currentRevision;
 
     /**
-     * @var string $docroot
-     * @ORM\Column(name="docroot", type="string", length=255)
+     * @var string $approot
+     * @ORM\Column(name="approot", type="string", length=255)
      */
-    private $docroot;
+    private $approot;
+
+    /**
+     * @var string $webroot
+     * @ORM\Column(name="webroot", type="string", length=255)
+     */
+    private $webroot;
 
     /**
      * @var string $currentRevision
@@ -278,19 +284,36 @@ class Deployment
         return $this->requiresRevision;
     }
 
+
     /**
-     * @param string $docroot
+     * @param string $approot
      */
-    public function setDocroot($docroot)
+    public function setApproot($approot)
     {
-        $this->docroot = $docroot;
+        $this->approot = $approot;
     }
 
     /**
      * @return string
      */
-    public function getDocroot()
+    public function getApproot()
     {
-        return $this->docroot;
+        return $this->approot;
+    }
+
+    /**
+     * @param string $webroot
+     */
+    public function setWebroot($webroot)
+    {
+        $this->webroot = $webroot;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebroot()
+    {
+        return $this->webroot;
     }
 }
