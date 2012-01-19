@@ -5,18 +5,16 @@ set :stages, %w(T A P)
 set :default_stage, "T"
 require 'capistrano/ext/multistage'
 
-
-
-
-
-set :stages, %w(testing acceptance production)
-set :default_stage, "testing"
-require 'capistrano/ext/multistage'
-
 set :application, "#{project}"
 set :repository, "#{gitrepo}"
 set :scm, :git
-set :deploy_via, :remote_cache
+
+# Maybe in the future the target server will have git on it. So we can exchange the lines below (=faster deployment)
+#set :deploy_via, :remote_cache
+set :deploy_via, :rsync_with_remote_cache
+set :local_cache, ''
+set :rsync_options, '-az --delete --exclude=Capfile --exclude=build.xml --exclude=config/ --exclude=.gitignore --delete-excluded'
+
 set :revision, "#{revision}"
 
 set :ssh_options, {:forward_agent => true}

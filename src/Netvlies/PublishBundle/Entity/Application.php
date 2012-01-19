@@ -83,7 +83,7 @@ class Application
     /**
      * Set type
      *
-     * @param string $type
+     * @param ApplicationType $type
      */
     public function setType($type)
     {
@@ -93,7 +93,7 @@ class Application
     /**
      * Get type
      *
-     * @return string 
+     * @return ApplicationType
      */
     public function getType()
     {
