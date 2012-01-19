@@ -25,6 +25,10 @@ class DeploymentController extends Controller {
 
         $em  = $this->getDoctrine()->getEntityManager();
         $sRepositoryPath = $this->container->getParameter('repositorypath');
+
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Application $app
+         */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
 
         // Update phing targets through repo
@@ -32,12 +36,23 @@ class DeploymentController extends Controller {
 
         $deployment = new Deployment();
 
+        switch($app->getType()->getName()){
+            case 'symfony2':
+                $deployment->setWebroot('/home/'.$app->getName().'/vhost/web'.$app->getName());
+                $deployment->setApproot('/home/'.$app->getName().'/vhost/'.$app->getName());
+                break;
+            default:
+                $deployment->setWebroot('/home/'.$app->getName().'/vhost/'.$app->getName());
+                $deployment->setApproot('/home/'.$app->getName().'/vhost/'.$app->getName());
+                break;
+        }
+
         $deployment->setApplication($app);
         $deployment->setUsername($app->getName());
         $deployment->setMysqldb($app->getName());
         $deployment->setMysqluser($app->getName());
         $deployment->setMysqlpw($app->getMysqlpw());
-        $deployment->setDocroot('/home/'.$app->getName().'/vhost/'.$app->getName());
+
 
         return $this->handleForm($deployment);
     }

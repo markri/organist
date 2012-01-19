@@ -39,7 +39,8 @@ class FormDeploymentType extends AbstractType
             ->add('mysqldb', 'text', array('required'=>true, 'label'=>'MySQL database'))
             ->add('mysqluser', 'text', array('required'=>true, 'label'=>'MySQL user'))
             ->add('mysqlpw', 'text', array('required'=>true, 'label'=>'MySQL password'))
-            ->add('docroot', 'text', array('required'=>true, 'label'=>'Absolute docroot'))
+            ->add('approot', 'text', array('required'=>true, 'label'=>'Absolute approot'))
+            ->add('webroot', 'text', array('required'=>true, 'label'=>'Absolute webroot'))
             ->add('requiresrevision', 'checkbox', array('required'=>false, 'label'=>'Requires submission of revision on execution'))
 
             ;
