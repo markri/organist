@@ -47,9 +47,9 @@ else
 	fi
 fi
 
-# process log
+# process log and remove script
 `$console publish:processlog --uid=$scriptid --exitcode=$exitcode`
+rm $script
 
-# @todo call command to symfony console with $(basename $script) as parameter to set it finished and save logfile there
 # Somehow this is needed in order to return all output back to the terminal, why???
 read -n1

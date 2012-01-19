@@ -1,0 +1,35 @@
+// Defaults
+$color1: #e41e76;
+
+$textColor: #484848;
+$textColorLight: lighten($textColor, 15.2%);
+$link: $color1;
+$buttonColor: $textColorLight;
+$buttonColorActive: $textColor;
+
+// Header
+$headerText: #fff;
+$headerFrom: #555;
+$headerTo: darken($headerFrom, 10%);
+
+// Subnav
+$subnavText: $headerText;
+$subnavBorder: #000;
+$subnavBackground: #242424;
+$dropdownLinks: $textColorLight;
+
+// Sidenav
+$sidenavBackground: #f7f4f3;
+
+// Content
+$contentBackground: #fff;
+$contentBorder: #e3e2e2;
+$contentTitle: $textColorLight;
+
+// Tooltip
+$tooltipText: #2f2f2f;
+$tooltipFrom: #f7f5f4;
+$tooltipTo: #e1dedd;
+
+// Buttons
+$buttonColor: #6f6f6f;

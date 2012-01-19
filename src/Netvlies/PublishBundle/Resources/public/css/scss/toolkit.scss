@@ -1,0 +1,124 @@
+@import "compass/css3/images";
+@import "compass/css3/box-sizing";
+@import "compass/css3/box-shadow";
+@import "compass/css3/transition";
+@import "compass/css3/transform";
+@import "compass/utilities";
+@import "mixins";
+
+#toolkit {
+    header[role=banner] {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+
+        li {
+            width: auto;
+            height: auto;
+
+            a {
+                color: #bfbfbf;
+                display: block;
+                padding: 10px 10px 11px;
+                line-height: 12px;
+                text-decoration: none;
+                font-size: 16px;
+
+                &:hover {
+                    color: #ffffff;
+                }
+            }
+        }
+    }
+}
+
+#toolkit-main {
+    margin: 0 40px 40px;
+    font-size: 14px;
+
+    h1 {
+        font-size: 40px;
+        border-bottom: double 5px black;
+        
+        
+    }
+    h2 {
+        font-size: 20px;
+        margin: 0 0 1em 0;
+    }
+    code, pre {
+        padding: 0 3px 2px;
+        font-family: Monaco, Andale Mono, Courier New, monospace;
+        font-size: 12px;
+        border-radius: 3px;
+
+    }
+    code {
+        background-color: #fee9cc;
+        color: rgba(0, 0, 0, 0.75);
+        padding: 1px 3px;
+    }
+    pre {
+        background-color: #fefbf3;
+        display: block;
+        padding: 9px;
+        margin: 0 0 18px;
+        line-height: 18px;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+        white-space: pre;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        border: 1px solid rgba(0,0,0,.2);
+        @include box-shadow(0 1px 2px rgba(0,0,0,.1));
+        overflow: hidden;
+    }
+    article {
+        padding-top: 70px;
+    }
+    section {
+        @include clearfix;
+        margin-bottom: 20px;
+    }
+    .com { color: #93a1a1; }
+    .lit { color: #195f91; }
+    .pun, .opn, .clo { color: #93a1a1; }
+    .fun { color: #dc322f; }
+    .str, .atv { color: #268bd2; }
+    .kwd, .tag { color: #195f91; }
+    .typ, .atn, .dec, .var { color: #CB4B16; }
+    .pln { color: #93a1a1; }
+
+    .prettyprint ol {
+        margin: 0 0 0 2%;
+
+        li {
+            padding: 0 5px;
+            color: rgba(0,0,0,.15);
+            line-height: 20px;
+            border-radius: 2px;
+        }
+    }
+    .explanation {
+        float: left;
+        width: 20%;
+        margin-right: 5%;
+    }
+    .examples {
+        float: left;
+        width: 75%;
+    }
+    .example {
+        background-color: #ffeaea;
+        margin-bottom: 20px;
+        padding: 19px;
+        min-height: 20px;
+        border: 1px solid #eee;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, 0.05));
+    }
+}

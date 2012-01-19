@@ -47,6 +47,13 @@ class DeploymentLog
      */
     private $datetimeEnd;
 
+
+    /**
+     * @var string $user
+     * @ORM\Column(name="user", type="string", length=255)
+     */
+    private $user;
+
     /**
      * @var string $key
      * @ORM\Column(name="uid", type="string", length=255)
@@ -71,6 +78,24 @@ class DeploymentLog
      * @ORM\Column(name="exitcode", type="string", nullable="true")
      */
     private $exitCode;
+
+
+    /**
+     * @todo soft link So deployments can still be deleted without constraints to deploymentLog
+     * This variable is used as a temporary backreference to update current status (revision etc)
+     * @var int $deploymentId
+     * @ORM\Column(name="deploymentid", type="integer")
+     */
+    private $deploymentId;
+
+
+    /**
+     * @var string $revision
+     * @ORM\Column(name="revision", type="string", length=255)
+     */
+    private $revision;
+
+
 
 
 
@@ -209,5 +234,47 @@ class DeploymentLog
     public function getExitCode()
     {
         return $this->exitCode;
+    }
+
+    /**
+     * @param int $deploymentId
+     */
+    public function setDeploymentId($deploymentId)
+    {
+        $this->deploymentId = $deploymentId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDeploymentId()
+    {
+        return $this->deploymentId;
+    }
+
+    /**
+     * @param string $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setRevision($revision)
+    {
+        $this->revision = $revision;
+    }
+
+    public function getRevision()
+    {
+        return $this->revision;
     }
 }

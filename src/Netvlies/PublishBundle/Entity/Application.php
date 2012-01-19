@@ -35,8 +35,8 @@ class Application
     private $customer;
 
     /**
-     * @Assert\Choice(choices = {"Symfony2", "OMS", "Basissite v1", "custom"}, message="Choose a valid type symfony2, OMS or custom.")
-     * @ORM\Column(name="type", type="string", length=255, nullable=true)
+     * @var ApplicationType $type
+     * @ORM\ManyToOne(targetEntity="ApplicationType")
      */
     private $type;
 

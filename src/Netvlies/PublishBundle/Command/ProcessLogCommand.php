@@ -42,14 +42,32 @@ class ProcessLogCommand extends ContainerAwareCommand
          }
 
          $em = $this->getContainer()->get('doctrine')->getEntityManager();
+         /**
+          * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
+          */
          $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
 
          $logfile = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts/'.$uid.'.log';
          $logentry->setDatetimeEnd(new \DateTime());
          $logentry->setLog(file_get_contents($logfile));
          $logentry->setExitCode($exitcode);
+
          $em->persist($logentry);
          $em->flush();
          unlink($logfile);
+
+         // Update deployment with revision if applicable
+         $deploymentId = $logentry->getDeploymentId();
+         $revision = $logentry->getRevision();
+
+         if(!empty($deploymentId) && !empty($revision)){
+             /**
+              * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
+              */
+             $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneById($deploymentId);
+             $deployment->setCurrentRevision($revision);
+             $em->persist($deployment);
+             $em->flush();
+         }
      }
 }

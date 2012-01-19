@@ -1,0 +1,19 @@
+.autocomplete-data {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	background: #fff;
+	border: solid 1px #ccc;
+    
+    li {
+        line-height: 1.55em;
+        margin: 2px 0;
+        padding: 0 10px;
+        cursor: pointer;
+        
+        &:hover {
+            background: #ddd;
+        }
+    }
+}

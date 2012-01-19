@@ -55,6 +55,13 @@ class Environment
      */
     private $keyname;
 
+
+    /**
+     * @var string $deploybridgecommand
+     * @ORM\Column(name="deploybridgecommand", type="string", length=255)
+     */
+    private $deploybridgecommand;
+
     /**
      * Get id
      *
@@ -162,5 +169,21 @@ class Environment
      */
     public function __toString(){
         return $this->getType().' ('.$this->getHostname().')';
+    }
+
+    /**
+     * @param string $deploybridgecommand
+     */
+    public function setDeploybridgecommand($deploybridgecommand)
+    {
+        $this->deploybridgecommand = $deploybridgecommand;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeploybridgecommand()
+    {
+        return $this->deploybridgecommand;
     }
 }

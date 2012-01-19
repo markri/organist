@@ -31,11 +31,8 @@ class ApplicationController extends Controller {
         return array();
     }
 
-
     /**
-     * Used as embedded controller, to prevent assigning sites, over and over again
-     * This controller is called from base2.html.twig So no route is needed
-     *
+     * @Route("/application/list")
      * @Template()
      */
     public function listAction(){
@@ -47,9 +44,58 @@ class ApplicationController extends Controller {
 
     /**
      *
-     * @Route("/application/view/{id}")
+     * @Route("/application/deploy/{id}")
      * @Template()
 	 */    
+    public function deployAction($id, $revision=null) {
+        var_dump($_POST);
+
+        $oEntityManager = $this->getDoctrine()->getEntityManager();
+                $sRepositoryPath = $this->container->getParameter('repositorypath');
+                $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
+
+
+                $query = $oEntityManager->createQuery('
+                    SELECT d FROM Netvlies\PublishBundle\Entity\Deployment d
+                    INNER JOIN d.environment e
+                    WHERE d.application = :app
+                    ORDER BY e.type, e.hostname
+                ');
+
+                $query->setParameter('app', $app);
+                $deployments = $query->getResult();
+
+                $allTwigParams = array();
+                $allTwigParams['application'] = $app;
+                $allTwigParams['deployments'] = $deployments;
+                $allTwigParams['revision'] = $revision;
+
+                // Branch / Tag selector form
+                $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => new Branches($app)));
+                $request = $this->getRequest();
+
+                if($request->getMethod() == 'POST'){
+                    $form->bindRequest($request);
+                }
+                else if(!empty($revision)){
+                    // == redirected from executeAction, some target is executed, so we need to remember the chosen branch
+                    // So we simulate a request object and bind it to the form object
+                    $simrequest = new \Symfony\Component\HttpFoundation\Request(array(), array('netvlies_publishbundle_executetype' => array('branchtodeploy'=>$revision)));
+                    $simrequest->setMethod('POST');
+                    $form->bindRequest($simrequest);
+                }
+
+                $allTwigParams['form'] = $form->createView();
+
+                return $allTwigParams;
+        //return $this->viewAction($id, $revision);
+    }
+
+    /**
+     *
+     * @Route("/application/view/{id}")
+     * @Template()
+	 */
     public function viewAction($id, $revision=null) {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();

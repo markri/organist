@@ -13,9 +13,15 @@ class FormApplicationEnrichType extends AbstractType
         $builder
             ->add('name', 'text', array('read_only' => true))
             ->add('customer', 'text', array('read_only' => true))
-            ->add('type', 'choice', array('choices' => array('OMS'=>'OMS', 'Symfony2'=>'Symfony2', "Basissite v1"=>"Basissite v1", 'custom'=>'Custom'), 'empty_value'=> '-- choose type --', 'required'=>true))
+            ->add('type', 'entity', array(
+                'class' => 'NetvliesPublishBundle:ApplicationType',
+                'property'=> 'label',
+                'empty_value'=> '-- choose type --',
+                'expanded' => false,
+                'multiple' => false,
+                'required'=>true)
+            )
             ->add('mysqlpw', 'text', array('label'=>'MySQL wachtwoord', 'required'=>true ))
-
             ;
     }
 

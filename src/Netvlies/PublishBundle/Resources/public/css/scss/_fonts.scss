@@ -1,0 +1,15 @@
+@font-face {
+	font-family: 'DinRegular';
+	src: url('DINWeb.eot?#iefix') format('embedded-opentype'), 
+	     url('DINComp.ttf')  format('truetype'),
+	     url('DINWeb.woff') format('woff');
+}
+@font-face {
+	font-family: 'DinMedium';
+	src: url('DINWeb-Medium.eot?#iefix') format('embedded-opentype'), 
+	     url('DINComp-Medium.ttf')  format('truetype'),
+	     url('DINWeb-Medium.woff') format('woff');
+}
+$default-font: Verdana, Arial, Helvetica, sans-serif;
+$DinRegular: 'DinRegular', Arial, sans-serif; 
+$DinMedium: 'DinMedium', Arial, sans-serif;

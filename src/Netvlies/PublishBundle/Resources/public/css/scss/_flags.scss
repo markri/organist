@@ -1,0 +1,23 @@
+.nl:before {
+    @include sprite-sprite(nl);
+}
+
+.be:before {
+    @include sprite-sprite(be);
+}
+
+.fr:before {
+    @include sprite-sprite(fr);
+}
+
+.de:before {
+    @include sprite-sprite(de);
+}
+
+.it:before {
+    @include sprite-sprite(it);
+}
+
+.es:before {
+    @include sprite-sprite(es);
+}

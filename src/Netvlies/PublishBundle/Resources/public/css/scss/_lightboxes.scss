@@ -1,0 +1,58 @@
+.lightboxes {
+	position:fixed;
+	width:50%;
+	top:5%;
+	left:25%;
+	height:90%;
+	display:none;
+
+    > div {
+        position:absolute;
+        top:0;
+        left:0;
+        display:none;
+        border: solid 4px #4c4d4e;
+        padding: 20px;
+        background: #fff;
+        overflow:hidden;
+        z-index:250;
+        width:100%;
+        border-radius: 25px;
+        @include box-sizing(border-box);
+        max-height:100%;
+    }
+
+    h1 {
+        margin-top:0px;
+    }
+    .close {
+        width:50px;
+        height:50px;
+        position:absolute;
+        top:-15px;
+        right:-15px;
+        left:auto;
+        border-width:2px;
+        padding:0;
+        display:none;
+        background:#f00;
+        color:#fff;
+        text-align:center;
+        line-height: 48px;
+        font-size: 30px;
+        font-weight: bold;
+        font-family: monospace;
+        cursor:pointer;
+    }
+}
+#overlay {
+	z-index:100;
+	position:absolute;
+	top:0;
+	right:0;
+	bottom:0;
+	left:0;
+	background:#333;
+	background:rgba(0,0,0,.3);
+	display:none;
+}

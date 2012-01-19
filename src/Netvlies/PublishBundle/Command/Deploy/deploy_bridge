@@ -32,6 +32,9 @@ switch($action){
 	case 'testsettings':
 		echo shell_exec($currentdir.'/testsettings.sh '.implode(' ',$arguments));
 		break;
+	case 'symfony2acl':
+		echo shell_exec($currentdir.'/symfony2acl.sh '.implode(' ',$arguments));
+		break;
 	default:
 		showhelp();
 		break;
