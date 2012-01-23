@@ -279,7 +279,7 @@ header[role=banner] .tooltip:after { content: ''; position: absolute; top: -5px;
 #content-wrapper nav li:first-child { border-top: solid 1px #cbcbca; }
 
 /* ========== content ========== */
-#content { background: white; width: 75%; float: left; }
+#content { background: white; width: 100%; float: left; }
 #content header { zoom: 1; margin: 20px 30px; }
 #content header:before, #content header:after { content: ''; display: table; }
 #content header:after { clear: both; }
