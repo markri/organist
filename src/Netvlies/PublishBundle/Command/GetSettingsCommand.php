@@ -23,11 +23,11 @@ class getSettingsCommand extends ContainerAwareCommand
 
      protected function configure()
      {
-         // @todo add label option. This needs to be implemented in entity first
          $this
              ->setName('publish:getsettings')
              ->setDescription('Display settings needed for deployment. Needs deploymentid')
-             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'Deployment id')
+             ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Deployment id')
+             ->addOption('pd', null, InputOption::VALUE_OPTIONAL, 'Primary domain')
              ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Deployment id', 'refs/heads/master')
          ;
      }
@@ -35,9 +35,11 @@ class getSettingsCommand extends ContainerAwareCommand
      protected function execute(InputInterface $input, OutputInterface $output)
      {
          $id = $input->getOption('id');
+         $pd = $input->getOption('pd');
          $branch = $input->getOption('branch');
 
-         if(empty($id)){
+         if(empty($id) && empty($pd)){
+             throw new Exception('primary domain or id is required');
              return;
          }
 
@@ -45,7 +47,12 @@ class getSettingsCommand extends ContainerAwareCommand
          /**
           * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
           */
-         $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByid($id);
+         if(!empty($id)){
+            $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByid($id);
+         }
+         else{
+            $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByPrimaryDomain($pd);
+         }
 
          $app = $deployment->getApplication();
          $app->setBaseRepositoriesPath($this->getContainer()->getParameter('repositorypath'));
@@ -60,9 +67,8 @@ class getSettingsCommand extends ContainerAwareCommand
          $console = new  ConsoleController();
          $params = $console->getSettings($this->getContainer(), $deployment, $reference);
 
-        foreach($params as $param){
-            echo substr($param, 2)."\n";
+        foreach($params as $key=>$value){
+            echo $key.'='.$value."\n";
         }
-
      }
 }

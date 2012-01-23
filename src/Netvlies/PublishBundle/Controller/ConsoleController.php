@@ -48,12 +48,18 @@ class ConsoleController extends Controller {
     }
 
 
+    /**
+     * Returns a simple key value array with all parameters needed for given deployment and revision
+     * @todo It is probably not the best place to have this method in the controller (its also used in the getSettingsCommand)
+     *
+     * @param $container
+     * @param $deployment
+     * @param $revision
+     * @return array
+     */
     public function getSettings($container, $deployment, $revision){
+
         $params = array();
-
-
-        // @todo escaped and unescaped
-        // for settings file and for command line params
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Application $oApp
@@ -66,22 +72,22 @@ class ConsoleController extends Controller {
          $environment = $deployment->getEnvironment();
 
 		// Entity attributes
-        $params[] = '-Dproject='.$app->getName();
-        $params[] = '-Dgitrepo='.$app->getGitrepo();
-        $params[] = '-Dpubkeyfile='.$container->getParameter('pubkeyfile');
-        $params[] = '-Dprivkeyfile='.$container->getParameter('privkeyfile');
-        $params[] = '-Dusername='.$deployment->getUsername();
-        $params[] = '-Dmysqldb='.$deployment->getMysqldb();
-        $params[] = '-Dmysqluser='.$deployment->getMysqluser();
-        $params[] = '-Dmysqlpw='.$deployment->getMysqlpw();
-        $params[] = '-DhomedirsBase='.$environment->getHomedirsBase();
-        $params[] = '-Dsudouser='.$container->getParameter('sudouser');
-		$params[] = '-Dhostname='.$environment->getHostname();
-        $params[] = '-Drevision='.$revision;
-        $params[] = '-Dwebroot='.$deployment->getWebroot();
-        $params[] = '-Dapproot='.$deployment->getApproot();
-		$params[] = '-Dotap='.$environment->getType();
-        $params[] = '-Dbridgebin='.$environment->getDeploybridgecommand();
+        $params['project'] = $app->getName();
+        $params['gitrepo'] = $app->getGitrepoSSH();
+        $params['pubkeyfile'] = $container->getParameter('pubkeyfile');
+        $params['privkeyfile'] = $container->getParameter('privkeyfile');
+        $params['username'] = $deployment->getUsername();
+        $params['mysqldb'] = $deployment->getMysqldb();
+        $params['mysqluser'] = $deployment->getMysqluser();
+        $params['mysqlpw'] = $deployment->getMysqlpw();
+        $params['homedirsBase'] = $environment->getHomedirsBase();
+        $params['sudouser'] = $container->getParameter('sudouser');
+		$params['hostname'] = $environment->getHostname();
+        $params['revision'] = $revision;
+        $params['webroot'] = $deployment->getWebroot();
+        $params['approot'] = $deployment->getApproot();
+		$params['otap'] = $environment->getType();
+        $params['bridgebin'] = $environment->getDeploybridgecommand();
 
 		// user files and dirs
         $userfiles = $app->getUserFiles();
@@ -96,16 +102,16 @@ class ConsoleController extends Controller {
                 $files[] = $file->getPath();
             }
         }
-        $params[] = '-Duserfiles='.implode(',', $files);
-        $params[] = '-Duserdirs='.implode(',', $dirs);
+        $params['userfiles'] = implode(',', $files);
+        $params['userdirs'] = implode(',', $dirs);
 
 
 		// Also build a capistrano parameter bag from all previously given params
         $capParams = '';
-        foreach($params as $param){
-            $capParams[]=preg_replace('/^-D/', '-S', $param, 1);
+        foreach($params as $key=>$value){
+            $capParams[]='-S'.$key.'='.$value;
         }
-        $params[] = '-Dcapparams='.implode(' ', $capParams);
+        $params['capparams'] = implode(' ', $capParams);
         return $params;
     }
 
@@ -139,9 +145,14 @@ class ConsoleController extends Controller {
 
         // Get params
         $params = $this->getSettings($this->container, $deployment, $revision);
+		$shellargs = array();
+		
+		foreach($params as $key=>$value){
+			$shellargs[] = '-D'.$key.'='.escapeshellarg($value);
+		}
 
 		// build command
-        $command = 'phing -f '.$oApp->getBuildFile().' '.$deployment->getPhingTarget()->getName().' '.implode(' ', $params);
+        $command = 'phing -f '.$oApp->getBuildFile().' '.$deployment->getPhingTarget()->getName().' '.implode(' ', $shellargs);
         $uid = md5(time().rand(0, 10000));
         $scriptBuilder = new ScriptBuilder($uid);
         $scriptBuilder->addLine($command);

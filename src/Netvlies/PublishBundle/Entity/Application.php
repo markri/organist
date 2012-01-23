@@ -42,9 +42,14 @@ class Application
 
     /**
      * @Assert\Regex(pattern="/^git@bitbucket.org:.*?.git$/", match=true, message="Use GIT SSH connection string from Bitbucket")
-     * @ORM\Column(name="gitrepo", type="string", length=255, nullable=true)
+     * @ORM\Column(name="gitrepoSSH", type="string", length=255, nullable=true)
      */
-    private $gitrepo;
+    private $gitrepoSSH;
+
+    /**
+     * @ORM\Column(name="gitrepokey", type="string", length=255, nullable=true)
+     */
+    private $gitrepokey;
 
     /**
      * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
@@ -116,23 +121,23 @@ class Application
     }
 
     /**
-     * Set gitrepo
+     * Set gitrepoSSH
      *
-     * @param string $gitrepo
+     * @param string $gitrepoSSH
      */
-    public function setGitrepo($gitrepo)
+    public function setGitrepoSSH($gitrepoSSH)
     {
-        $this->gitrepo = $gitrepo;
+        $this->gitrepoSSH = $gitrepoSSH;
     }
 
     /**
-     * Get gitrepo
+     * Get gitrepoSSH
      *
      * @return string 
      */
-    public function getGitrepo()
+    public function getGitrepoSSH()
     {
-        return $this->gitrepo;
+        return $this->gitrepoSSH;
     }
 
     /**
@@ -225,6 +230,7 @@ class Application
         // Reference is bound to this entity by selecting it in a form
         // so we can use the internal getter
         $reference = $this->getReferenceToDeploy();
+        //use bitbucketrepoowner from container
 
 
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Changesets
@@ -293,6 +299,16 @@ class Application
     public function getApplicableChangesets()
     {
         return $this->applicableChangesets;
+    }
+
+    public function setGitrepokey($gitrepokey)
+    {
+        $this->gitrepokey = $gitrepokey;
+    }
+
+    public function getGitrepokey()
+    {
+        return $this->gitrepokey;
     }
 
 }
