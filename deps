@@ -65,3 +65,4 @@
 [zf2]
     git=https://github.com/zendframework/zf2.git
     target=/zend
+
