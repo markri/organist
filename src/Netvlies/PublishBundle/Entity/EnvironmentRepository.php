@@ -3,6 +3,7 @@
 namespace Netvlies\PublishBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * EnvironmentRepository
@@ -27,6 +28,28 @@ class EnvironmentRepository extends EntityRepository
         $query->setParameter('host', $host);
 
         return $query->getResult();
+    }
+
+
+    public function getOrderedByTypeAndHost(){
+
+        $rsm = new ResultSetMapping;
+        $rsm->addEntityResult('NetvliesPublishBundle:Environment', 'e');
+        $rsm->addFieldResult('e', 'id', 'id');
+        $rsm->addFieldResult('e', 'type', 'type');
+        $rsm->addFieldResult('e', 'hostname', 'hostname');
+
+        $query = $this->getEntityManager()->createNativeQuery("
+            SELECT e.* FROM Environment e
+            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P')
+        ", $rsm);
+
+
+        $result = $query->getResult();
+        foreach($result as $environment){
+            //@todos
+           // $environment
+        }
     }
 
 

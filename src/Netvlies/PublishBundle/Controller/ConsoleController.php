@@ -48,6 +48,69 @@ class ConsoleController extends Controller {
     }
 
 
+    public function getSettings($container, $deployment, $revision){
+        $params = array();
+
+
+        // @todo escaped and unescaped
+        // for settings file and for command line params
+
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Application $oApp
+         */
+         $app = $deployment->getApplication();
+
+         /**
+          * @var \Netvlies\PublishBundle\Entity\Environment $environment
+          */
+         $environment = $deployment->getEnvironment();
+
+		// Entity attributes
+        $params[] = '-Dproject='.$app->getName();
+        $params[] = '-Dgitrepo='.$app->getGitrepo();
+        $params[] = '-Dpubkeyfile='.$container->getParameter('pubkeyfile');
+        $params[] = '-Dprivkeyfile='.$container->getParameter('privkeyfile');
+        $params[] = '-Dusername='.$deployment->getUsername();
+        $params[] = '-Dmysqldb='.$deployment->getMysqldb();
+        $params[] = '-Dmysqluser='.$deployment->getMysqluser();
+        $params[] = '-Dmysqlpw='.$deployment->getMysqlpw();
+        $params[] = '-DhomedirsBase='.$environment->getHomedirsBase();
+        $params[] = '-Dsudouser='.$container->getParameter('sudouser');
+		$params[] = '-Dhostname='.$environment->getHostname();
+        $params[] = '-Drevision='.$revision;
+        $params[] = '-Dwebroot='.$deployment->getWebroot();
+        $params[] = '-Dapproot='.$deployment->getApproot();
+		$params[] = '-Dotap='.$environment->getType();
+        $params[] = '-Dbridgebin='.$environment->getDeploybridgecommand();
+
+		// user files and dirs
+        $userfiles = $app->getUserFiles();
+        $dirs = array();
+        $files = array();
+        foreach($userfiles as $file){
+            $type = $file->getType();
+            if($type=='D'){
+                $dirs[] = $file->getPath();
+            }
+            else{
+                $files[] = $file->getPath();
+            }
+        }
+        $params[] = '-Duserfiles='.implode(',', $files);
+        $params[] = '-Duserdirs='.implode(',', $dirs);
+
+
+		// Also build a capistrano parameter bag from all previously given params
+        $capParams = '';
+        foreach($params as $param){
+            $capParams[]=preg_replace('/^-D/', '-S', $param, 1);
+        }
+        $params[] = '-Dcapparams='.implode(' ', $capParams);
+        return $params;
+    }
+
+
+
     /**
      * Is used for executing a phing target
      *
@@ -73,50 +136,9 @@ class ConsoleController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Environment $environment
          */
         $environment = $deployment->getEnvironment();
-        $params = array();
 
-		// Entity attributes
-        $params[] = '-Dproject='.$oApp->getName();
-        $params[] = '-Dgitrepo='.escapeshellarg($oApp->getGitrepo());
-        $params[] = '-Dpubkeyfile='.$this->container->getParameter('pubkeyfile');
-        $params[] = '-Dprivkeyfile='.$this->container->getParameter('privkeyfile');
-        $params[] = '-Dusername='.$deployment->getUsername();
-        $params[] = '-Dmysqldb='.$deployment->getMysqldb();
-        $params[] = '-Dmysqluser='.$deployment->getMysqluser();
-        $params[] = '-Dmysqlpw='.$deployment->getMysqlpw();
-        $params[] = '-DhomedirsBase='.$environment->getHomedirsBase();
-        $params[] = '-Dsudouser='.$this->container->getParameter('sudouser');
-		$params[] = '-Dhostname='.$environment->getHostname();
-        $params[] = '-Drevision='.$revision;
-        $params[] = '-Dwebroot='.$deployment->getWebroot();
-        $params[] = '-Dapproot='.$deployment->getApproot();
-		$params[] = '-Dotap='.$environment->getType();
-        $params[] = '-Dbridgebin='.$environment->getDeploybridgecommand();
-
-		// user files and dirs
-        $userfiles = $oApp->getUserFiles();
-        $dirs = array();
-        $files = array();
-        foreach($userfiles as $file){
-            $type = $file->getType();
-            if($type=='D'){
-                $dirs[] = $file->getPath();
-            }
-            else{
-                $files[] = $file->getPath();
-            }
-        }
-        $params[] = '-Duserfiles='.escapeshellarg(implode(',', $files));
-        $params[] = '-Duserdirs='.escapeshellarg(implode(',', $dirs));
-
-
-		// Also build a capistrano parameter bag from all previously given params
-        $capParams = '';
-        foreach($params as $param){
-            $capParams[]=preg_replace('/^-D/', '-S', $param, 1);
-        }
-        $params[] = '-Dcapparams='.escapeshellarg(implode(' ', $capParams));
-
+        // Get params
+        $params = $this->getSettings($this->container, $deployment, $revision);
 
 		// build command
         $command = 'phing -f '.$oApp->getBuildFile().' '.$deployment->getPhingTarget()->getName().' '.implode(' ', $params);
@@ -131,7 +153,9 @@ class ConsoleController extends Controller {
         $log->setCommand($command);
         $log->setDatetimeStart(new \DateTime());
 
-        $log->setUser($_SERVER['PHP_AUTH_USER']);
+
+        $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
+        $log->setUser($user);
         $log->setDeploymentId($id);
         $log->setRevision($revision);
         $log->setHost($environment->getHostname());

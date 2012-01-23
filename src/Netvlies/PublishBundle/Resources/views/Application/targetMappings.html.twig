@@ -1,12 +1,10 @@
 {% extends 'NetvliesPublishBundle:Application:view.html.twig' %}
 {% block deployment %}
     {% if application.gitrepo %}
-        <a href="{{ path('netvlies_publish_application_edit', {'id': application.id})}}">edit {{application.name}}</a><br>
-        <a href="{{path('netvlies_publish_console_exec', {'script': application.getGitUpdateScript()})}}" target="_blank">Update references</a>
 
         <h2>Deployments</h2>
 
-        <form id="deploy" name="deploy" method="POST" action="{{ path('netvlies_publish_application_deploy', {'id': application.id})}}">
+        <form id="deploy" name="deploy" method="POST" action="{{ path('netvlies_publish_application_targetmappings', {'id': application.id})}}">
             <table border="1" cellspacing="0">
                 <thead>
                     <th>Environment</th>
@@ -26,8 +24,8 @@
                     <td>{{deployment.currentBranch}}&nbsp;</td>
                     <td>{{deployment.currentRevision}}&nbsp;</td>
                     <td>
-                        {% if (deployment.requiresrevision == false or application.lastRevisionId is not empty) %}
-                            <a href="{{ path('netvlies_publish_application_execute', {'id': application.id, 'deployid':deployment.id, 'revision':application.lastRevisionId }) }}">execute</a> |
+                        {% if (deployment.requiresrevision == false or application.referencetodeploy is not empty) %}
+                            <a href="{{ path('netvlies_publish_application_execute', {'id': application.id, 'deployid':deployment.id, 'revision':application.referencetodeploy }) }}">execute</a> |
                         {%else%}
                             -- choose branch/tag -- |
                         {% endif %}
@@ -50,20 +48,27 @@
 
             <br/>
             <br/>
-            {{ form_label(form.branchtodeploy) }}
-            {{ form_widget(form.branchtodeploy, { 'attr': {'onchange': 'onchange=document.deploy.submit()'}}) }}
+            {{ form_label(form.referencetodeploy) }}
+            {{ form_widget(form.referencetodeploy, { 'attr': {'onchange': 'onchange=document.deploy.submit()'}}) }}
             <br/>
             <br/>
-            {% if application.lastRevisionId %}
-                Last revision: {{ application.lastRevisionId }}<br>
-                Author: {{ application.lastRevisionAuthor }}<br>
-                Message: {{ application.lastRevisionMessage }}<br>
+            {% if application.referencetodeploy %}
+                <h3>Applicable changesets for this reference</h3>
+                {% for changeset in application.applicableChangesets %}
+                    Reference: {{ changeset.raw_node }}<br>
+                    Author: {{ changeset.author }}<br>
+                    Message: {{ changeset.message }}<br>
+                    <hr>
+
+                {% endfor %}
+                This list might not be complete. Please see <a href="{{application.getBitbucketChangesetURL}}">BitBucket</a> for a complete history
+                
             {% endif %}
             <br>
         </form>
 
 
-        <a href="{{path('netvlies_publish_deployment_create', {'id': application.id})}}">Add deployment</a>
+        <a href="{{path('netvlies_publish_deployment_createstep1', {'id': application.id})}}">Add deployment</a>
     {% else %}
         <a href="{{ path('netvlies_publish_application_enrich', {'id': application.id})}}">initialize new project</a>
     {% endif %}

@@ -78,6 +78,4 @@ class PhingTarget
     {
         return $this->application;
     }
-
-
 }

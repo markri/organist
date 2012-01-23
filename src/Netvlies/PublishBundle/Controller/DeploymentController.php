@@ -9,7 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\Deployment;
-use Netvlies\PublishBundle\Form\FormDeploymentType;
+use Netvlies\PublishBundle\Form\FormDeploymentStep1Type;
 
 
 
@@ -18,10 +18,28 @@ class DeploymentController extends Controller {
 
 
     /**
-     * @Route("/deployment/new/{id}")
+     * @Route("/deployment/app/{id}/new/step1")
      * @Template()
      */
-    public function createAction($id){
+    public function createStep1Action($id){
+
+        $em  = $this->getDoctrine()->getEntityManager();
+        $sRepositoryPath = $this->container->getParameter('repositorypath');
+        $app = $em->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
+
+
+		// Fill deployment with default values which are most likely to be true
+        $deployment = new Deployment();
+        $deployment->setApplication($app);
+
+        return $this->handleFormStep1($deployment);
+    }
+
+    /**
+     * @Route("/deployment/app/{id}/new/step2")
+     * @Template()
+     */
+    public function createStep2Action($id){
 
         $em  = $this->getDoctrine()->getEntityManager();
         $sRepositoryPath = $this->container->getParameter('repositorypath');
@@ -31,10 +49,12 @@ class DeploymentController extends Controller {
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
 
+
         // Update phing targets through repo
         $em->getRepository('NetvliesPublishBundle:PhingTarget')->updatePhingTargets($app);
 
-        $deployment = new Deployment();
+		// Fill deployment with default values which are most likely to be true
+        $deployment = $this->getRequest()->getSession()->get('deployment');
 
         switch($app->getType()->getName()){
             case 'symfony2':
@@ -53,8 +73,7 @@ class DeploymentController extends Controller {
         $deployment->setMysqluser($app->getName());
         $deployment->setMysqlpw($app->getMysqlpw());
 
-
-        return $this->handleForm($deployment);
+        return $this->handleFormStep2($deployment);
     }
 
     /**
@@ -83,15 +102,71 @@ class DeploymentController extends Controller {
 
         return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
     }
-
+	
+	
     protected function handleForm($deployment){
 
-        $form = $this->createForm(new FormDeploymentType(), $deployment, array('app' => $deployment->getApplication()));
+
+        $form = $this->createForm(new FormDeploymentStep1Type(), $deployment, array('app' => $deployment->getApplication()));
+
         $request = $this->getRequest();
         $em  = $this->getDoctrine()->getEntityManager();
         $app = $deployment->getApplication();
 
 
+
+        if($request->getMethod() == 'POST'){
+
+            $form->bindRequest($request);
+
+            if($form->isValid()){
+                $em->persist($deployment);
+                $em->flush();
+                return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
+            }
+        }
+
+        return array(
+            'form' => $form->createView(),
+        );
+    }	
+
+    protected function handleFormStep1($deployment){
+
+        //$form = $this->createForm(new FormDeploymentStep1Type(), $deployment, array('app' => $deployment->getApplication()));
+        $request = $this->getRequest();
+        $em  = $this->getDoctrine()->getEntityManager();
+
+        $em  = $this->getDoctrine()->getEntityManager();
+                $envs = $em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();
+        var__dump($envs);
+        exit;
+
+        $app = $deployment->getApplication();
+
+        if($request->getMethod() == 'POST'){
+
+            $form->bindRequest($request);
+
+            if($form->isValid()){
+				$session = $this->getRequest()->getSession();
+				$session->set('deployment', $deployment);
+                return $this->redirect($this->generateUrl('netvlies_publish_deployment_createstep2', array('id'=>$app->getId())));
+            }
+        }
+
+        return array(
+            'form' => $form->createView(),
+        );
+    }
+
+
+    protected function handleFormStep2($deployment){
+
+        $form = $this->createForm(new FormDeploymentStep2Type(), $deployment, array('app' => $deployment->getApplication()));
+        $request = $this->getRequest();
+        $em  = $this->getDoctrine()->getEntityManager();
+        $app = $deployment->getApplication();
 
         if($request->getMethod() == 'POST'){
 

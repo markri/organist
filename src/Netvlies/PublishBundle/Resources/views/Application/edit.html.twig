@@ -3,6 +3,7 @@
 {% block content %}
 
         <h2>{{application.name}}</h2>
+        <a href="{{path('netvlies_publish_console_exec', {'script': gitupdatescript})}}" target="_blank">Update references (only needed if there are changes in deployment descriptors, build.xml, deploy.rb, etc)</a>
 
         <form action="" method="POST">
 
