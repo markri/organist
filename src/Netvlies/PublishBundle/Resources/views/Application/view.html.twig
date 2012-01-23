@@ -11,7 +11,7 @@
                 <hr />
                 <div id="text">
                     Customer: {{application.customer}}<br>
-                    Repository: <a href="https://bitbucket.org/{{application.gitrepo|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepo}}</a><br>
+                    Repository: <a href="https://bitbucket.org/{{application.gitrepoSSH|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepoSSH}}</a><br>
                     Applicationtype: {{application.type.label}}<br>
 
 

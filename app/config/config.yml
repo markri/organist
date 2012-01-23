@@ -71,3 +71,5 @@ parameters:
     sudouser: deploy
     bitbucketuser: nvs_ci
     bitbucketpassword: 33x54Yq7CY
+    bitbucketrepoowner: netvlies
+    

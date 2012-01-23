@@ -21,7 +21,7 @@ class FormApplicationEditType extends AbstractType
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('gitrepo', 'text', array('required'=>true))
+            ->add('gitrepoSSH', 'text', array('required'=>true))
 
             ;
     }

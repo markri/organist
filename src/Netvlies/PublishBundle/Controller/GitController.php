@@ -40,7 +40,7 @@ class GitController extends Controller
 
         $scriptBuilder = new ScriptBuilder(time());
         $scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
-        $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepo()).' '.escapeshellarg($oApp->getAbsolutePath()));
+        $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($oApp->getAbsolutePath()));
 
 
         return array('script' => $scriptBuilder->getEncodedScriptPath(),

@@ -39,8 +39,7 @@ class ApplicationController extends Controller {
     public function listAction(){
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         $apps = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getAll();
-        //@todo should be renamed to apps
-        return array('sites' => $apps);
+        return array('apps' => $apps);
     }
 
 

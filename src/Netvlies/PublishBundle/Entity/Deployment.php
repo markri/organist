@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Netvlies\PublishBundle\Entity\Deployment
  *
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="primaryDomain", columns={"primaryDomain"})})
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\DeploymentRepository")
  */
 class Deployment
@@ -30,10 +30,10 @@ class Deployment
     private $environment;
 	
     /**
-     * @var string $label
-     * @ORM\Column(name="label", type="string", length=255, nullable=true)
+     * @var string $primaryDomain
+     * @ORM\Column(name="primaryDomain", type="string", length=255, nullable=true)
      */	
-	private $label;
+	private $primaryDomain;
 
     /**
      * @var Application $application
@@ -322,20 +322,20 @@ class Deployment
     {
         return $this->webroot;
     }
-	
+
     /**
-     * @param string $label
+     * @param string $primaryDomain
      */
-    public function setLabel($label)
+    public function setPrimaryDomain($primaryDomain)
     {
-        $this->label = $label;
+        $this->primaryDomain = $primaryDomain;
     }
 
     /**
      * @return string
      */
-    public function getLabel()
+    public function getPrimaryDomain()
     {
-        return $this->label;
-    }	
+        return $this->primaryDomain;
+    }
 }
