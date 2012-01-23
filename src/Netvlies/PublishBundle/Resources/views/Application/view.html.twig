@@ -9,20 +9,21 @@
                     <h1>{{application.name}}</h1>
                 </header>
                 <hr />
-                Customer: {{application.customer}}<br>
-                Repository: <a href="https://bitbucket.org/{{application.gitrepo|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepo}}</a><br>
-                Type: {{application.type.label}}<br>
+                <div id="text">
+                    Customer: {{application.customer}}<br>
+                    Repository: <a href="https://bitbucket.org/{{application.gitrepo|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepo}}</a><br>
+                    Applicationtype: {{application.type.label}}<br>
 
 
-        {% block deployment %}{% endblock %}
+                    {% block deployment %}{% endblock %}
 
-        {%block console%}
-            {% if deployid is defined %}
-                <h2>Output</h2>
-                <iframe src="{{path('netvlies_publish_console_exectarget', {'id': deployid, 'revision': revision})}}" width="1000" height="505"></iframe>
-            {%endif%}
-        {%endblock%}
-
+                    {%block console%}
+                        {% if deployid is defined %}
+                            <h2>Output</h2>
+                            <iframe src="{{path('netvlies_publish_console_exectarget', {'id': deployid, 'revision': revision})}}" width="1000" height="505"></iframe>
+                        {%endif%}
+                    {%endblock%}
+                </div>
             </section>
         </div>
 {% endblock %}

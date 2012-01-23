@@ -12,7 +12,7 @@ class FormExecuteType extends AbstractType
     {
 
         $builder
-            ->add('branchtodeploy', 'choice', array(
+            ->add('referencetodeploy', 'choice', array(
                 'choice_list'=>$options['branchchoice'],
                 'label'=>'Branch/Tag to use'
             ))

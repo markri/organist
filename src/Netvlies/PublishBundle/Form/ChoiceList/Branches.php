@@ -30,7 +30,7 @@ class Branches implements ChoiceListInterface
     function getChoices()
     {
         $return = array(''=>'-- Kies een branch --');
-        $branches = $this->application->getBranches();
+        $branches = $this->application->getRemoteBranches();
         return array_merge($return, $branches);
     }
 }

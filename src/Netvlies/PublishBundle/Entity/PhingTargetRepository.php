@@ -25,7 +25,7 @@ class PhingTargetRepository extends EntityRepository
         }
 
         // Build file exists so get targets
-        $targets = $app->parseTargets();
+        $targets = $this->parsePhingTargets($app);
         $targetNames = array();
         $appId = $app->getId();
 
@@ -72,6 +72,26 @@ class PhingTargetRepository extends EntityRepository
 //            $oEntityManager->remove($target);
 //            $oEntityManager->flush();
 //        }
+    }
+
+
+    /**
+     * @todo later on we need to make a distinction based on different roles
+     * e.g. a PM will see different targets compared to a developer, maybe we can do this
+     */
+    protected function parsePhingTargets($application){
+        $sBuildFile = $application->getBuildFile();
+		$oXML = simplexml_load_file($sBuildFile);
+
+		$aTargets = array();
+
+		foreach($oXML->target as $oTarget){
+			if(isset($oTarget['name']) ){
+				$aTargets[] = array('name'=>(string)$oTarget['name'], 'description'=>(string)$oTarget['description']);
+			}
+		}
+
+		return $aTargets;
     }
 
 }

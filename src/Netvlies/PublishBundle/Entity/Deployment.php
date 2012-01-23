@@ -28,6 +28,12 @@ class Deployment
      * @ORM\ManyToOne(targetEntity="Environment")
      */
     private $environment;
+	
+    /**
+     * @var string $label
+     * @ORM\Column(name="label", type="string", length=255, nullable=true)
+     */	
+	private $label;
 
     /**
      * @var Application $application
@@ -316,4 +322,20 @@ class Deployment
     {
         return $this->webroot;
     }
+	
+    /**
+     * @param string $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }	
 }

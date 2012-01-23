@@ -283,6 +283,7 @@ header[role=banner] .tooltip:after { content: ''; position: absolute; top: -5px;
 #content header { zoom: 1; margin: 20px 30px; }
 #content header:before, #content header:after { content: ''; display: table; }
 #content header:after { clear: both; }
+#content #text { padding-left:40px;  padding-bottom:20px;}
 #content .link { display: block; margin: 0 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 21px; position: relative; }
 #content .link:before { content: ''; position: absolute; background-position: 0 -184px; height: 13px; width: 13px; top: 0; left: 0; }
 #content > hr { margin: 20px 30px; }

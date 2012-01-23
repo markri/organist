@@ -66,6 +66,8 @@ services:
 
 parameters:
     repositorypath: /var/www/vhosts/publish/web/repos
-    privkeyfile: /var/www/.ssh/id_dsa
+    privkeyfile: /var/lib/jenkins/.ssh/id_dsa
+    pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
     sudouser: deploy
-    pubkeyfile: /var/www/.ssh/id_dsa.pub
+    bitbucketuser: nvs_ci
+    bitbucketpassword: 33x54Yq7CY

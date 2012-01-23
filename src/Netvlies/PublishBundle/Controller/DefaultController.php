@@ -15,10 +15,7 @@ use Netvlies\PublishBundle\Console;
 
 class DefaultController extends Controller {
 
-    /**
-	 * @Route("/")
-	 * @Template()
-	 */
+
     public function indexAction() {
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Site');
