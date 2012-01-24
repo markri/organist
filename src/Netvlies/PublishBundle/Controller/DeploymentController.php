@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\Deployment;
 use Netvlies\PublishBundle\Form\FormDeploymentStep1Type;
+use Netvlies\PublishBundle\Form\ChoiceList\EnvironmentsType;
 
 
 
@@ -133,14 +134,12 @@ class DeploymentController extends Controller {
 
     protected function handleFormStep1($deployment){
 
-        //$form = $this->createForm(new FormDeploymentStep1Type(), $deployment, array('app' => $deployment->getApplication()));
+		$em  = $this->getDoctrine()->getEntityManager();
+		
+		$envChoice = new EnvironmentsType($em);
+		
+        $form = $this->createForm(new FormDeploymentStep1Type(), $deployment, array('app' => $deployment->getApplication(), 'envchoice'=>$envChoice));
         $request = $this->getRequest();
-        $em  = $this->getDoctrine()->getEntityManager();
-
-        $em  = $this->getDoctrine()->getEntityManager();
-                $envs = $em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();
-        var__dump($envs);
-        exit;
 
         $app = $deployment->getApplication();
 

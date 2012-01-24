@@ -14,15 +14,9 @@ class FormDeploymentStep1Type extends AbstractType
     {
         $app = $options['app'];
         $builder
-			->add('label', 'text', array('label'=>'Label/domeinnaam', 'required'=>true))
-            ->add('environment', 'entity', array(
-                    'empty_value' => '-- Choose an environment --',
-                    'class' => 'NetvliesPublishBundle:Environment',
-                    'query_builder' => function(EnvironmentRepository $er){
-                        return $er->getOrderedByTypeAndHost();
-                    },
-                    'expanded' => false,
-                    'multiple' => false,
+			->add('primarydomain', 'text', array('label'=>'Label/domeinnaam', 'required'=>true))
+            ->add('environment', 'choice', array(
+					'choice_list'=>$options['envchoice'],
                     'required' => true
                 ))
                 ->add('phingtarget', 'entity', array(
@@ -45,6 +39,7 @@ class FormDeploymentStep1Type extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $options['app'] = null;
+		$options['envchoice'] = null;
         return $options;
     }
 

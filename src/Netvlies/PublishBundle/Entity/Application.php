@@ -160,11 +160,17 @@ class Application
         return $this->userFiles;
     }
 
+    /**
+     * @param $customer
+     */
     public function setCustomer($customer)
     {
         $this->customer = $customer;
     }
 
+    /**
+     * @return string
+     */
     public function getCustomer()
     {
         return $this->customer;
@@ -182,6 +188,9 @@ class Application
     }
 
 
+    /**
+     * @return string
+     */
     public function getAbsolutePath(){
         return $this->baseRepositoriesPath . '/' . $this->getName();
     }
@@ -237,7 +246,7 @@ class Application
         $ch = curl_init();
 
         //@todo we use this->getName in doing this we assume that the name is exactly the same as the bitbucket key, which could be different
-        $url = 'https://api.bitbucket.org/1.0/repositories/netvlies/'.$this->getName().'/changesets/?start='.$reference.'&limit=15';
+        $url = 'https://api.bitbucket.org/1.0/repositories/netvlies/'.$this->getGitRepoKey().'/changesets/?start='.$reference.'&limit=15';
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_USERPWD, $bbuser.':'.$bbpassword);
@@ -266,7 +275,7 @@ class Application
     public function getBitbucketChangesetURL(){
         //@todo we use this->getName in doing this we assume that the name is exactly the same as the bitbucket key, which could be different
         //@todo also the netvlies key is kind of fixed, which is not reusable
-        return 'https://bitbucket.org/netvlies/'.$this->getName().'/changesets';
+        return 'https://bitbucket.org/netvlies/'.$this->getGitRepoKey().'/changesets';
     }
 
 
@@ -301,12 +310,12 @@ class Application
         return $this->applicableChangesets;
     }
 
-    public function setGitrepokey($gitrepokey)
+    public function setGitRepoKey($gitrepokey)
     {
         $this->gitrepokey = $gitrepokey;
     }
 
-    public function getGitrepokey()
+    public function getGitRepoKey()
     {
         return $this->gitrepokey;
     }

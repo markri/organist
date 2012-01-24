@@ -31,6 +31,10 @@ class EnvironmentRepository extends EntityRepository
     }
 
 
+    /**
+     * Gets an array of all environment objects ordered by O, T, A, P
+     * @return array
+     */
     public function getOrderedByTypeAndHost(){
 
         $rsm = new ResultSetMapping;
@@ -44,12 +48,8 @@ class EnvironmentRepository extends EntityRepository
             ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P')
         ", $rsm);
 
-
         $result = $query->getResult();
-        foreach($result as $environment){
-            //@todos
-           // $environment
-        }
+        return $result;
     }
 
 

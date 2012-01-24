@@ -147,7 +147,8 @@ class ApplicationController extends Controller {
     }
 
     /**
-     *
+     * This will load a template with an iframe where a console is loaded with params below
+	 
      * @Route("/application/{id}/execute/{deployid}/{revision}")
      * @Route("/application/{id}/execute/{deployid}")
      *
@@ -209,6 +210,10 @@ class ApplicationController extends Controller {
 
         $em  = $this->getDoctrine()->getEntityManager();
         $sRepositoryPath = $this->container->getParameter('repositorypath');
+
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Application $app
+         */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
         $form = $this->createForm(new FormApplicationEnrichType(), $app);
         $request = $this->getRequest();
@@ -223,9 +228,10 @@ class ApplicationController extends Controller {
                 $em->flush();
 
                 // Create git repo, add basic files
-                //@todo based on type
+                //@todo Do initialization
+                $type = $app->getType()->getName();
 
-                switch($app->getType()){
+                switch($type){
                     case 'OMS':
 
                         break;
