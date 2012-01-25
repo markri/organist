@@ -81,12 +81,12 @@ class DeploymentLog
 
 
     /**
-     * @todo soft link So deployments can still be deleted without constraints to deploymentLog
+     * @todo soft link So targets can still be deleted without constraints to deploymentLog
      * This variable is used as a temporary backreference to update current status (revision etc)
-     * @var int $deploymentId
-     * @ORM\Column(name="deploymentid", type="integer")
+     * @var int $targetId
+     * @ORM\Column(name="targetid", type="integer")
      */
-    private $deploymentId;
+    private $targetId;
 
 
     /**
@@ -239,17 +239,17 @@ class DeploymentLog
     /**
      * @param int $deploymentId
      */
-    public function setDeploymentId($deploymentId)
+    public function setTargetId($targetId)
     {
-        $this->deploymentId = $deploymentId;
+        $this->targetId = $targetId;
     }
 
     /**
      * @return int
      */
-    public function getDeploymentId()
+    public function getTargetId()
     {
-        return $this->deploymentId;
+        return $this->targetId;
     }
 
     /**

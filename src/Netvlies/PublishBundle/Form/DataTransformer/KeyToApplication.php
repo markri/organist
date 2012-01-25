@@ -44,19 +44,19 @@ class KeyToApplication implements DataTransformerInterface
      *
      * @throws UnexpectedTypeException if the given value is not an array
      */
-    public function reverseTransform($deployment)
+    public function reverseTransform($target)
     {
-        $appKey = $deployment->getApplication();
+        $appKey = $target->getApplication();
         $apps = $this->entityManager->getRepository('NetvliesPublishBundle:Application')->findByName($appKey);
 
         if(count($apps) ==0){
-            $deployment->setApplication(null);
+            $target->setApplication(null);
         }
         else{
-            $deployment->setApplication($apps[0]);
+            $target->setApplication($apps[0]);
         }
 
-        return $deployment;
+        return $target;
     }
 
     

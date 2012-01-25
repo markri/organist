@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilder;
 use Doctrine\ORM\EntityRepository;
 use Netvlies\PublishBundle\Entity\PhingTargetRepository;
 
-class FormDeploymentType extends AbstractType
+class FormTargetType extends AbstractType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
@@ -31,8 +31,8 @@ class FormDeploymentType extends AbstractType
                                                 ->where('t.application = :app')
                                                 ->setParameter('app', $app);
                                     },
-                                    'expanded' => false,
-                                    'multiple' => false,
+                                    'expanded' => true,
+                                    'multiple' => true,
                                     'required' => true
                                 ))
             ->add('username', 'text', array('label'=>'Username. (in which homedir it will be deployed, just username)', 'required'=>true))
@@ -55,7 +55,7 @@ class FormDeploymentType extends AbstractType
 
     public function getName()
     {
-        return 'netvlies_publishbundle_deploymenttype';
+        return 'netvlies_publishbundle_targettypestep2';
     }
 
 }

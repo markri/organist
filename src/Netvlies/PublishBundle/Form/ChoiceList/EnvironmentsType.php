@@ -28,7 +28,7 @@ class EnvironmentsType implements ChoiceListInterface
     function getChoices()
     {
 		$envs = $this->em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();		
-		$return = array(''=>'-- Kies een branch --');
+		$return = array(''=>'-- Choose environment --');
 		
 		foreach($envs as $env){
 			$return[$env->getId()] = $env->getType().' ('.$env->getHostname().')';

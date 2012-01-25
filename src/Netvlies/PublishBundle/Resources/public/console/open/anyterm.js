@@ -136,7 +136,7 @@ function sync_load(url,query) {
 function handle_resp_error(resp) {
   if (resp.charAt(0)=="E") {
     var msg = resp.substr(1);
-	//@todo maybe all but "subprocess terminated" msg?
+    // just disable any alert msg
     //alert(msg);
     return true;
   }

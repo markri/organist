@@ -56,17 +56,17 @@ class ProcessLogCommand extends ContainerAwareCommand
          $em->flush();
          unlink($logfile);
 
-         // Update deployment with revision if applicable
-         $deploymentId = $logentry->getDeploymentId();
+         // Update target with revision if applicable
+         $targetId = $logentry->getDeploymentId();
          $revision = $logentry->getRevision();
 
-         if(!empty($deploymentId) && !empty($revision)){
+         if(!empty($targetId) && !empty($revision)){
              /**
               * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
               */
-             $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneById($deploymentId);
-             $deployment->setCurrentRevision($revision);
-             $em->persist($deployment);
+             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($targetId);
+             $target->setCurrentRevision($revision);
+             $em->persist($target);
              $em->flush();
          }
      }
