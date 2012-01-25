@@ -19,15 +19,4 @@ class ApplicationRepository extends EntityRepository
     public function getAll(){
         return $this->findBy(array(), array('name' => 'ASC'));
     }
-
-
-    /**
-     * @param $id
-     * @return \Netvlies\PublishBundle\Entity\Application
-     */
-    public function getApp($id, $repoPath){
-        $oApp = $this->find($id);
-        $oApp->setBaseRepositoriesPath($repoPath);
-        return $oApp;
-    }
 }

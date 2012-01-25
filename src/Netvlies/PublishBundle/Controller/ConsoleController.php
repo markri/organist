@@ -40,7 +40,7 @@ class ConsoleController extends Controller {
 
         // @todo conditionally add a log entry here
         // but since execTarget is the main purpose of this tool where all additional log params are saved it is kind of
-        // useless. (we cant reach those extra params from here, we dont know which deploymentid is involved / or maybe there isnt a deployment id)
+        // useless. (we cant reach those extra params from here, we dont know which targetid is involved / or maybe there isnt a deployment id)
         // so maybe we can add a log entry here if it isnt already made (we can check db for uid), so every exec action is logged.
 
         return array('script' => $script);
@@ -49,43 +49,43 @@ class ConsoleController extends Controller {
 
 
     /**
-     * Returns a simple key value array with all parameters needed for given deployment and revision
+     * Returns a simple key value array with all parameters needed for given target and revision
      * @todo It is probably not the best place to have this method in the controller (its also used in the getSettingsCommand)
      *
      * @param $container
-     * @param $deployment
+     * @param $target
      * @param $revision
      * @return array
      */
-    public function getSettings($container, $deployment, $revision){
+    public function getSettings($container, $target, $revision){
 
         $params = array();
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Application $oApp
          */
-         $app = $deployment->getApplication();
+         $app = $target->getApplication();
 
          /**
           * @var \Netvlies\PublishBundle\Entity\Environment $environment
           */
-         $environment = $deployment->getEnvironment();
+         $environment = $target->getEnvironment();
 
 		// Entity attributes
         $params['project'] = $app->getName();
         $params['gitrepo'] = $app->getGitrepoSSH();
         $params['pubkeyfile'] = $container->getParameter('pubkeyfile');
         $params['privkeyfile'] = $container->getParameter('privkeyfile');
-        $params['username'] = $deployment->getUsername();
-        $params['mysqldb'] = $deployment->getMysqldb();
-        $params['mysqluser'] = $deployment->getMysqluser();
-        $params['mysqlpw'] = $deployment->getMysqlpw();
+        $params['username'] = $target->getUsername();
+        $params['mysqldb'] = $target->getMysqldb();
+        $params['mysqluser'] = $target->getMysqluser();
+        $params['mysqlpw'] = $target->getMysqlpw();
         $params['homedirsBase'] = $environment->getHomedirsBase();
         $params['sudouser'] = $container->getParameter('sudouser');
 		$params['hostname'] = $environment->getHostname();
         $params['revision'] = $revision;
-        $params['webroot'] = $deployment->getWebroot();
-        $params['approot'] = $deployment->getApproot();
+        $params['webroot'] = $target->getWebroot();
+        $params['approot'] = $target->getApproot();
 		$params['otap'] = $environment->getType();
         $params['bridgebin'] = $environment->getDeploybridgecommand();
 
@@ -120,31 +120,31 @@ class ConsoleController extends Controller {
     /**
      * Is used for executing a phing target
      *
-     * @Route("/console/deployment/{id}/{revision}")
-     * @Route("/console/deployment/{id}"))
+     * @Route("/console/target/{id}/{revision}")
+     * @Route("/console/target/{id}"))
 	 */
     public function execTargetAction($id, $revision=null){
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Deployment');
         /**
-         * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
+         * @var \Netvlies\PublishBundle\Entity\Target $target
          */
-        $deployment = $oRepository->findOneById($id);
+        $target = $oRepository->findOneById($id);
 
        /**
         * @var \Netvlies\PublishBundle\Entity\Application $oApp
         */
-        $oApp = $deployment->getApplication();
+        $oApp = $target->getApplication();
         $oApp->setBaseRepositoriesPath($this->container->getParameter('repositorypath'));
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Environment $environment
          */
-        $environment = $deployment->getEnvironment();
+        $environment = $target->getEnvironment();
 
         // Get params
-        $params = $this->getSettings($this->container, $deployment, $revision);
+        $params = $this->getSettings($this->container, $target, $revision);
 		$shellargs = array();
 		
 		foreach($params as $key=>$value){
@@ -152,7 +152,7 @@ class ConsoleController extends Controller {
 		}
 
 		// build command
-        $command = 'phing -f '.$oApp->getBuildFile().' '.$deployment->getPhingTarget()->getName().' '.implode(' ', $shellargs);
+        $command = 'phing -f '.$oApp->getBuildFile().' '.$target->getPhingTarget()->getName().' '.implode(' ', $shellargs);
         $uid = md5(time().rand(0, 10000));
         $scriptBuilder = new ScriptBuilder($uid);
         $scriptBuilder->addLine($command);

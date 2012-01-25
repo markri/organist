@@ -54,7 +54,7 @@ class PhingTargetRepository extends EntityRepository
             $oEntityManager->persist($record);
             $oEntityManager->flush();
         }
-// We cant just delete old phing targets, because they could still be coupled in deployment entity, which will give constraint error on deletion
+// We cant just delete old phing targets, because they could still be coupled in target entity, which will give constraint error on deletion
 // Further more we dont know on which branch we're on (which could have different deployment descriptors)
 
 //        $query = $oEntityManager->createQuery('

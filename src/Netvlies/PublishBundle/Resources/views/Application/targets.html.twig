@@ -1,0 +1,77 @@
+{% extends 'NetvliesPublishBundle:Application:view.html.twig' %}
+{% block target %}
+    {% if application.gitrepoSSH %}
+
+        <h2>Targets</h2>
+
+        <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_application_targets', {'id': application.id})}}">
+            <table border="1" cellspacing="0">
+                <thead>
+                    <th>Environment</th>
+                    <th>Label</th>
+                    <th>Phing target</th>
+                    <th>Current branch</th>
+                    <th>Current revision</th>
+                    <th>Actions</th>
+                </thead>
+            {% for target in targets %}
+                <tr>
+                    <td>{{ target.environment.type }}</td>
+                    <td>{{ target.primaryDomain }}</td>
+
+                {% if target.phingTarget %}
+                    <td>{{target.phingTarget.name}} </td>
+                    <td>{{target.currentBranch}}&nbsp;</td>
+                    <td>{{target.currentRevision}}&nbsp;</td>
+                    <td>
+                        {% if (target.requiresrevision == false or application.referencetodeploy is not empty) %}
+                            <a href="{{ path('netvlies_publish_application_execute', {'id': application.id, 'targetid':target.id, 'revision':application.referencetodeploy }) }}">execute</a> |
+                        {%else%}
+                            -- choose branch/tag -- |
+                        {% endif %}
+
+                        <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}">edit</a> |
+                        <a href="{{path('netvlies_publish_target_delete', {'id': target.id})}}">delete</a>
+                    </td>
+                {%else%}
+                    <td>Unbound action</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <a href="{{ path('netvlies_publish_target_edit', {'id': target.id }) }}">edit</a> |
+                        <a href="{{path('netvlies_publish_target_delete', {'id': target.id})}}">delete</a>
+                    </td>
+                {%endif%}
+                </tr>
+            {% endfor %}
+            </table>
+
+            <br/>
+            <br/>
+            {{ form_label(form.referencetodeploy) }}
+            {{ form_widget(form.referencetodeploy, { 'attr': {'onchange': 'onchange=document.target.submit()'}}) }}
+            <br/>
+            <br/>
+            {% if application.referencetodeploy %}
+                <h3>Applicable changesets for this reference</h3>
+                {% for changeset in changesets %}
+                    Reference: {{ changeset.raw_node }}<br>
+                    Author: {{ changeset.author }}<br>
+                    Message: {{ changeset.message }}<br>
+                    <hr>
+
+                {% endfor %}
+                This list might not be complete. Please see <a href="{{bitbucketChangesetURL}}">BitBucket</a> for a complete history
+                
+            {% endif %}
+            <br>
+        </form>
+
+
+        <a href="{{path('netvlies_publish_target_createstep1', {'id': application.id})}}">Add target</a>
+    {% else %}
+        <a href="{{ path('netvlies_publish_application_enrich', {'id': application.id})}}">initialize new project</a>
+    {% endif %}
+{% endblock %}
+
+

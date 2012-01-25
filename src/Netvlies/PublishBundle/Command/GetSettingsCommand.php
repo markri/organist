@@ -25,8 +25,8 @@ class getSettingsCommand extends ContainerAwareCommand
      {
          $this
              ->setName('publish:getsettings')
-             ->setDescription('Display settings needed for deployment. Needs deploymentid')
-             ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Deployment id')
+             ->setDescription('Display settings needed for target. Needs targetid')
+             ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Target id')
              ->addOption('pd', null, InputOption::VALUE_OPTIONAL, 'Primary domain')
              ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Deployment id', 'refs/heads/master')
          ;
@@ -45,16 +45,16 @@ class getSettingsCommand extends ContainerAwareCommand
 
          $em = $this->getContainer()->get('doctrine')->getEntityManager();
          /**
-          * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
+          * @var \Netvlies\PublishBundle\Entity\Target $target
           */
          if(!empty($id)){
-            $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByid($id);
+             $target = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByid($id);
          }
          else{
-            $deployment = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByPrimaryDomain($pd);
+             $target = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByPrimaryDomain($pd);
          }
 
-         $app = $deployment->getApplication();
+         $app = $target->getApplication();
          $app->setBaseRepositoriesPath($this->getContainer()->getParameter('repositorypath'));
          $branches = $app->getRemoteBranches();
 
@@ -65,7 +65,7 @@ class getSettingsCommand extends ContainerAwareCommand
          $reference = array_search($branch, $branches);
 
          $console = new  ConsoleController();
-         $params = $console->getSettings($this->getContainer(), $deployment, $reference);
+         $params = $console->getSettings($this->getContainer(), $target, $reference);
 
         foreach($params as $key=>$value){
             echo $key.'='.$value."\n";

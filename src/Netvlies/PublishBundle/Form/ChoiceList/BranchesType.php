@@ -10,15 +10,13 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 
 
 
-class Branches implements ChoiceListInterface
+class BranchesType implements ChoiceListInterface
 {
 
-    private $application;
+    private $gitService;
 
-    public function __construct($app){
-
-        $this->application = $app;
-
+    public function __construct($gitService){
+        $this->gitService = $gitService;
     }
 
 
@@ -30,7 +28,7 @@ class Branches implements ChoiceListInterface
     function getChoices()
     {
         $return = array(''=>'-- Kies een branch --');
-        $branches = $this->application->getRemoteBranches();
+        $branches = $this->gitService->getRemoteBranches();
         return array_merge($return, $branches);
     }
 }

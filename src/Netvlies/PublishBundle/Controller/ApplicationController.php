@@ -14,15 +14,10 @@ use Netvlies\PublishBundle\Entity\ScriptBuilder;
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\PublishBundle\Form\FormApplicationEnrichType;
 use Netvlies\PublishBundle\Form\FormExecuteType;
-use Netvlies\PublishBundle\Form\ChoiceList\Branches;
-
-
-
+use Netvlies\PublishBundle\Form\ChoiceList\BranchesType;
 
 
 class ApplicationController extends Controller {
-
-
 
     /**
 	 * @Route("/")
@@ -33,6 +28,8 @@ class ApplicationController extends Controller {
     }
 
     /**
+     * This action is used as subaction to load all available applications into its template, which is almost always used
+     *
      * @Route("/application/list")
      * @Template()
      */
@@ -42,56 +39,60 @@ class ApplicationController extends Controller {
         return array('apps' => $apps);
     }
 
-
     /**
      *
-     * @Route("/application/{id}/targetmappings")
+     * @Route("/application/{id}/targets")
      * @Template()
 	 */    
-    public function targetMappingsAction($id, $revision=null) {
+    public function targetsAction($id, $revision=null) {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
-        $sRepositoryPath = $this->container->getParameter('repositorypath');
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
-        $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
+        $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
 
         $query = $oEntityManager->createQuery('
-            SELECT d FROM Netvlies\PublishBundle\Entity\Deployment d
-            INNER JOIN d.environment e
-            WHERE d.application = :app
+            SELECT t FROM Netvlies\PublishBundle\Entity\Target t
+            INNER JOIN t.environment e
+            WHERE t.application = :app
             ORDER BY e.type, e.hostname
         ');
 
         $query->setParameter('app', $app);
-        $deployments = $query->getResult();
+        $targets = $query->getResult();
 
         $allTwigParams = array();
         $allTwigParams['application'] = $app;
-        $allTwigParams['deployments'] = $deployments;
+        $allTwigParams['targets'] = $targets;
         $allTwigParams['revision'] = $revision;
 
         // Git reference selector form
-        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => new Branches($app)));
+
+        /**
+         * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+         */
+        $gitService = $this->get('git');
+        $gitService->setApplication($app);
+        $branchType = new BranchesType($gitService);
+
+        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => $branchType));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
             $form->bindRequest($request);
-            $bbuser = $this->container->getParameter('bitbucketuser');
-            $bbpw = $this->container->getParameter('bitbucketpassword');
-            $app->processBitbucketReference($bbuser, $bbpw);
+            $allTwigParams['changesets'] = $gitService->getLastChangesets();
+            $allTwigParams['bitbucketChangesetURL'] = $gitService->getBitbucketChangesetURL();
         }
-        else if(!empty($revision)){
-            //@todo ugly place to implement this
-            // == redirected from executeAction, some target is executed, so we need to remember the chosen branch
-            // So we simulate a request object and bind it to the form object
-            $simrequest = new \Symfony\Component\HttpFoundation\Request(array(), array('netvlies_publishbundle_executetype' => array('branchtodeploy'=>$revision)));
-            $simrequest->setMethod('POST');
-            $form->bindRequest($simrequest);
-        }
+//        else if(!empty($revision)){
+//            // == redirected from executeAction, some target is executed, so we need to remember the chosen branch
+//            // So we simulate a request object and bind it to the form object
+//            $simrequest = new \Symfony\Component\HttpFoundation\Request(array(), array('netvlies_publishbundle_executetype' => array('branchtodeploy'=>$revision)));
+//            $simrequest->setMethod('POST');
+//            $form->bindRequest($simrequest);
+//        }
 
         $allTwigParams['form'] = $form->createView();
 
@@ -99,49 +100,16 @@ class ApplicationController extends Controller {
     }
 
     /**
-     *
      * @Route("/application/{id}/view")
      * @Template()
 	 */
-    public function viewAction($id, $revision=null) {
+    public function viewAction($id) {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
-        $sRepositoryPath = $this->container->getParameter('repositorypath');
-        $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
-
-
-        $query = $oEntityManager->createQuery('
-            SELECT d FROM Netvlies\PublishBundle\Entity\Deployment d
-            INNER JOIN d.environment e
-            WHERE d.application = :app
-            ORDER BY e.type, e.hostname
-        ');
-
-        $query->setParameter('app', $app);
-        $deployments = $query->getResult();
+        $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
         $allTwigParams = array();
         $allTwigParams['application'] = $app;
-        $allTwigParams['deployments'] = $deployments;
-        $allTwigParams['revision'] = $revision;
-        $scriptBuilder = new \Netvlies\PublishBundle\Entity\ScriptBuilder(time());
-
-        // Branch / Tag selector form
-        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => new Branches($app)));
-        $request = $this->getRequest();
-
-        if($request->getMethod() == 'POST'){
-            $form->bindRequest($request);
-        }
-        else if(!empty($revision)){
-            // == redirected from executeAction, some target is executed, so we need to remember the chosen branch
-            // So we simulate a request object and bind it to the form object
-            $simrequest = new \Symfony\Component\HttpFoundation\Request(array(), array('netvlies_publishbundle_executetype' => array('branchtodeploy'=>$revision)));
-            $simrequest->setMethod('POST');
-            $form->bindRequest($simrequest);
-        }
-
-        $allTwigParams['form'] = $form->createView();
 
         return $allTwigParams;
     }
@@ -169,9 +137,11 @@ class ApplicationController extends Controller {
     public function editAction($id){
 
         $em  = $this->getDoctrine()->getEntityManager();
-        $sRepositoryPath = $this->container->getParameter('repositorypath');
-        $app = $em->getRepository('NetvliesPublishBundle:Application')->getApp($id, $sRepositoryPath);
-        $currentRepo = $app->getGitrepo();
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Application $app
+         */
+        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+        $currentRepo = $app->getGitrepoSSH();
         $form = $this->createForm(new FormApplicationEditType(), $app);
         $request = $this->getRequest();
 
@@ -183,7 +153,7 @@ class ApplicationController extends Controller {
                 $em->persist($app);
                 $em->flush();
 
-                $newRepo = $app->getGitrepo();
+                $newRepo = $app->getGitrepoSSH();
                 if($currentRepo == $newRepo){
                     return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$id)));
                 }
@@ -193,6 +163,7 @@ class ApplicationController extends Controller {
             }
         }
 
+        //@todo this will actually create the script, which is presumptious
         $scriptBuilder = new ScriptBuilder(time());
 
         return array(

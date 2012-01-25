@@ -44,19 +44,19 @@ class KeyToEnvironment implements DataTransformerInterface
      *
      * @throws UnexpectedTypeException if the given value is not an array
      */
-    public function reverseTransform($deployment)
+    public function reverseTransform($target)
     {
-        $envKey = $deployment->getEnvironment();
+        $envKey = $target->getEnvironment();
         $envs = $this->entityManager->getRepository('NetvliesPublishBundle:Environment')->findByKeyname($envKey);
 
         if(count($envs) ==0){
-            $deployment->setEnvironment(null);
+            $target->setEnvironment(null);
         }
         else{
-            $deployment->setEnvironment($envs[0]);
+            $target->setEnvironment($envs[0]);
         }
 
-        return $deployment;
+        return $target;
     }
 
     

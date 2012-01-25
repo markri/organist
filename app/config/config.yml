@@ -58,17 +58,18 @@ jms_security_extra:
     secure_controllers:  true
     secure_all_services: false
 
-#@todo needs to be removed
+
 services:
-    console:
-        class:   Netvlies\PublishBundle\Console
+    git:
+        class:   Netvlies\PublishBundle\Services\GitBitbucket
+        arguments: [%repositorypath%, %bitbucketuser%, %bitbucketpassword%, %bitbucketrepoowner%]
 
 
 parameters:
-    repositorypath: /var/www/vhosts/publish/web/repos
     privkeyfile: /var/lib/jenkins/.ssh/id_dsa
     pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
     sudouser: deploy
+    repositorypath: /var/www/vhosts/publish/web/repos
     bitbucketuser: nvs_ci
     bitbucketpassword: 33x54Yq7CY
     bitbucketrepoowner: netvlies
