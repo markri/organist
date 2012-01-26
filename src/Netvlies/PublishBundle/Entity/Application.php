@@ -62,6 +62,12 @@ class Application
      */
     private $userFiles;
 
+    /**
+     * @var string $branchToFollow
+     * @ORM\Column(name="branchtofollow", type="string", length=255, nullable=true)
+     */
+    private $branchToFollow;
+
 
     private $referenceToDeploy;
 
@@ -203,6 +209,16 @@ class Application
     public function getRepoKey()
     {
         return $this->repokey;
+    }
+
+    public function setBranchToFollow($branchToFollow)
+    {
+        $this->branchToFollow = $branchToFollow;
+    }
+
+    public function getBranchToFollow()
+    {
+        return $this->branchToFollow;
     }
 
 }

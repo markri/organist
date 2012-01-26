@@ -78,4 +78,14 @@ class PhingTarget
     {
         return $this->application;
     }
+
+    public function setTargets($targets)
+    {
+        $this->targets = $targets;
+    }
+
+    public function getTargets()
+    {
+        return $this->targets;
+    }
 }
