@@ -13,7 +13,7 @@ class FormApplicationEditType extends AbstractType
         $builder
             ->add('name', 'text', array('read_only' => true))
             ->add('customer', 'text', array('read_only' => true))
-            ->add('mysqlpw', 'text', array('label'=>'MySQL password', 'read_only' => true))
+            ->add('mysqlpw', 'text', array('label'=>'Default MySQL password', 'read_only' => true))
             ->add('type', 'entity', array(
                 'class' => 'NetvliesPublishBundle:ApplicationType',
                 'property'=> 'label',
@@ -21,13 +21,18 @@ class FormApplicationEditType extends AbstractType
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('gitrepoSSH', 'text', array('required'=>true))
+            ->add('gitrepoSSH', 'text', array('required'=>true, 'label'=>'SSH link to your git repository', 'read_only' => true))
+            ->add('branchToFollow', 'choice', array(
+                'choice_list'=>$options['branchchoice'],
+                'label'=>'Branch/Tag to use for deployment descriptors'
+            ))
 
             ;
     }
 
     public function getDefaultOptions(array $options)
     {
+        $options['branchchoice'] = null;
         return $options;
     }
 

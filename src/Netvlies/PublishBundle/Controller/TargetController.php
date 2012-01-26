@@ -9,8 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\Target;
-use Netvlies\PublishBundle\Form\FormTargetStep1Type;
-use Netvlies\PublishBundle\Form\FormTargetStep2Type;
+use Netvlies\PublishBundle\Form\FormTargetType;
 use Netvlies\PublishBundle\Form\ChoiceList\EnvironmentsType;
 
 
@@ -20,65 +19,17 @@ class TargetController extends Controller {
 
 
     /**
-     * @Route("/application/{id}/target/new/step1")
+     * @Route("/application/{id}/target/new")
      * @Template()
      */
-    public function createStep1Action($id){
+    public function createAction($id){
 
         $em  = $this->getDoctrine()->getEntityManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
-		// Fill target with default values which are most likely to be true
-        $target = new Target();
-        $target->setApplication($app);
-
-        return $this->handleFormStep1($target);
+        return $this->handleForm($app);
     }
 
-    /**
-     * @Route("/target/new/step2")
-     * @Template()
-     */
-    public function createStep2Action(){
-
-        $session = $this->getRequest()->getSession();
-        /**
-         * @var \Netvlies\PublishBundle\Entity\Target $target
-         */
-        $target = $session->get('target');
-
-
-        /**
-         * @var \Netvlies\PublishBundle\Entity\Application $app
-         */
-        $app = $target->getApplication();
-
-
-        // Update phing targets through repo
-        $em  = $this->getDoctrine()->getEntityManager();
-        $em->getRepository('NetvliesPublishBundle:PhingTarget')->updatePhingTargets($app);
-
-		// Fill target with default values which are most likely to be true
-
-        switch($app->getType()->getName()){
-            case 'symfony2':
-                $target->setWebroot('/home/'.$app->getName().'/vhost/web'.$app->getName());
-                $target->setApproot('/home/'.$app->getName().'/vhost/'.$app->getName());
-                break;
-            default:
-                $target->setWebroot('/home/'.$app->getName().'/vhost/'.$app->getName());
-                $target->setApproot('/home/'.$app->getName().'/vhost/'.$app->getName());
-                break;
-        }
-
-        $target->setApplication($app);
-        $target->setUsername($app->getName());
-        $target->setMysqldb($app->getName());
-        $target->setMysqluser($app->getName());
-        $target->setMysqlpw($app->getMysqlpw());
-
-        return $this->handleFormStep2($target);
-    }
 
     /**
      * @Route("/target/edit/{id}")
@@ -104,88 +55,105 @@ class TargetController extends Controller {
         $em->remove($target);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
     }
 	
-	
-//    protected function handleForm($deployment){
-//
-//
-//        $form = $this->createForm(new FormDeploymentStep1Type(), $deployment, array('app' => $deployment->getApplication()));
-//
-//        $request = $this->getRequest();
-//        $em  = $this->getDoctrine()->getEntityManager();
-//        $app = $deployment->getApplication();
-//
-//
-//
-//        if($request->getMethod() == 'POST'){
-//
-//            $form->bindRequest($request);
-//
-//            if($form->isValid()){
-//                $em->persist($deployment);
-//                $em->flush();
-//                return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
-//            }
-//        }
-//
-//        return array(
-//            'form' => $form->createView(),
-//        );
-//    }
 
-    protected function handleFormStep1($target){
+
+    /**
+     * @todo validation is now done by HTML5 required attributes, which is ok, but may fail when relying on SSP validation, we dont have validation groups
+     * @param $app \Netvlies\PublishBundle\Entity\Application
+     * @return array
+     */
+    protected function handleForm($app){
 
 		$em  = $this->getDoctrine()->getEntityManager();
-		
+        $request = $this->getRequest();
+
+        $target = new Target();
+        $target->setApplication($app);
+
 		$envChoice = new EnvironmentsType($em);
-        $form = $this->createForm(new FormTargetStep1Type(), $target, array('app' => $target->getApplication(), 'envchoice'=>$envChoice));
 
-        $request = $this->getRequest();
+        $pbag = $request->request->all();
+        $secondPart = !empty($pbag['netvlies_publishbundle_targettype']['label']);
 
-        if($request->getMethod() == 'POST'){
-
-            $form->bindRequest($request);
-
-            if($form->isValid()){
-				$session = $this->getRequest()->getSession();
-				$session->set('target', $target);
-                return $this->redirect($this->generateUrl('netvlies_publish_target_createstep2'));
-            }
-        }
-
-        return array(
-            'form' => $form->createView(),
-        );
-    }
-
-
-    protected function handleFormStep2($target){
-
-        $form = $this->createForm(new FormTargetStep2Type(), $target, array('app' => $target->getApplication()));
-        $request = $this->getRequest();
-        $em  = $this->getDoctrine()->getEntityManager();
-        $app = $target->getApplication();
+        $form = $this->createForm(new FormTargetType(), $target, array('app' => $target->getApplication(), 'envchoice'=>$envChoice, 'secondPart'=>$secondPart));
 
         if($request->getMethod() == 'POST'){
 
             $form->bindRequest($request);
 
-            if($form->isValid()){
-                $em->persist($target);
-                $em->flush();
-                return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
+            // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
+            $envId = $target->getEnvironment();
+            /**
+             * @var \Netvlies\PublishBundle\Entity\Environment $env
+             */
+            $env = $em->getRepository('NetvliesPublishBundle:Environment')->findOneById($envId);
+            $target->setEnvironment($env);
+
+            if(!$form->isValid()){
+
+                $form1 =  array(
+                    'formStep1' => $form->createView()
+                );
+
+                return $form1;
+            }
+
+            $db = $target->getMysqldb();
+
+            if(empty($db)){
+                // Step1
+
+                switch($target->getEnvironment()->getType()){
+                    case 'O':
+                        $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName();
+                        $target->setApproot($appRoot);
+                        $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                        break;
+                    case 'T':
+                        $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    case 'A':
+                        $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
+                    case 'P':
+                        $target->setPrimaryDomain('www.'.$app->getName().'.nl');
+                    default:
+                        $appRoot = $env->getHomedirsBase().'/'.$app->getUsername().'/www/current';
+                        $target->setApproot($appRoot);
+                        break;
+                }
+
+                switch($app->getType()->getName()){
+                    case 'symfony2':
+                        $target->setWebroot($appRoot.'/web');
+                        break;
+                    default:
+                        $target->setWebroot($appRoot);
+                        break;
+                }
+
+                $target->setMysqldb($app->getName());
+                $target->setMysqluser($app->getName());
+                $target->setMysqlpw($app->getMysqlpw());
+                $target->setLabel('Target settings for '.$target->getPrimaryDomain());
+
+                // Reinitialize form with presetted data (secondPart), without binding to trigger PRE_SET event again,  so we have a plain form again ready for next submission
+                $form = $this->createForm(new FormTargetType(), $target, array('app' => $target->getApplication(), 'envchoice'=>$envChoice, 'secondPart'=>true));
+            }
+            else{
+                // Step2
+                if($form->isValid()){
+                    $em->persist($target);
+                    $em->flush();
+                    return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
+                }
             }
         }
 
         return array(
-            'form' => $form->createView(),
+            'formStep1' => $form->createView(),
         );
+
     }
-
-
-
-
-
 }

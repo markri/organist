@@ -6,13 +6,12 @@
 
         <form action="" method="POST">
 
-            Some values are prefilled with (standard conforming) values <br/>
-            {{ form_errors(form) }}
-            {{ form_widget(form) }}
+            {{ form_errors(formStep1) }}
+            {{ form_widget(formStep1) }}
 
-
-            <input type="submit" value="Opslaan" />
+            <input type="submit" value="Next" />
 
         </form>
+
 
 {% endblock %}

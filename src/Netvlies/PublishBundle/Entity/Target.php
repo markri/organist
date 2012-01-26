@@ -22,7 +22,7 @@ class Target
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var Environment $environment
@@ -80,11 +80,9 @@ class Target
     private $mysqlpw;
 
     /**
-     * @var Application $application
-     * @Assert\NotBlank(message="phing target could not be found")
-     * @ORM\ManyToOne(targetEntity="PhingTarget")
+     * @ORM\ManyToMany(targetEntity="PhingTarget")
      */
-    private $phingTarget;
+    private $phingTargets;
 
     /**
      * @ORM\Column(name="currentBranch", type="string", length=255, nullable=true)
@@ -110,13 +108,12 @@ class Target
      */
     private $webroot;
 
-    /**
-     * @var string $currentRevision
-     * @todo should be an optionlist with following options (deployment target, copycontent target)
-     * @ORM\Column(name="requiresRevision", type="boolean", nullable=true)
-     */
-    private $requiresRevision;
 
+
+    public function __construct()
+    {
+        $this->phingTargets = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -205,7 +202,8 @@ class Target
     }
 
 
-    public function __toString(){
+    public function __toString()
+    {
         return $this->environment->getType().' ('.$this->environment->getHostname().')';
     }
 
@@ -258,19 +256,27 @@ class Target
     }
 
     /**
-     * @param \Netvlies\PublishBundle\Entity\Application $phingTarget
+     * @param Doctrine\Common\Collections\Collection $phingTargets
      */
-    public function setPhingTarget($phingTarget)
+    public function setPhingTargets($phingTargets)
     {
-        $this->phingTarget = $phingTarget;
+        $this->phingTargets = $phingTargets;
     }
 
     /**
-     * @return \Netvlies\PublishBundle\Entity\Application
+     * @return Doctrine\Common\Collections\Collection
      */
-    public function getPhingTarget()
+    public function getPhingTargets()
     {
-        return $this->phingTarget;
+        return $this->phingTargets;
+    }
+
+    /**
+     * @param PhingTarget $phingTarget
+     */
+    public function addPhingTarget(PhingTarget $phingTarget)
+    {
+        $this->phingTargets[] = $phingTarget;
     }
 
     public function setCurrentBranch($currentBranch)

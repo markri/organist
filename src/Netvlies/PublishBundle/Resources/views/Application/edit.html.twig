@@ -3,13 +3,11 @@
 {% block content %}
 
         <h2>{{application.name}}</h2>
-        <a href="{{path('netvlies_publish_console_exec', {'script': gitupdatescript})}}" target="_blank">Update references (only needed if there are changes in deployment descriptors, build.xml, deploy.rb, etc)</a>
+        <a href="{{path('netvlies_publish_git_pull', {'id': application.id})}}" target="_blank">Update deployment descriptors</a>
 
         <form action="" method="POST">
 
             {{ form_errors(form) }}
-            Note: changing the git repository causes a new clone from the repository. So saving can take a while
-
             {{ form_widget(form) }}
 
             <input type="submit" value="Opslaan" />

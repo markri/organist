@@ -63,6 +63,14 @@ class Environment
     private $deploybridgecommand;
 
     /**
+     * @var string $defaultUser
+     * @ORM\Column(name="defaultuser", type="string", length=255)
+     */
+    private $defaultUser;
+
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -185,5 +193,21 @@ class Environment
     public function getDeploybridgecommand()
     {
         return $this->deploybridgecommand;
+    }
+
+    /**
+     * @param string $defaultUser
+     */
+    public function setDefaultUser($defaultUser)
+    {
+        $this->defaultUser = $defaultUser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultUser()
+    {
+        return $this->defaultUser;
     }
 }

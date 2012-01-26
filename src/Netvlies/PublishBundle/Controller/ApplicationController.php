@@ -86,13 +86,6 @@ class ApplicationController extends Controller {
             $allTwigParams['changesets'] = $gitService->getLastChangesets();
             $allTwigParams['bitbucketChangesetURL'] = $gitService->getBitbucketChangesetURL();
         }
-//        else if(!empty($revision)){
-//            // == redirected from executeAction, some target is executed, so we need to remember the chosen branch
-//            // So we simulate a request object and bind it to the form object
-//            $simrequest = new \Symfony\Component\HttpFoundation\Request(array(), array('netvlies_publishbundle_executetype' => array('branchtodeploy'=>$revision)));
-//            $simrequest->setMethod('POST');
-//            $form->bindRequest($simrequest);
-//        }
 
         $allTwigParams['form'] = $form->createView();
 
@@ -141,8 +134,12 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $currentRepo = $app->getGitrepoSSH();
-        $form = $this->createForm(new FormApplicationEditType(), $app);
+        $currentBranch = $app->getBranchToFollow();
+
+        $gitService = $this->get('git');
+        $gitService->setApplication($app);
+
+        $form = $this->createForm(new FormApplicationEditType(), $app, array('branchchoice' => new BranchesType($gitService)));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
@@ -153,23 +150,20 @@ class ApplicationController extends Controller {
                 $em->persist($app);
                 $em->flush();
 
-                $newRepo = $app->getGitrepoSSH();
-                if($currentRepo == $newRepo){
+                $newBranch = $app->getBranchToFollow();
+
+                if($currentBranch == $newBranch){
                     return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$id)));
                 }
                 else{
-                    return $this->redirect($this->generateUrl('netvlies_publish_git_cloneapplication', array('id'=>$id)));
+                    return $this->redirect($this->generateUrl('netvlies_publish_git_checkout', array('id'=>$id, 'reference'=>$newBranch)));
                 }
             }
         }
 
-        //@todo this will actually create the script, which is presumptious
-        $scriptBuilder = new ScriptBuilder(time());
-
         return array(
             'form' => $form->createView(),
             'application' => $app,
-            'gitupdatescript' => $scriptBuilder->getGitUpdateScript($app)
         );
     }
 

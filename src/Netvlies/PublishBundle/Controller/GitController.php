@@ -25,7 +25,7 @@ class GitController extends Controller
      * @Template()
      * @param $id
      */
-    public function cloneApplicationAction($id){
+    public function cloneAction($id){
          $oEntityManager = $this->getDoctrine()->getEntityManager();
          $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Application');
 
@@ -39,47 +39,92 @@ class GitController extends Controller
          $oApp->setBaseRepositoriesPath($sRepositoryPath);
 
         $scriptBuilder = new ScriptBuilder(time());
-        $scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
+        //$scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
         $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($oApp->getAbsolutePath()));
 
 
-        return array('script' => $scriptBuilder->getEncodedScriptPath(),
-                     'site' => $oApp);
+        return array('scriptpath' => $scriptBuilder->getEncodedScriptPath(),
+                     'application' => $oApp);
     }
-
 
 
 
     /**
  	 * @Route("/git/pull/{id}")
+     * @Template()
  	 */
-//     public function pullAction($id) {
-//
-//         // Check if repo base path is there and writable
-//         $sPath = $this->container->getParameter('repositorypath');
-//         $oDir = new \SplFileInfo($sPath);
-//
-//         if (!$oDir->isDir() || !$oDir->isWritable()) {
-//             echo 'Main repository directory does not exist or is not writable! (' . $sPath . ')';
-//             return array();
-//         }
-//
-//         // Get site and determine its subfolder to write
-//         $oSite = $this->getSite($id);
-//         $sSiteRepository = $oSite->getAbsolutePath();//$sPath . '/' . $oSite->getName();
-//
-//         // Get new console and execute git command
-//         /* @var $oConsole Console */
-//         $oConsole = $this->container->get('Console');
-//
-//         if (file_exists($sSiteRepository)) {
-//             $oConsole->execute('cd '.escapeshellarg($sSiteRepository).'; git pull');
-//         } else {
-//             $oConsole->execute('git clone ' . $oSite->getRepository() . ' ' . escapeshellarg($sSiteRepository));
-//         }
-//
-//         // Return normal response
-//         return array();
-//     }
+     public function pullAction($id) {
 
+         // Check if repo base path is there and writable
+         $sPath = $this->container->getParameter('repositorypath');
+         $oDir = new \SplFileInfo($sPath);
+
+         if (!$oDir->isDir() || !$oDir->isWritable()) {
+             throw new Exception('Main repository directory does not exist or is not writable! (' . $sPath . ')');
+         }
+
+         $oEntityManager = $this->getDoctrine()->getEntityManager();
+         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
+         /**
+          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+          */
+         $gitService = $this->get('git');
+         $gitService->setApplication($app);
+         $sSiteRepository = $gitService->getAbsolutePath();
+
+         // Get new console and execute git command
+         if (!file_exists($sSiteRepository)) {
+             throw new \Exception('Local git repository doesnt exist');
+         }
+
+         $scriptBuilder = new ScriptBuilder(time());
+         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository).'; git pull');
+
+
+         // Return normal response
+         return array(
+              'scriptpath' => $scriptBuilder->getEncodedScriptPath(),
+              'application' => $app
+         );
+     }
+
+
+    /**
+ 	 * @Route("/git/checkout/{id}/{reference}")
+     * @Template()
+ 	 */
+     public function checkoutAction($id, $reference) {
+
+         // Check if repo base path is there and writable
+         $sPath = $this->container->getParameter('repositorypath');
+         $oDir = new \SplFileInfo($sPath);
+
+         if (!$oDir->isDir() || !$oDir->isWritable()) {
+             throw new Exception('Main repository directory does not exist or is not writable! (' . $sPath . ')');
+         }
+
+         $oEntityManager = $this->getDoctrine()->getEntityManager();
+         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
+         /**
+          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+          */
+         $gitService = $this->get('git');
+         $gitService->setApplication($app);
+         $sSiteRepository = $gitService->getAbsolutePath();
+
+         // Get new console and execute git command
+         $scriptBuilder = new ScriptBuilder(time());
+         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
+         $scriptBuilder->addLine('git pull');
+         $scriptBuilder->addLine('git checkout '.$reference);
+
+         // Return normal response
+         return array(
+              'scriptpath' => $scriptBuilder->getEncodedScriptPath(),
+              'application' => $app,
+                'reference' => $reference
+         );
+     }
 }
