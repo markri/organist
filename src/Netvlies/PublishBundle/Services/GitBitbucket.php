@@ -57,7 +57,7 @@ class GitBitbucket
     }
 
     /**
-     * Currently not support
+     *
      * @return array
      */
     public function getRemoteBranches(){
@@ -89,31 +89,32 @@ class GitBitbucket
 
     /**
      * Return locally checked out branches which are tracking the corresponding remote branches/tags
+     * @todo this is incorrect. Because it only displays fetched references of remote branches
      * @return array
      */
-    public function getLocalBranches(){
-
-        $this->checkApp();
-
-        if(!file_exists($this->getAbsolutePath())){
-            throw new Exception('Local git repository doesnt exist');
-        }
-
-        $path = $this->getAbsolutePath();
-        $command = 'cd '.$path.'; git branch -r';
-        $output = shell_exec($command);
-
-        $regex = '/  (.*)$/im';
-        $matches = array();
-        $numberfound = preg_match_all($regex, $output, $matches);
-
-        if($numberfound == 0){
-            return array();
-        }
-
-        $branches = $matches[1];
-        return $branches;
-    }
+//    public function getLocalBranches(){
+//
+//        $this->checkApp();
+//
+//        if(!file_exists($this->getAbsolutePath())){
+//            throw new Exception('Local git repository doesnt exist');
+//        }
+//
+//        $path = $this->getAbsolutePath();
+//        $command = 'cd '.$path.'; git branch -r';
+//        $output = shell_exec($command);
+//
+//        $regex = '/  (.*)$/im';
+//        $matches = array();
+//        $numberfound = preg_match_all($regex, $output, $matches);
+//
+//        if($numberfound == 0){
+//            return array();
+//        }
+//
+//        $branches = $matches[1];
+//        return $branches;
+//    }
 
 
 

@@ -34,13 +34,21 @@ class GitController extends Controller
          * @var \Netvlies\PublishBundle\Entity\Application $oApp
          */
          $oApp = $oRepository->find($id);
+         $oApp->setBranchToFollow('master');
 
-         $sRepositoryPath = $this->container->getParameter('repositorypath');
-         $oApp->setBaseRepositoriesPath($sRepositoryPath);
+        $oEntityManager->persist($oApp);
+        $oEntityManager->flush();
 
-        $scriptBuilder = new ScriptBuilder(time());
-        //$scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
-        $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($oApp->getAbsolutePath()));
+        /**
+         * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+         */
+        $gitService = $this->get('git');
+        $gitService->setApplication($oApp);
+        $sSiteRepository = $gitService->getAbsolutePath();
+
+         $scriptBuilder = new ScriptBuilder(time());
+         //$scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
+         $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($sSiteRepository));
 
 
         return array('scriptpath' => $scriptBuilder->getEncodedScriptPath(),
@@ -50,10 +58,10 @@ class GitController extends Controller
 
 
     /**
- 	 * @Route("/git/pull/{id}")
+ 	 * @Route("/git/fetch/{id}")
      * @Template()
  	 */
-     public function pullAction($id) {
+     public function fetchAction($id) {
 
          // Check if repo base path is there and writable
          $sPath = $this->container->getParameter('repositorypath');
@@ -64,6 +72,10 @@ class GitController extends Controller
          }
 
          $oEntityManager = $this->getDoctrine()->getEntityManager();
+
+         /**
+          * @var \Netvlies\PublishBundle\Entity\Application $app
+          */
          $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
          /**
@@ -79,7 +91,9 @@ class GitController extends Controller
          }
 
          $scriptBuilder = new ScriptBuilder(time());
-         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository).'; git pull');
+         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
+         $scriptBuilder->addLine('git fetch');
+         $scriptBuilder->addLine('git checkout '.$app->getBranchToFollow());
 
 
          // Return normal response
@@ -117,7 +131,7 @@ class GitController extends Controller
          // Get new console and execute git command
          $scriptBuilder = new ScriptBuilder(time());
          $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
-         $scriptBuilder->addLine('git pull');
+         $scriptBuilder->addLine('git fetch');
          $scriptBuilder->addLine('git checkout '.$reference);
 
          // Return normal response
