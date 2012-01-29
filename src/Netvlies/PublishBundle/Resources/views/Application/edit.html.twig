@@ -1,17 +1,26 @@
 {% extends 'NetvliesPublishBundle::base2.html.twig' %}
 
 {% block content %}
+<div id="content-wrapper">
 
-        <h2>{{application.name}}</h2>
-        <a href="{{path('netvlies_publish_git_pull', {'id': application.id})}}" target="_blank">Update deployment descriptors</a>
+    <section id="content">
+        <header>
+            <h1>{{application.name}}</h1>
+        </header>
+        <hr />
+        <div id="text">
 
         <form action="" method="POST">
 
             {{ form_errors(form) }}
             {{ form_widget(form) }}
 
+            <br/>
             <input type="submit" value="Opslaan" />
 
         </form>
+        </div>
+        </section>
+    </div>
 
 {% endblock %}

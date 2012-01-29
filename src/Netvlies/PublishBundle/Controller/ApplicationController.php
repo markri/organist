@@ -44,7 +44,7 @@ class ApplicationController extends Controller {
      * @Route("/application/{id}/targets")
      * @Template()
 	 */    
-    public function targetsAction($id, $revision=null) {
+    public function targetsAction($id) {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
 
@@ -67,27 +67,28 @@ class ApplicationController extends Controller {
         $allTwigParams = array();
         $allTwigParams['application'] = $app;
         $allTwigParams['targets'] = $targets;
-        $allTwigParams['revision'] = $revision;
+//        $allTwigParams['revision'] = $revision;
 
         // Git reference selector form
 
         /**
          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
          */
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
-        $branchType = new BranchesType($gitService);
+//        $gitService = $this->get('git');
+//        $gitService->setApplication($app);
+//        $remoteBranches = $gitService->getRemoteBranches();
+//        $branchType = new BranchesType($remoteBranches);
 
-        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => $branchType));
-        $request = $this->getRequest();
+//        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => $branchType));
+//        $request = $this->getRequest();
 
-        if($request->getMethod() == 'POST'){
-            $form->bindRequest($request);
-            $allTwigParams['changesets'] = $gitService->getLastChangesets();
-            $allTwigParams['bitbucketChangesetURL'] = $gitService->getBitbucketChangesetURL();
-        }
+//        if($request->getMethod() == 'POST'){
+//            $form->bindRequest($request);
+//            $allTwigParams['changesets'] = $gitService->getLastChangesets();
+//            $allTwigParams['bitbucketChangesetURL'] = $gitService->getBitbucketChangesetURL();
+//        }
 
-        $allTwigParams['form'] = $form->createView();
+        //$allTwigParams['form'] = $form->createView();
 
         return $allTwigParams;
     }
@@ -109,7 +110,7 @@ class ApplicationController extends Controller {
 
     /**
      * This will load a template with an iframe where a console is loaded with params below
-	 
+þ
      * @Route("/application/{id}/execute/{deployid}/{revision}")
      * @Route("/application/{id}/execute/{deployid}")
      *
@@ -134,12 +135,21 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $currentBranch = $app->getBranchToFollow();
+        $currentReference = $app->getReferenceToFollow();
 
         $gitService = $this->get('git');
         $gitService->setApplication($app);
 
-        $form = $this->createForm(new FormApplicationEditType(), $app, array('branchchoice' => new BranchesType($gitService)));
+
+        $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
+
+        if(is_null($remoteBranches)){
+            // Conditionally set remote branches if session is not there yet
+            $remoteBranches = $gitService->getRemoteBranches();
+            $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
+        }
+
+        $form = $this->createForm(new FormApplicationEditType(), $app, array('branchchoice' => new BranchesType($remoteBranches)));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
@@ -147,16 +157,18 @@ class ApplicationController extends Controller {
             $form->bindRequest($request);
 
             if($form->isValid()){
+
+                $newReference = $app->getReferenceToFollow();
+                $app->setBranchToFollow($remoteBranches[$newReference]);
+
                 $em->persist($app);
                 $em->flush();
 
-                $newBranch = $app->getBranchToFollow();
-
-                if($currentBranch == $newBranch){
+                if($currentReference == $newReference){
                     return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$id)));
                 }
                 else{
-                    return $this->redirect($this->generateUrl('netvlies_publish_git_checkout', array('id'=>$id, 'reference'=>$newBranch)));
+                    return $this->redirect($this->generateUrl('netvlies_publish_git_checkout', array('id'=>$id, 'reference'=>$newReference)));
                 }
             }
         }
