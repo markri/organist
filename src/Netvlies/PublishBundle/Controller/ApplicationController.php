@@ -10,22 +10,18 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\ScriptBuilder;
+use Netvlies\PublishBundle\Entity\Deployment;
 
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\PublishBundle\Form\FormApplicationEnrichType;
+use Netvlies\PublishBundle\Form\FormApplicationDeployType;
 use Netvlies\PublishBundle\Form\FormExecuteType;
 use Netvlies\PublishBundle\Form\ChoiceList\BranchesType;
 
 
 class ApplicationController extends Controller {
 
-    /**
-	 * @Route("/")
-	 * @Template()
-	 */
-    public function indexAction() {
-        return array();
-    }
+
 
     /**
      * This action is used as subaction to load all available applications into its template, which is almost always used
@@ -144,6 +140,7 @@ class ApplicationController extends Controller {
         $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
 
         if(is_null($remoteBranches)){
+            //@todo we need to rethink this, because the session is also reused when not saving the item .... which is bad...
             // Conditionally set remote branches if session is not there yet
             $remoteBranches = $gitService->getRemoteBranches();
             $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
@@ -160,6 +157,7 @@ class ApplicationController extends Controller {
 
                 $newReference = $app->getReferenceToFollow();
                 $app->setBranchToFollow($remoteBranches[$newReference]);
+                $this->getRequest()->getSession()->remove('remoteBranches');
 
                 $em->persist($app);
                 $em->flush();
@@ -231,5 +229,50 @@ class ApplicationController extends Controller {
             'application' => $app
         );
 
+    }
+
+
+    /**
+     * @Route("/application/dashboard/{id}")
+     * @Template()
+     */
+    public function dashboardAction($id){
+        //add copy content form bind entity Deployment to this form
+        // FormApplicationDeploy
+        $em  = $this->getDoctrine()->getEntityManager();
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Application $app
+         */
+        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
+        $gitService = $this->get('git');
+        $gitService->setApplication($app);
+
+
+        $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
+
+        if(is_null($remoteBranches)){
+            // Conditionally set remote branches if session is not there yet
+            $remoteBranches = $gitService->getRemoteBranches();
+            $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
+        }
+
+        $form = $this->createForm(new FormApplicationDeployType(), new Deployment(), array('branchchoice' => new BranchesType($remoteBranches)));
+        $request = $this->getRequest();
+
+
+        if($request->getMethod() == 'POST'){
+
+            $form->bindRequest($request);
+
+            if($form->isValid()){
+
+            }
+        }
+
+        return array(
+            'form' => $form->createView(),
+            'application' => $app,
+        );
     }
 }

@@ -37,6 +37,10 @@ class GitBitbucket
         $this->user = $user;
         $this->password = $password;
         $this->owner = $owner;
+
+        if(!file_exists($repositoryBasePath)){
+            throw new \Exception('Repository base path doesnt exist, please change your config.yml');
+        }
     }
 
 
@@ -47,6 +51,9 @@ class GitBitbucket
         if(is_null($this->app)){
             throw new \Exception('Application needs to be set before any other methods can be used');
         }
+
+
+
     }
 
     /**
@@ -65,7 +72,7 @@ class GitBitbucket
         $this->checkApp();
 
         if(!file_exists($this->getAbsolutePath())){
-            return array();
+            throw new \Exception('Repository path doesnt exist '.$this->getAbsolutePath());
         }
 
         $path = $this->getAbsolutePath();
