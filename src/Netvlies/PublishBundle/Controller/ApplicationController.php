@@ -135,16 +135,7 @@ class ApplicationController extends Controller {
 
         $gitService = $this->get('git');
         $gitService->setApplication($app);
-
-
-        $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
-
-        if(is_null($remoteBranches)){
-            //@todo we need to rethink this, because the session is also reused when not saving the item .... which is bad...
-            // Conditionally set remote branches if session is not there yet
-            $remoteBranches = $gitService->getRemoteBranches();
-            $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
-        }
+        $remoteBranches = $gitService->getRemoteBranches();
 
         $form = $this->createForm(new FormApplicationEditType(), $app, array('branchchoice' => new BranchesType($remoteBranches)));
         $request = $this->getRequest();
@@ -154,6 +145,9 @@ class ApplicationController extends Controller {
             $form->bindRequest($request);
 
             if($form->isValid()){
+
+                // Get the remote branches from session. Because current array could be newer
+                $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
 
                 $newReference = $app->getReferenceToFollow();
                 $app->setBranchToFollow($remoteBranches[$newReference]);
@@ -170,6 +164,9 @@ class ApplicationController extends Controller {
                 }
             }
         }
+
+        // If normal form is requested, we set the remote branches in session so we can use it later on when receiving the form back
+        $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
 
         return array(
             'form' => $form->createView(),
@@ -247,15 +244,7 @@ class ApplicationController extends Controller {
 
         $gitService = $this->get('git');
         $gitService->setApplication($app);
-
-
-        $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
-
-        if(is_null($remoteBranches)){
-            // Conditionally set remote branches if session is not there yet
-            $remoteBranches = $gitService->getRemoteBranches();
-            $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
-        }
+        $remoteBranches = $gitService->getRemoteBranches();
 
         $form = $this->createForm(new FormApplicationDeployType(), new Deployment(), array('branchchoice' => new BranchesType($remoteBranches)));
         $request = $this->getRequest();
@@ -267,8 +256,12 @@ class ApplicationController extends Controller {
 
             if($form->isValid()){
 
+                $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
+
             }
         }
+
+        $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
 
         return array(
             'form' => $form->createView(),
