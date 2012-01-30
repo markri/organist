@@ -62,7 +62,8 @@ jms_security_extra:
 services:
     git:
         class:   Netvlies\PublishBundle\Services\GitBitbucket
-        arguments: [%repositorypath%, %bitbucketuser%, %bitbucketpassword%, %bitbucketrepoowner%]
+        #arguments: [%repositorypath%, %bitbucketuser%, %bitbucketpassword%, %bitbucketrepoowner%]
+        arguments: [@service_container]
 
 
 parameters:

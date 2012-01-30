@@ -62,7 +62,10 @@
     target=/bundles/Symfony/Bundle/AsseticBundle
     version=v1.0.1
 
-[zf2]
-    git=https://github.com/zendframework/zf2.git
-    target=/zend
+[zf1]
+    git=git://github.com/komola/ZendFramework.git
+    target=/zf1/Zend
+
+# Use following on CMD to fix autoloader warnings in ZF1 without # of course
+#find . -name '*.php' -not -wholename '*/Loader/Autoloader.php' -not -wholename '*/Application.php' -print0 | xargs -0 sed --regexp-extended --in-place 's/(require_once)/\/\/ \1/g'
 
