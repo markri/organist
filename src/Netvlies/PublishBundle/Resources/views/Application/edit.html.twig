@@ -3,7 +3,7 @@
 {% block content %}
 
         <h2>{{application.name}}</h2>
-        <a href="{{path('netvlies_publish_git_pull', {'id': application.id})}}" target="_blank">Update deployment descriptors</a>
+        <a href="{{path('netvlies_publish_git_fetch', {'id': application.id})}}" target="_blank">Update deployment descriptors</a>
 
         <form action="" method="POST">
 
