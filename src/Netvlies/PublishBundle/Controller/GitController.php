@@ -50,10 +50,10 @@ class GitController extends Controller
 
 
     /**
- 	 * @Route("/git/pull/{id}")
+ 	 * @Route("/git/fetch/{id}")
      * @Template()
  	 */
-     public function pullAction($id) {
+     public function fetchAction($id) {
 
          // Check if repo base path is there and writable
          $sPath = $this->container->getParameter('repositorypath');
@@ -79,7 +79,7 @@ class GitController extends Controller
          }
 
          $scriptBuilder = new ScriptBuilder(time());
-         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository).'; git pull');
+         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository).'; git fetch -v');
 
 
          // Return normal response
@@ -117,7 +117,7 @@ class GitController extends Controller
          // Get new console and execute git command
          $scriptBuilder = new ScriptBuilder(time());
          $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
-         $scriptBuilder->addLine('git pull');
+         $scriptBuilder->addLine('git fetch -v');
          $scriptBuilder->addLine('git checkout '.$reference);
 
          // Return normal response
