@@ -22,7 +22,7 @@ class FormApplicationEditType extends AbstractType
                 'required'=>true)
             )
             ->add('gitrepoSSH', 'text', array('required'=>true, 'label'=>'SSH link to your git repository', 'read_only' => true))
-            ->add('branchToFollow', 'choice', array(
+            ->add('referenceToFollow', 'choice', array(
                 'choice_list'=>$options['branchchoice'],
                 'label'=>'Branch/Tag to use for deployment descriptors'
             ))
