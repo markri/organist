@@ -11,8 +11,10 @@ namespace Netvlies\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\PublishBundle\Entity\TargetRepository;
-
+use Netvlies\PublishBundle\Entity\Deployment;
 
 
 
@@ -30,7 +32,9 @@ class FormApplicationDeployType extends AbstractType
                     return $tr->createQueryBuilder('t')
                         ->where('t.application = :app')
                         ->setParameter('app', $app);
+                    //@todo order by OTAP
                 },
+                'empty_value' => '-- Choose a target --',
                 'expanded' => false,
                 'multiple' => false,
                 'required'=>true)
@@ -38,9 +42,7 @@ class FormApplicationDeployType extends AbstractType
             ->add('reference', 'choice', array(
                 'choice_list'=>$options['branchchoice'],
                 'label'=>'Branch/Tag to use'
-            ))
-
-        ;
+            ));
     }
 
     public function getDefaultOptions(array $options)

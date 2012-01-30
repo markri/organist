@@ -13,10 +13,17 @@
             Customer: {{application.customer}}<br>
             Repository: <a href="https://bitbucket.org/{{application.gitrepoSSH|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepoSSH}}</a><br>
             Applicationtype: {{application.type.label}}<br>
+            <form id="#deploy_form" method="POST">
 
-            {{ form_errors(form) }}
-            {{ form_widget(form) }}
+                {{ form_errors(form) }}
 
+                {{ form_widget(form) }}
+
+                <div id="reference_return">
+
+                </div>
+
+            </form>
 
             {% block target %}{% endblock %}
 
@@ -24,4 +31,27 @@
     </section>
 </div>
 {% endblock %}
+{% block oms_javascripts %}
+
+    {{ parent() }}
+    <script>
+    $('#netvlies_publishbundle_applicationdeploy_target').change( function() {
+        // disable submit button temporarily to load last used reference
+        $.ajax({
+            type: "GET",
+            data: "id=" + $(this).val(),
+            url:"{{ path('netvlies_publish_target_getreference') }}",
+            success: function(msg){
+                if (msg != ''){
+                        $('#reference_return').html(msg).show();
+                   }
+                   else
+                   {
+                       $('#reference_return').html('<em>Oops! Something went wrong</em>');
+                   }
+               }
+           });
+      });
+    </script>
+{%endblock%}
 

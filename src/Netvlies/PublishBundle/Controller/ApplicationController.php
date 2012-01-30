@@ -121,7 +121,7 @@ class ApplicationController extends Controller {
 
 
     /**
-     * @Route("/application/edit/{id}")
+     * @Route("/application/{id}/edit")
      * @Template()
      */
     public function editAction($id){
@@ -146,9 +146,6 @@ class ApplicationController extends Controller {
 
             if($form->isValid()){
 
-                // Get the remote branches from session. Because current array could be newer
-                $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
-
                 $newReference = $app->getReferenceToFollow();
                 $app->setBranchToFollow($remoteBranches[$newReference]);
                 $this->getRequest()->getSession()->remove('remoteBranches');
@@ -165,9 +162,6 @@ class ApplicationController extends Controller {
             }
         }
 
-        // If normal form is requested, we set the remote branches in session so we can use it later on when receiving the form back
-        $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
-
         return array(
             'form' => $form->createView(),
             'application' => $app,
@@ -175,7 +169,7 @@ class ApplicationController extends Controller {
     }
 
     /**
-     * @Route("/application/enrich/{id}")
+     * @Route("/application/{id}/enrich")
      * @Template()
      */
     public function enrichAction($id){
@@ -230,7 +224,7 @@ class ApplicationController extends Controller {
 
 
     /**
-     * @Route("/application/dashboard/{id}")
+     * @Route("/application/{id}/dashboard")
      * @Template()
      */
     public function dashboardAction($id){
@@ -246,7 +240,7 @@ class ApplicationController extends Controller {
         $gitService->setApplication($app);
         $remoteBranches = $gitService->getRemoteBranches();
 
-        $form = $this->createForm(new FormApplicationDeployType(), new Deployment(), array('branchchoice' => new BranchesType($remoteBranches)));
+        $form = $this->createForm(new FormApplicationDeployType(), new Deployment(), array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
         $request = $this->getRequest();
 
 
@@ -255,9 +249,7 @@ class ApplicationController extends Controller {
             $form->bindRequest($request);
 
             if($form->isValid()){
-
                 $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
-
             }
         }
 

@@ -27,7 +27,7 @@ class BranchesType implements ChoiceListInterface
      */
     function getChoices()
     {
-        $return = array(''=>'-- Kies een branch --');
+        $return = array(''=>'-- Choose a reference --');
         return array_merge($return, $this->branches);
     }
 }

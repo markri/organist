@@ -17,8 +17,7 @@ class GitBitbucket
     protected $user;
     protected $password;
     protected $owner;
-    protected $lastProcessedReference;
-    protected $lastChangesets; // last 15 changesets (or less if other branches are updated)
+    protected $cachectl;
 
     /**
      * @var \Netvlies\PublishBundle\Entity\Application $app
@@ -32,13 +31,33 @@ class GitBitbucket
      * @param $password
      * @param $owner
      */
-    public function __construct($repositoryBasePath, $user, $password, $owner){
-        $this->basePath = $repositoryBasePath;
-        $this->user = $user;
-        $this->password = $password;
-        $this->owner = $owner;
 
-        if(!file_exists($repositoryBasePath)){
+    /**
+     * @param $container
+     */
+    public function __construct($container){
+
+        $this->basePath = $container->getParameter('repositorypath');
+        $this->user = $container->getParameter('bitbucketuser');
+        $this->password = $container->getParameter('bitbucketpassword');
+        $this->owner = $container->getParameter('bitbucketrepoowner');
+
+        $frontendOptions = array(
+           'lifetime' => 7200, // cache lifetime of 2 hours
+           'automatic_serialization' => true
+        );
+
+        $backendOptions = array(
+            'cache_dir' => $container->getParameter('kernel.root_dir').'/cache/'.$container->getParameter('kernel.environment') // Directory where to put the cache files
+        );
+
+        // getting a Zend_Cache_Core object
+        $this->cachectl = \Zend_Cache::factory('Core',
+                                     'File',
+                                     $frontendOptions,
+                                     $backendOptions);
+
+        if(!file_exists($this->basePath)){
             throw new \Exception('Repository base path doesnt exist, please change your config.yml');
         }
     }
@@ -64,12 +83,17 @@ class GitBitbucket
     }
 
     /**
-     *
+     * @todo this method might return a string with "fatal: remote end hung up unexpectedly" When no valid key is found
+     * So we should build some way to validate the keys and throw an exception for that
      * @return array
      */
     public function getRemoteBranches(){
 
         $this->checkApp();
+
+        if( ($result = $this->cachectl->load('remotebranches_'.$this->app->getId())) !== false ) {
+            return $result;
+        }
 
         if(!file_exists($this->getAbsolutePath())){
             throw new \Exception('Repository path doesnt exist '.$this->getAbsolutePath());
@@ -91,55 +115,34 @@ class GitBitbucket
         $branchnames = $matches[2];
 
         $return = array_combine($refs, $branchnames);
+
+        $this->cachectl->save($return, 'remotebranches_'.$this->app->getId());
+
         return $return;
     }
 
+
+
     /**
-     * Return locally checked out branches which are tracking the corresponding remote branches/tags
-     * @todo this is incorrect. Because it only displays fetched references of remote branches
-     * @return array
+     * @param $reference Latest reference to calculate from.
+     * @return array|\false|mixed
      */
-//    public function getLocalBranches(){
-//
-//        $this->checkApp();
-//
-//        if(!file_exists($this->getAbsolutePath())){
-//            throw new Exception('Local git repository doesnt exist');
-//        }
-//
-//        $path = $this->getAbsolutePath();
-//        $command = 'cd '.$path.'; git branch -r';
-//        $output = shell_exec($command);
-//
-//        $regex = '/  (.*)$/im';
-//        $matches = array();
-//        $numberfound = preg_match_all($regex, $output, $matches);
-//
-//        if($numberfound == 0){
-//            return array();
-//        }
-//
-//        $branches = $matches[1];
-//        return $branches;
-//    }
-
-
-
-	public function getLastChangesets()
+	public function getLastChangesets($reference='')
     {
         $this->checkApp();
 
-        // Reference is bound to application by selecting it in a form
-        // so we can use the internal getter
-        $reference = $this->app->getReferenceToDeploy();
-
-        if($this->lastProcessedReference == $reference){
-            return $this->lastChangesets;
+        if( ($result = $this->cachectl->load('changesets_'.$this->app->getId().$reference)) !== false ) {
+            return $result;
         }
 
+        // Reference is bound to application by selecting it in a form
+        // so we can use the internal getter
+        //$reference = $this->app->getReferenceToDeploy();
+
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Changesets
+        $startRef = empty($reference)?'':'&start='.$reference;
         $ch = curl_init();
-        $url = 'https://api.bitbucket.org/1.0/repositories/'.$this->owner.'/'.$this->app->getRepoKey().'/changesets/?start='.$reference.'&limit=15';
+        $url = 'https://api.bitbucket.org/1.0/repositories/'.$this->owner.'/'.$this->app->getRepoKey().'/changesets/?&limit=15'.$startRef;
 
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user.':'.$this->password);
@@ -150,7 +153,6 @@ class GitBitbucket
         $assoc = json_decode($json, true);
         $changesets = $assoc['changesets'];
         $topdownchangesets = array_reverse($changesets);
-
         $allowednodes = $topdownchangesets[0]['parents'];
         $branchesets = array();
         $branchesets[] = $topdownchangesets[0];
@@ -162,8 +164,9 @@ class GitBitbucket
             }
         }
 
-        $this->lastChangesets = $branchesets;
-        return $this->lastChangesets;
+        $this->cachectl->save($branchesets, 'changesets_'.$this->app->getId().$reference);
+
+        return $branchesets;
 	}
 
     /**
