@@ -68,6 +68,12 @@ class Application
      */
     private $branchToFollow;
 
+    /**
+     * @var string $branchToFollow
+     * @ORM\Column(name="referencetofollow", type="string", length=255, nullable=true)
+     */
+    private $referenceToFollow;
+
 
     private $referenceToDeploy;
 
@@ -201,12 +207,12 @@ class Application
     }
 
 
-    public function setRepoKey($repoKey)
+    public function setRepokey($repokey)
     {
-        $this->repoKey = $repoKey;
+        $this->repokey = $repokey;
     }
 
-    public function getRepoKey()
+    public function getRepokey()
     {
         return $this->repokey;
     }
@@ -220,5 +226,22 @@ class Application
     {
         return $this->branchToFollow;
     }
+
+    /**
+     * @param string $referenceToFollow
+     */
+    public function setReferenceToFollow($referenceToFollow)
+    {
+        $this->referenceToFollow = $referenceToFollow;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReferenceToFollow()
+    {
+        return $this->referenceToFollow;
+    }
+
 
 }

@@ -37,6 +37,10 @@ class GitBitbucket
         $this->user = $user;
         $this->password = $password;
         $this->owner = $owner;
+
+        if(!file_exists($repositoryBasePath)){
+            throw new \Exception('Repository base path doesnt exist, please change your config.yml');
+        }
     }
 
 
@@ -47,6 +51,9 @@ class GitBitbucket
         if(is_null($this->app)){
             throw new \Exception('Application needs to be set before any other methods can be used');
         }
+
+
+
     }
 
     /**
@@ -57,7 +64,7 @@ class GitBitbucket
     }
 
     /**
-     * Currently not support
+     *
      * @return array
      */
     public function getRemoteBranches(){
@@ -65,7 +72,7 @@ class GitBitbucket
         $this->checkApp();
 
         if(!file_exists($this->getAbsolutePath())){
-            return array();
+            throw new \Exception('Repository path doesnt exist '.$this->getAbsolutePath());
         }
 
         $path = $this->getAbsolutePath();
@@ -89,31 +96,32 @@ class GitBitbucket
 
     /**
      * Return locally checked out branches which are tracking the corresponding remote branches/tags
+     * @todo this is incorrect. Because it only displays fetched references of remote branches
      * @return array
      */
-    public function getLocalBranches(){
-
-        $this->checkApp();
-
-        if(!file_exists($this->getAbsolutePath())){
-            throw new Exception('Local git repository doesnt exist');
-        }
-
-        $path = $this->getAbsolutePath();
-        $command = 'cd '.$path.'; git branch -r';
-        $output = shell_exec($command);
-
-        $regex = '/  (.*)$/im';
-        $matches = array();
-        $numberfound = preg_match_all($regex, $output, $matches);
-
-        if($numberfound == 0){
-            return array();
-        }
-
-        $branches = $matches[1];
-        return $branches;
-    }
+//    public function getLocalBranches(){
+//
+//        $this->checkApp();
+//
+//        if(!file_exists($this->getAbsolutePath())){
+//            throw new Exception('Local git repository doesnt exist');
+//        }
+//
+//        $path = $this->getAbsolutePath();
+//        $command = 'cd '.$path.'; git branch -r';
+//        $output = shell_exec($command);
+//
+//        $regex = '/  (.*)$/im';
+//        $matches = array();
+//        $numberfound = preg_match_all($regex, $output, $matches);
+//
+//        if($numberfound == 0){
+//            return array();
+//        }
+//
+//        $branches = $matches[1];
+//        return $branches;
+//    }
 
 
 

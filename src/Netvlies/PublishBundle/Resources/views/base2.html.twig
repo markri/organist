@@ -20,7 +20,6 @@
 </head>
 
 <body>
-
     {% block body %}
         <header role="banner">
     		<h1>Publishing tool</h1>
@@ -67,7 +66,7 @@
                 {% if application is defined %}
                     {% block oms_project_options %}
                         <li>
-                            <a href="#" >Dashboard</a>
+                            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
                         </li>
                         <li>
                             <a href="{{ path('netvlies_publish_application_targets', {'id': application.id }) }}">Targets</a>
