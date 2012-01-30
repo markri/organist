@@ -1,0 +1,27 @@
+{% extends 'NetvliesPublishBundle::base2.html.twig' %}
+{% block oms_project_name %}{{application.name}}{% endblock %}
+
+{% block content %}
+<div id="content-wrapper">
+
+    <section id="content">
+        <header>
+            <h1>{{application.name}}</h1>
+        </header>
+        <hr />
+        <div id="text">
+            Customer: {{application.customer}}<br>
+            Repository: <a href="https://bitbucket.org/{{application.gitrepoSSH|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepoSSH}}</a><br>
+            Applicationtype: {{application.type.label}}<br>
+
+            {{ form_errors(form) }}
+            {{ form_widget(form) }}
+
+
+            {% block target %}{% endblock %}
+
+        </div>
+    </section>
+</div>
+{% endblock %}
+
