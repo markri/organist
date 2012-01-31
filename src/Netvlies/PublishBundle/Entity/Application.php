@@ -11,7 +11,7 @@ use Netvlies\PublishBundle\Entity\ScriptBuilder;
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"name"})})
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\ApplicationRepository")
- *
+ * @todo custom parameters can be added which will be passed allong when executing something in consolecontroller
  */
 class Application
 {
@@ -75,7 +75,7 @@ class Application
     private $referenceToFollow;
 
 
-    private $referenceToDeploy;
+    //private $referenceToDeploy;
 
 
 
@@ -196,15 +196,15 @@ class Application
         return $this->mysqlpw;
     }
 
-    public function setReferenceToDeploy($referenceToDeploy)
-    {
-        $this->referenceToDeploy = $referenceToDeploy;
-    }
-
-    public function getReferenceToDeploy()
-    {
-        return $this->referenceToDeploy;
-    }
+//    public function setReferenceToDeploy($referenceToDeploy)
+//    {
+//        $this->referenceToDeploy = $referenceToDeploy;
+//    }
+//
+//    public function getReferenceToDeploy()
+//    {
+//        return $this->referenceToDeploy;
+//    }
 
 
     public function setRepokey($repokey)
