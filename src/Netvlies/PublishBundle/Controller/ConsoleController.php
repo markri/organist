@@ -117,6 +117,37 @@ class ConsoleController extends Controller {
 
 
 
+//    /**
+//     * @param Deployment $deployment
+//     * @Template()
+//     */
+//    public function deployAction(Deployment $deployment){
+//        //copy application view to this template
+          //parse default deploy command and pass it to netvlies_console_exec
+//    }
+//
+//
+//    public function copyContentAction(CopyContent $copyContent){
+//
+//    }
+//
+//    public function rollBackAction(Rollback $rollback){
+//
+//    }
+//    public function customTargetAction(CustomTarget $customTarget){
+//          // type phing|capistrano must be in CustomTarget
+            // extra params can be given into extra form from which entity must be in CustomTarget
+            //
+//    }
+//    public function setupDevAction(SetupDev $setupDev){
+//
+//}
+
+
+
+
+
+
     /**
      * Is used for executing a phing target
      *
@@ -126,7 +157,7 @@ class ConsoleController extends Controller {
     public function execTargetAction($id, $revision=null){
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
-        $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Deployment');
+        $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Target');
         /**
          * @var \Netvlies\PublishBundle\Entity\Target $target
          */
@@ -136,7 +167,12 @@ class ConsoleController extends Controller {
         * @var \Netvlies\PublishBundle\Entity\Application $oApp
         */
         $oApp = $target->getApplication();
-        $oApp->setBaseRepositoriesPath($this->container->getParameter('repositorypath'));
+
+        /**
+         * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+         */
+        $gitService = $this->get('git');
+        $gitService->setApplication($oApp);
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Environment $environment
@@ -152,7 +188,10 @@ class ConsoleController extends Controller {
 		}
 
 		// build command
-        $command = 'phing -f '.$oApp->getBuildFile().' '.$target->getPhingTarget()->getName().' '.implode(' ', $shellargs);
+        $oApp->getType()->getDeployCommand();
+
+        // @todo this will break. Because of deploy which is static
+        $command = 'phing -f '.$gitService->getBuildFile().' deploy '.implode(' ', $shellargs);
         $uid = md5(time().rand(0, 10000));
         $scriptBuilder = new ScriptBuilder($uid);
         $scriptBuilder->addLine($command);

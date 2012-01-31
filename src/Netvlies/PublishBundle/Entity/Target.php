@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\TargetRepository")
+ * @todo custom parameters can be added which will be passed allong when executing something in consolecontroller
  */
 class Target
 {
@@ -79,10 +80,6 @@ class Target
      */
     private $mysqlpw;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="PhingTarget")
-     */
-    private $phingTargets;
 
     /**
      * @ORM\Column(name="currentBranch", type="string", length=255, nullable=true)
@@ -109,11 +106,6 @@ class Target
     private $webroot;
 
 
-
-    public function __construct()
-    {
-        $this->phingTargets = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
      * Get id
@@ -255,29 +247,6 @@ class Target
         return $this->mysqluser;
     }
 
-    /**
-     * @param Doctrine\Common\Collections\Collection $phingTargets
-     */
-    public function setPhingTargets($phingTargets)
-    {
-        $this->phingTargets = $phingTargets;
-    }
-
-    /**
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getPhingTargets()
-    {
-        return $this->phingTargets;
-    }
-
-    /**
-     * @param PhingTarget $phingTarget
-     */
-    public function addPhingTarget(PhingTarget $phingTarget)
-    {
-        $this->phingTargets[] = $phingTarget;
-    }
 
     public function setCurrentBranch($currentBranch)
     {

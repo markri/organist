@@ -7,20 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Netvlies\PublishBundle\Entity\Deployment
  *
- * @ORM\Table()
- * @ORM\Entity
  */
 class Deployment
 {
-    /**
-     * @var integer $id
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
     /**
      * @var \Netvlies\PublishBundle\Entity\Target $target
      *
@@ -46,7 +35,7 @@ class Deployment
     /**
      * Set target
      *
-     * @param object $target
+     * @param \Netvlies\PublishBundle\Entity\Target $target
      */
     public function setTarget($target)
     {
@@ -56,7 +45,7 @@ class Deployment
     /**
      * Get target
      *
-     * @return object 
+     * @return \Netvlies\PublishBundle\Entity\Target
      */
     public function getTarget()
     {

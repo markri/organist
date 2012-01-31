@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity()
  *
+ * @todo this functions as a kind of template. In here a template key must be added so these can be found in  resources\views\applicationType
+ *
+ *
  */
 class ApplicationType
 {
@@ -30,6 +33,22 @@ class ApplicationType
      * @ORM\Column(name="label", type="string", length=255)
      */
     private $label;
+
+    /**
+     * @ORM\Column(name="deployCommand", type="string", length=255)
+     */
+    private $deployCommand;
+
+    /**
+     * @ORM\Column(name="copyCommand", type="string", length=255)
+     */
+    private $copyContentCommand;
+
+    /**
+     * @ORM\Column(name="rollbackCommand", type="string", length=255)
+     */
+    private $rollbackCommand;
+
 
 
     public function setId($id)
@@ -60,5 +79,35 @@ class ApplicationType
     public function getLabel()
     {
         return $this->label;
+    }
+
+    public function setCopyContentCommand($copyContentCommand)
+    {
+        $this->copyContentCommand = $copyContentCommand;
+    }
+
+    public function getCopyContentCommand()
+    {
+        return $this->copyContentCommand;
+    }
+
+    public function setDeployCommand($deployCommand)
+    {
+        $this->deployCommand = $deployCommand;
+    }
+
+    public function getDeployCommand()
+    {
+        return $this->deployCommand;
+    }
+
+    public function setRollbackCommand($rollbackCommand)
+    {
+        $this->rollbackCommand = $rollbackCommand;
+    }
+
+    public function getRollbackCommand()
+    {
+        return $this->rollbackCommand;
     }
 }

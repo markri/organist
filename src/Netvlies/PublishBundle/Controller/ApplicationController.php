@@ -107,14 +107,14 @@ class ApplicationController extends Controller {
     /**
      * This will load a template with an iframe where a console is loaded with params below
 þ
-     * @Route("/application/{id}/execute/{deployid}/{revision}")
-     * @Route("/application/{id}/execute/{deployid}")
+     * @Route("/application/{id}/execute/{targetid}/{revision}")
+     * @Route("/application/{id}/execute/{targetid}")
      *
      * @Template("NetvliesPublishBundle:Application:view.html.twig")
 	 */
-    public function executeAction($id, $deployid, $revision=null){
+    public function executeAction($id, $targetid, $revision=null){
         $twigParams = $this->viewAction($id, $revision);
-        $twigParams['deployid'] = $deployid;
+        $twigParams['targetid'] = $targetid;
         $twigParams['revision'] = $revision;
         return $twigParams;
     }
@@ -228,8 +228,7 @@ class ApplicationController extends Controller {
      * @Template()
      */
     public function dashboardAction($id){
-        //add copy content form bind entity Deployment to this form
-        // FormApplicationDeploy
+
         $em  = $this->getDoctrine()->getEntityManager();
         /**
          * @var \Netvlies\PublishBundle\Entity\Application $app
@@ -239,8 +238,9 @@ class ApplicationController extends Controller {
         $gitService = $this->get('git');
         $gitService->setApplication($app);
         $remoteBranches = $gitService->getRemoteBranches();
+        $deployment = new Deployment();
 
-        $form = $this->createForm(new FormApplicationDeployType(), new Deployment(), array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
+        $form = $this->createForm(new FormApplicationDeployType(), $deployment, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
         $request = $this->getRequest();
 
 
@@ -249,11 +249,9 @@ class ApplicationController extends Controller {
             $form->bindRequest($request);
 
             if($form->isValid()){
-                $remoteBranches = $this->getRequest()->getSession()->get('remoteBranches');
+                return $this->redirect($this->generateUrl('netvlies_publish_application_execute', array('id'=>$id, 'targetid'=>$deployment->getTarget()->getId(), 'revision'=>$deployment->getReference())));
             }
         }
-
-        $this->getRequest()->getSession()->set('remoteBranches', $remoteBranches);
 
         return array(
             'form' => $form->createView(),
