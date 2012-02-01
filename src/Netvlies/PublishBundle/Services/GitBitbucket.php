@@ -87,11 +87,11 @@ class GitBitbucket
      * So we should build some way to validate the keys and throw an exception for that
      * @return array
      */
-    public function getRemoteBranches(){
+    public function getRemoteBranches($fresh=false){
 
         $this->checkApp();
 
-        if( ($result = $this->cachectl->load('remotebranches_'.$this->app->getId())) !== false ) {
+        if( ($result = $this->cachectl->load('remotebranches_'.$this->app->getId())) !== false && $fresh == false) {
             return $result;
         }
 

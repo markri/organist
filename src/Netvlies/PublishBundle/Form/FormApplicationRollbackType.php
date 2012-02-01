@@ -14,11 +14,11 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\PublishBundle\Entity\TargetRepository;
-use Netvlies\PublishBundle\Entity\Deployment;
+use Netvlies\PublishBundle\Entity\Rollback;
 
 
 
-class FormApplicationDeployType extends AbstractType
+class FormApplicationRollbackType extends AbstractType
 {
 
     public function buildForm(FormBuilder $builder, array $options)
@@ -38,16 +38,11 @@ class FormApplicationDeployType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required'=>true)
-            )
-            ->add('reference', 'choice', array(
-                'choice_list'=>$options['branchchoice'],
-                'label'=>'Branch/Tag to use'
-            ));
+            );
     }
 
     public function getDefaultOptions(array $options)
     {
-        $options['branchchoice'] = null;
         $options['app'] = null;
         $options['csrf_protection'] = false;
 
@@ -56,7 +51,7 @@ class FormApplicationDeployType extends AbstractType
 
     public function getName()
     {
-        return 'netvlies_publishbundle_applicationdeploy';
+        return 'netvlies_publishbundle_applicationrollback';
     }
 
 }

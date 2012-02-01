@@ -210,4 +210,53 @@ class TargetController extends Controller {
 
         return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
     }
+
+    /**
+     *@Route("/target/loadChangeset")
+     */
+    public function loadChangesetAction(){
+        // and description of current reference
+        $id = $this->get('request')->query->get('id');
+        $newRef = $this->get('request')->query->get('ref');
+
+        $em  = $this->getDoctrine()->getEntityManager();
+        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+        $app = $target->getApplication();
+
+        $gitService = $this->get('git');
+        $gitService->setApplication($app);
+
+        /**
+         * @var \Netvlies\PublishBundle\Entity\Target $target
+         */
+        $oldRef = $target->getCurrentRevision();
+        $changesets = $gitService->getLastChangesets($newRef);
+
+        if(empty($newRef) && count($changesets)>0){
+            $newRef = $changesets[0]['raw_node'];
+            $oldRef = '.. (first deployment)';
+        }
+
+        $messages = array();
+        $foundAll = false;
+
+        foreach($changesets as $changeset){
+            $messages[] = array(
+                'author' => $changeset['author'],
+                'message' => $changeset['message']
+            );
+            if($changeset['raw_node']==$oldRef){
+                $foundAll = true;
+            }
+        }
+
+        $params = array();
+        $params['foundall'] = $foundAll;
+        $params['messages'] = $messages;
+        $params['oldref'] = $oldRef;
+        $params['newref'] = $newRef;
+        $params['bburl'] = $gitService->getBitbucketChangesetURL();
+
+        return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
+    }
 }

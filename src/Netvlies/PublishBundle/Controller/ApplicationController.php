@@ -9,13 +9,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
-use Netvlies\PublishBundle\Entity\ScriptBuilder;
 use Netvlies\PublishBundle\Entity\Deployment;
+use Netvlies\PublishBundle\Entity\Rollback;
 
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\PublishBundle\Form\FormApplicationEnrichType;
+
 use Netvlies\PublishBundle\Form\FormApplicationDeployType;
-use Netvlies\PublishBundle\Form\FormExecuteType;
+use Netvlies\PublishBundle\Form\FormApplicationRollbackType;
 use Netvlies\PublishBundle\Form\ChoiceList\BranchesType;
 
 
@@ -36,6 +37,7 @@ class ApplicationController extends Controller {
     }
 
     /**
+     * Will return a list of all targets for this application
      *
      * @Route("/application/{id}/targets")
      * @Template()
@@ -63,33 +65,13 @@ class ApplicationController extends Controller {
         $allTwigParams = array();
         $allTwigParams['application'] = $app;
         $allTwigParams['targets'] = $targets;
-//        $allTwigParams['revision'] = $revision;
-
-        // Git reference selector form
-
-        /**
-         * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
-         */
-//        $gitService = $this->get('git');
-//        $gitService->setApplication($app);
-//        $remoteBranches = $gitService->getRemoteBranches();
-//        $branchType = new BranchesType($remoteBranches);
-
-//        $form = $this->createForm(new FormExecuteType(), $app, array('branchchoice' => $branchType));
-//        $request = $this->getRequest();
-
-//        if($request->getMethod() == 'POST'){
-//            $form->bindRequest($request);
-//            $allTwigParams['changesets'] = $gitService->getLastChangesets();
-//            $allTwigParams['bitbucketChangesetURL'] = $gitService->getBitbucketChangesetURL();
-//        }
-
-        //$allTwigParams['form'] = $form->createView();
 
         return $allTwigParams;
     }
 
     /**
+     * Detailed view
+     *
      * @Route("/application/{id}/view")
      * @Template()
 	 */
@@ -102,21 +84,6 @@ class ApplicationController extends Controller {
         $allTwigParams['application'] = $app;
 
         return $allTwigParams;
-    }
-
-    /**
-     * This will load a template with an iframe where a console is loaded with params below
-þ
-     * @Route("/application/{id}/execute/{targetid}/{revision}")
-     * @Route("/application/{id}/execute/{targetid}")
-     *
-     * @Template("NetvliesPublishBundle:Application:view.html.twig")
-	 */
-    public function executeAction($id, $targetid, $revision=null){
-        $twigParams = $this->viewAction($id, $revision);
-        $twigParams['targetid'] = $targetid;
-        $twigParams['revision'] = $revision;
-        return $twigParams;
     }
 
 
@@ -237,24 +204,38 @@ class ApplicationController extends Controller {
 
         $gitService = $this->get('git');
         $gitService->setApplication($app);
-        $remoteBranches = $gitService->getRemoteBranches();
+        $remoteBranches = $gitService->getRemoteBranches(true);
         $deployment = new Deployment();
+        $rollback = new Rollback();
 
-        $form = $this->createForm(new FormApplicationDeployType(), $deployment, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
+        $deployForm = $this->createForm(new FormApplicationDeployType(), $deployment, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
+        $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $rollback, array('app'=>$app));
         $request = $this->getRequest();
-
 
         if($request->getMethod() == 'POST'){
 
-            $form->bindRequest($request);
+            if ($request->request->has($deployForm->getName())){
+                $deployForm->bindRequest($request);
+                if($deployForm->isValid()){
+                    return $this->forward('NetvliesPublishBundle:Console:deploy', array(
+                        'deployment'  => $deployment
+                    ));
+                }
+            }
 
-            if($form->isValid()){
-                return $this->redirect($this->generateUrl('netvlies_publish_application_execute', array('id'=>$id, 'targetid'=>$deployment->getTarget()->getId(), 'revision'=>$deployment->getReference())));
+            if ($request->request->has($rollbackForm->getName())){
+                $rollbackForm->bindRequest($request);
+                if($rollbackForm->isValid()){
+                    return $this->forward('NetvliesPublishBundle:Console:rollback', array(
+                        'rollback'  => $rollback
+                    ));
+                }
             }
         }
 
         return array(
-            'form' => $form->createView(),
+            'deployForm' => $deployForm->createView(),
+            'rollbackForm' => $rollbackForm->createView(),
             'application' => $app,
         );
     }

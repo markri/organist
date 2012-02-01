@@ -13,21 +13,26 @@
             Customer: {{application.customer}}<br>
             Repository: <a href="https://bitbucket.org/{{application.gitrepoSSH|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepoSSH}}</a><br>
             Applicationtype: {{application.type.label}}<br>
-            <form id="#deploy_form" method="POST">
 
-                {{ form_errors(form) }}
-                {{ form_widget(form) }}
+            <hr/>
+            <h2>Deploy</h2>
+            <form id="#deploy_form" name="deploy_form" method="POST">
+                {{ form_errors(deployForm) }}
+                {{ form_widget(deployForm) }}
 
                 <div id="reference_return">
 
                 </div>
-
             </form>
 
-            {% block target %}{% endblock %}
+            <hr />
+            <h2>Rollback</h2>
 
-
-
+            <form id="#rollback_form" name="rollback_form" method="POST">
+                {{ form_errors(rollbackForm) }}
+                {{ form_widget(rollbackForm) }}
+                <input type="submit" value="Rollback"/>
+            </form>
 
         </div>
 
@@ -38,12 +43,20 @@
 
     {{ parent() }}
     <script>
+
     $('#netvlies_publishbundle_applicationdeploy_target').change( function() {
-        // disable submit button temporarily to load last used reference
+
+        if($(this).val()==''){
+            return;
+        }
+
         $.ajax({
             type: "GET",
             data: "id=" + $(this).val(),
             url:"{{ path('netvlies_publish_target_getreference') }}",
+            beforeSend: function(){
+                $('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();
+            },            
             success: function(msg){
                 if (msg != ''){
                         $('#reference_return').html(msg).show();
@@ -55,6 +68,32 @@
                }
            });
       });
+
+
+    $('#netvlies_publishbundle_applicationdeploy_reference').change( function (){
+        if($(this).val()==''){
+            return;
+        }
+
+        $.ajax({
+            type: "GET",
+            data: "id=" + $('#netvlies_publishbundle_applicationdeploy_target').val()  + "&ref="+$(this).val(),
+            url:"{{ path('netvlies_publish_target_loadchangeset') }}",
+            beforeSend: function(){
+                $('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();
+            },
+            success: function(msg){
+                if (msg != ''){
+                        $('#reference_return').html(msg).show();
+                   }
+                   else
+                   {
+                       $('#reference_return').html('<em>Oops! Something went wrong</em>');
+                   }
+               }
+           });
+      });
+
     </script>
 {%endblock%}
 

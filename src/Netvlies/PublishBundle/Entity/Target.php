@@ -150,7 +150,7 @@ class Target
     /**
      * Get application
      *
-     * @return Application
+     * @return \Netvlies\PublishBundle\Entity\Application
      */
     public function getApplication()
     {
