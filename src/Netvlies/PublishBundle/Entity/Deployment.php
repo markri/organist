@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Netvlies\PublishBundle\Entity\Deployment
- *
  */
 class Deployment
 {

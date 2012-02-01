@@ -46,7 +46,6 @@ class ProcessLogCommand extends ContainerAwareCommand
           * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
           */
          $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
-
          $logfile = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts/'.$uid.'.log';
          $logentry->setDatetimeEnd(new \DateTime());
          $logentry->setLog(file_get_contents($logfile));
@@ -56,18 +55,21 @@ class ProcessLogCommand extends ContainerAwareCommand
          $em->flush();
          unlink($logfile);
 
-         // Update target with revision if applicable
-         $targetId = $logentry->getDeploymentId();
-         $revision = $logentry->getRevision();
-
-         if(!empty($targetId) && !empty($revision)){
-             /**
-              * @var \Netvlies\PublishBundle\Entity\Deployment $deployment
-              */
-             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($targetId);
-             $target->setCurrentRevision($revision);
-             $em->persist($target);
-             $em->flush();
+         // Target id will be empty when internally used for commands
+         $targetId = $logentry->getTargetId();
+         if(empty($targetId)){
+             return;
          }
+
+         /**
+          * @var \Netvlies\PublishBundle\Entity\Target $target
+          */
+         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($logentry->getTargetId());
+
+         $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION';
+         $revision = shell_exec($command);
+         $target->setCurrentRevision($revision);
+         $em->persist($target);
+         $em->flush();
      }
 }

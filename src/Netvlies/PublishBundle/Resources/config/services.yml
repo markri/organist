@@ -1,7 +1,5 @@
-parameters:
-#    netvlies_publish.example.class: Netvlies\PublishBundle\Example
-
 services:
-#    netvlies_publish.example:
-#        class: %netvlies_publish.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    git:
+        class:   Netvlies\PublishBundle\Services\GitBitbucket
+        arguments: [@service_container]
+

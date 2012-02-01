@@ -59,13 +59,6 @@ jms_security_extra:
     secure_all_services: false
 
 
-services:
-    git:
-        class:   Netvlies\PublishBundle\Services\GitBitbucket
-        #arguments: [%repositorypath%, %bitbucketuser%, %bitbucketpassword%, %bitbucketrepoowner%]
-        arguments: [@service_container]
-
-
 parameters:
     privkeyfile: /var/lib/jenkins/.ssh/id_dsa
     pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub

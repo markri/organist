@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\ScriptBuilder;
+use Netvlies\PublishBundle\Entity\DeploymentLog;
 use Netvlies\PublishBundle\Form\FormApplicationType;
 
 
@@ -50,6 +51,7 @@ class GitController extends Controller
          //$scriptBuilder->addLine('rm -rf '.escapeshellarg($oApp->getAbsolutePath()));
          $scriptBuilder->addLine('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($sSiteRepository));
 
+        //@todo add log entry
 
         return array('scriptpath' => $scriptBuilder->getEncodedScriptPath(),
                      'application' => $oApp);
@@ -57,51 +59,51 @@ class GitController extends Controller
 
 
 
-    /**
- 	 * @Route("/git/fetch/{id}")
-     * @Template()
- 	 */
-     public function fetchAction($id) {
-
-         // Check if repo base path is there and writable
-         $sPath = $this->container->getParameter('repositorypath');
-         $oDir = new \SplFileInfo($sPath);
-
-         if (!$oDir->isDir() || !$oDir->isWritable()) {
-             throw new Exception('Main repository directory does not exist or is not writable! (' . $sPath . ')');
-         }
-
-         $oEntityManager = $this->getDoctrine()->getEntityManager();
-
-         /**
-          * @var \Netvlies\PublishBundle\Entity\Application $app
-          */
-         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-
-         /**
-          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
-          */
-         $gitService = $this->get('git');
-         $gitService->setApplication($app);
-         $sSiteRepository = $gitService->getAbsolutePath();
-
-         // Get new console and execute git command
-         if (!file_exists($sSiteRepository)) {
-             throw new \Exception('Local git repository doesnt exist');
-         }
-
-         $scriptBuilder = new ScriptBuilder(time());
-         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
-         $scriptBuilder->addLine('git fetch');
-         $scriptBuilder->addLine('git checkout '.$app->getBranchToFollow());
-
-
-         // Return normal response
-         return array(
-              'scriptpath' => $scriptBuilder->getEncodedScriptPath(),
-              'application' => $app
-         );
-     }
+//    /**
+// 	 * @Route("/git/fetch/{id}")
+//     * @Template()
+// 	 */
+//     public function fetchAction($id) {
+//
+//         // Check if repo base path is there and writable
+//         $sPath = $this->container->getParameter('repositorypath');
+//         $oDir = new \SplFileInfo($sPath);
+//
+//         if (!$oDir->isDir() || !$oDir->isWritable()) {
+//             throw new Exception('Main repository directory does not exist or is not writable! (' . $sPath . ')');
+//         }
+//
+//         $oEntityManager = $this->getDoctrine()->getEntityManager();
+//
+//         /**
+//          * @var \Netvlies\PublishBundle\Entity\Application $app
+//          */
+//         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+//
+//         /**
+//          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+//          */
+//         $gitService = $this->get('git');
+//         $gitService->setApplication($app);
+//         $sSiteRepository = $gitService->getAbsolutePath();
+//
+//         // Get new console and execute git command
+//         if (!file_exists($sSiteRepository)) {
+//             throw new \Exception('Local git repository doesnt exist');
+//         }
+//
+//         $scriptBuilder = new ScriptBuilder(time());
+//         $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
+//         $scriptBuilder->addLine('git fetch');
+//         $scriptBuilder->addLine('git checkout '.$app->getBranchToFollow());
+//
+//
+//         // Return normal response
+//         return array(
+//              'scriptpath' => $scriptBuilder->getEncodedScriptPath(),
+//              'application' => $app
+//         );
+//     }
 
 
     /**
@@ -129,16 +131,30 @@ class GitController extends Controller
          $sSiteRepository = $gitService->getAbsolutePath();
 
          // Get new console and execute git command
-         $scriptBuilder = new ScriptBuilder(time());
+         $uid = md5(time().rand(0,1000));
+         $scriptBuilder = new ScriptBuilder($uid);
          $scriptBuilder->addLine('cd '.escapeshellarg($sSiteRepository));
          $scriptBuilder->addLine('git fetch');
          $scriptBuilder->addLine('git checkout '.$reference);
+
+
+         $log = new DeploymentLog();
+         $log->setCommand(file_get_contents($scriptBuilder->getScriptPath()));
+         $log->setDatetimeStart(new \DateTime());
+
+         $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
+         $log->setUser($user);
+         $log->setUid($uid);
+
+         $em  = $this->getDoctrine()->getEntityManager();
+         $em->persist($log);
+         $em->flush();
 
          // Return normal response
          return array(
               'scriptpath' => $scriptBuilder->getEncodedScriptPath(),
               'application' => $app,
-                'reference' => $reference
+              'reference' => $reference
          );
      }
 }
