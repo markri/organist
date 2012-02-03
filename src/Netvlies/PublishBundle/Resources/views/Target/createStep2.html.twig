@@ -1,7 +1,27 @@
 {% extends 'NetvliesPublishBundle::base2.html.twig' %}
+{% block oms_project_name %}{{application.name}}{% endblock %}
 
 {% block content %}
+<div id="content-wrapper">
 
+    <section id="content">
+        <header>
+            <h1>Adding target for {{application.name}} - Step 2</h1>
+        </header>
+        <hr />
+        <div id="text">
+
+            <form action="" method="POST">
+
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+
+                <input type="submit" value="Save" />
+
+            </form>
+        </div>
+    </section>
+</div>
 
 
 {% endblock %}

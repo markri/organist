@@ -60,10 +60,12 @@ jms_security_extra:
 
 
 parameters:
+    # @todo Add local jenkins user for checking in Commands
     privkeyfile: /var/lib/jenkins/.ssh/id_dsa
     pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
     sudouser: deploy
     repositorypath: /var/www/vhosts/publish/web/repos
+    # @todo add other services like github or maybe even svn repos?
     bitbucketuser: nvs_ci
     bitbucketpassword: 33x54Yq7CY
     bitbucketrepoowner: netvlies

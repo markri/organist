@@ -3,3 +3,20 @@ services:
         class:   Netvlies\PublishBundle\Services\GitBitbucket
         arguments: [@service_container]
 
+    console_controller:
+        class:    Netvlies\PublishBundle\Controller\ConsoleController
+        calls:
+            - [ setContainer, [ @service_container ] ]
+
+    netvlies.publish.form.environment_selector:
+        class: Netvlies\PublishBundle\Form\EnvironmentType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: environment_selector }
+
+
+#    netvlies.publish.form.create_target_step2:
+#        class: Netvlies\PublishBundle\Form\FormTargetStep2Type
+#        arguments: [@doctrine.orm.entity_manager]
+#        tags:
+#            - { name: form.type, alias: create_target_step2 }

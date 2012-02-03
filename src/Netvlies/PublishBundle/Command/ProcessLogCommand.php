@@ -46,6 +46,12 @@ class ProcessLogCommand extends ContainerAwareCommand
           * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
           */
          $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
+
+         if(is_null($logentry)){
+             echo "Warning: No log entry available to update...";
+             return;
+         }
+
          $logfile = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts/'.$uid.'.log';
          $logentry->setDatetimeEnd(new \DateTime());
          $logentry->setLog(file_get_contents($logfile));

@@ -7,13 +7,23 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Doctrine\ORM\EntityRepository;
+use Netvlies\PublishBundle\Form\DataTransformer\IdToEnvironment;
 
-class FormTargetStep2Type extends AbstractType
+class FormTargetEditType extends AbstractType
 {
+
 
     public function buildForm(FormBuilder $builder, array $options)
     {
+
         $builder
+            ->add('environment', 'environment_selector', array(
+                'required' => true,
+            ))
+            ->add('username', 'text', array(
+                'label'=>'Username. (in which homedir it will be deployed, just username)',
+                'required'=>true,
+            ))
             ->add('label', 'text', array(
                 'label'=>'Label (e.g. "Settings for myapp.dev1.netvlies.net"',
                 'required'=>true)
@@ -42,19 +52,23 @@ class FormTargetStep2Type extends AbstractType
                 'required'=>true,
                 'label'=>'Absolute webroot')
             );
+
+
+
     }
 
 
     public function getDefaultOptions(array $options)
     {
         $options['csrf_protection'] = false;
+        $options['em'] = null;
         return $options;
     }
 
 
     public function getName()
     {
-        return 'netvlies_publishbundle_targettype2';
+        return 'netvlies_publishbundle_targetedittype';
     }
 
 }
