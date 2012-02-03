@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Please adjust script accordingly to your needs
+# This script is used within the anyterm console
+
 script=$1
 logbase=$(dirname $0)/../../../../app/logs/scripts/
 console=$(dirname $0)/../../../../app/console
@@ -9,7 +10,9 @@ scriptid=`basename $script`
 mkdir -p $logbase
 logfile=$logbase""$scriptid".log"
 
+# Forward BitBucket key so we can temporarily use bitbucket on remote server (if remote connection is made with SSH agent forwarding)
 # ONLY THE RSA KEY!!! Which is for bitbucket. Other  key id_dsa should NOT be added (security)
+# @todo maybe we should move this into the script in the scriptbuilder??
 eval `ssh-agent`
 `ssh-add $HOME/.ssh/id_rsa`
 
@@ -34,6 +37,10 @@ ssh-agent -k > /dev/null 2>&1
 unset SSH_AGENT_PID
 unset SSH_AUTH_SOCK
 
+# process log and remove temp script and log
+echo "Saving log and clearing temporary files"
+`$console publish:processlog --uid=$scriptid --exitcode=$exitcode`
+
 # check if script was succesfull
 if [ $exitcode != '0' ]
 then
@@ -47,9 +54,7 @@ else
 	fi
 fi
 
-# process log and remove script
-`$console publish:processlog --uid=$scriptid --exitcode=$exitcode`
+# Self destruct
 rm $script
 
-# Somehow this is needed in order to return all output back to the terminal, why???
-read -n1
+exit $exitcode

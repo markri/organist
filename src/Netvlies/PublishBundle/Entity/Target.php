@@ -30,80 +30,80 @@ class Target
      * @Assert\NotBlank(message="environment is required/key could not be found")
      * @ORM\ManyToOne(targetEntity="Environment")
      */
-    private $environment;
+    protected $environment;
 
 
     /**
      * @var string $label
      * @ORM\Column(name="label", type="string", length=255, nullable=true)
      */
-    private $label;
+    protected $label;
 
     /**
      * @var string $primaryDomain
      * @ORM\Column(name="primaryDomain", type="string", length=255, nullable=true)
      */	
-	private $primaryDomain;
+    protected $primaryDomain;
 
     /**
      * @var Application $application
      * @Assert\NotBlank(message="application is required/key could not be found")
      * @ORM\ManyToOne(targetEntity="Application")
      */
-    private $application;
+    protected $application;
 
     /**
      * @var string $username
      * @Assert\NotBlank(message="username is required")
      * @ORM\Column(name="username", type="string", length=255)
      */
-    private $username;
+    protected $username;
 
     /**
      * @var string $currentRevision
      *
      * @ORM\Column(name="mysqldb", type="string", length=255, nullable=true)
      */
-    private $mysqldb;
+    protected $mysqldb;
 
     /**
      * @var string $currentRevision
      *
      * @ORM\Column(name="mysqluser", type="string", length=255, nullable=true)
      */
-    private $mysqluser;
+    protected $mysqluser;
 
     /**
      * @var string $currentRevision
      *
      * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
      */
-    private $mysqlpw;
+    protected $mysqlpw;
 
 
     /**
      * @ORM\Column(name="currentBranch", type="string", length=255, nullable=true)
      */
-    private $currentBranch;
+    protected $currentBranch;
 
     /**
      * @var string $currentRevision
      *
      * @ORM\Column(name="currentRevision", type="string", length=255, nullable=true)
      */
-    private $currentRevision;
+    protected $currentRevision;
 
     /**
      * @var string $approot
      * @ORM\Column(name="approot", type="string", length=255)
      */
-    private $approot;
+    protected $approot;
 
     /**
      * @var string $webroot
      * @ORM\Column(name="webroot", type="string", length=255)
      */
-    private $webroot;
+    protected $webroot;
 
 
 
@@ -196,7 +196,7 @@ class Target
 
     public function __toString()
     {
-        return $this->environment->getType().' ('.$this->environment->getHostname().')';
+        return $this->environment->getType().' ('.$this->getPrimaryDomain().')';
     }
 
     /**

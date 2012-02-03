@@ -89,6 +89,7 @@ class ConsoleController extends Controller {
         $params['revision'] = $revision;
         $params['webroot'] = $target->getWebroot();
         $params['approot'] = $target->getApproot();
+        $params['caproot'] = str_replace('/current', '', $target->getApproot());
 		$params['otap'] = $environment->getType();
         $params['bridgebin'] = $environment->getDeploybridgecommand();
 
@@ -223,6 +224,8 @@ class ConsoleController extends Controller {
                 case 'buildfile':
                     $command = str_replace('${buildfile}', $gitService->getBuildFile(), $command);
                     break;
+                case 'caproot':
+                    $command = str_replace('${caproot}', str_replace('/current', '', $target->getApproot()), $command);
                 default:
                     break;
             }

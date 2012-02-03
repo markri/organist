@@ -28,7 +28,7 @@ class getSettingsCommand extends ContainerAwareCommand
              ->setDescription('Display settings needed for target. Needs targetid')
              ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Target id')
              ->addOption('pd', null, InputOption::VALUE_OPTIONAL, 'Primary domain')
-             ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Deployment id', 'refs/heads/master')
+             ->addOption('branch', null, InputOption::VALUE_OPTIONAL, 'Reference', 'refs/heads/master')
          ;
      }
 
@@ -39,7 +39,7 @@ class getSettingsCommand extends ContainerAwareCommand
          $branch = $input->getOption('branch');
 
          if(empty($id) && empty($pd)){
-             throw new Exception('primary domain or id is required');
+             throw new \Exception('primary domain or id is required');
              return;
          }
 
@@ -48,24 +48,31 @@ class getSettingsCommand extends ContainerAwareCommand
           * @var \Netvlies\PublishBundle\Entity\Target $target
           */
          if(!empty($id)){
-             $target = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByid($id);
+             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneByid($id);
          }
          else{
-             $target = $em->getRepository('NetvliesPublishBundle:Deployment')->findOneByPrimaryDomain($pd);
+             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneByPrimaryDomain($pd);
          }
 
-         $app = $target->getApplication();
-         $app->setBaseRepositoriesPath($this->getContainer()->getParameter('repositorypath'));
-         $branches = $app->getRemoteBranches();
 
-         if(!in_array($branch, $branches)){
-            throw new \Exception('No such branch '.$branch);
-         }
 
-         $reference = array_search($branch, $branches);
+//         $app = $target->getApplication();
+         /**
+          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+          */
+//         $gitService = $this->getContainer()->get('git');
+//         $gitService->setApplication($app);
+//
+//         $branches = $gitService->getRemoteBranches();
+//
+//         if(!in_array($branch, $branches)){
+//            throw new \Exception('No such branch '.$branch);
+//         }
 
-         $console = new  ConsoleController();
-         $params = $console->getSettings($this->getContainer(), $target, $reference);
+//         $reference = array_search($branch, $branches);
+
+         $console = new ConsoleController();
+         $params = $console->getSettings($this->getContainer(), $target, $branch);
 
         foreach($params as $key=>$value){
             echo $key.'='.$value."\n";

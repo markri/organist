@@ -20,12 +20,13 @@ class EnvironmentsType implements ChoiceListInterface
     }
 
 
+
     /**
      * Returns a list of choices
      *
      * @return array
      */
-    function getChoices()
+    public function getChoices()
     {
 		$envs = $this->em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();		
 		$return = array(''=>'-- Choose environment --');
