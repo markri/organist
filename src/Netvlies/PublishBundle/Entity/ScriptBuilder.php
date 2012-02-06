@@ -5,6 +5,9 @@
  */
 namespace Netvlies\PublishBundle\Entity;
 
+/**
+ * @todo put this into DIC
+ */
 class ScriptBuilder
 {
 

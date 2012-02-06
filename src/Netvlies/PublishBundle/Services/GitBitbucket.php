@@ -83,8 +83,6 @@ class GitBitbucket
     }
 
     /**
-     * @todo this method might return a string with "fatal: remote end hung up unexpectedly" When no valid key is found
-     * So we should build some way to validate the keys and throw an exception for that
      * @return array
      */
     public function getRemoteBranches($fresh=false){
@@ -100,8 +98,13 @@ class GitBitbucket
         }
 
         $path = $this->getAbsolutePath();
-        $command = 'cd '.$path.'; git ls-remote 2>&1';
+        $command = 'cd '.$path.'; git ls-remote 2>&1; echo $?;';
         $output = shell_exec($command);
+        $exitcode = trim(substr($output, -2));
+
+        if($exitcode!='0'){
+            throw new \Exception('Cant read remote branches. Do you have a correct ssh key setup?');
+        }
 
         $regex = '/\n(.{40})\s*(.*)$/im';
         $matches = array();
@@ -134,10 +137,6 @@ class GitBitbucket
         if( ($result = $this->cachectl->load('changesets_'.$this->app->getId().$reference)) !== false ) {
             return $result;
         }
-
-        // Reference is bound to application by selecting it in a form
-        // so we can use the internal getter
-        //$reference = $this->app->getReferenceToDeploy();
 
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Changesets
         $startRef = empty($reference)?'':'&start='.$reference;
