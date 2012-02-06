@@ -35,47 +35,65 @@ class ProcessLogCommand extends ContainerAwareCommand
      {
          $uid = $input->getOption('uid');
          $exitcode = $input->getOption('exitcode');
+         $logDir = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts';
 
-         if(empty($uid)){
-             //@todo delete logs/scripts older than 2 days and update them in database
-             return;
+         $uids = array();
+
+         // Also include log files older than 2 weeks. They're probably not going to finish anyway. So clear them
+         $iterator = new DirectoryIterator($logDir);
+         foreach ($iterator as $fileinfo) {
+             if ($fileinfo->isFile()) {
+                 if(time() - $fileinfo->getMTime() > 60 * 60 * 24 * 14){
+                     $uids[] = $fileinfo->getBasename();
+                 }
+             }
+         }
+
+
+         if(!empty($uid)){
+             $uids[] = $uid;
          }
 
          $em = $this->getContainer()->get('doctrine')->getEntityManager();
-         /**
-          * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
-          */
-         $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
 
-         if(is_null($logentry)){
-             echo "Warning: No log entry available to update...";
-             return;
+
+         foreach($uids as $uid){
+             /**
+              * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
+              */
+             $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
+
+             if(is_null($logentry)){
+                 echo "Warning: No log entry available to update...";
+                 continue;
+             }
+
+
+             $logfile = $logDir.'/'.$uid.'.log';
+             $logentry->setDatetimeEnd(new \DateTime());
+             $logentry->setLog(file_get_contents($logfile));
+             $logentry->setExitCode($exitcode);
+
+             $em->persist($logentry);
+             $em->flush();
+             unlink($logfile);
+
+             $targetId = $logentry->getTargetId();
+             if(empty($targetId)){
+                 echo "Notice: No connected target to update ...";
+                 continue;
+             }
+
+             /**
+              * @var \Netvlies\PublishBundle\Entity\Target $target
+              */
+             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($logentry->getTargetId());
+
+             $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION';
+             $revision = shell_exec($command);
+             $target->setCurrentRevision($revision);
+             $em->persist($target);
+             $em->flush();
          }
-
-         $logfile = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts/'.$uid.'.log';
-         $logentry->setDatetimeEnd(new \DateTime());
-         $logentry->setLog(file_get_contents($logfile));
-         $logentry->setExitCode($exitcode);
-
-         $em->persist($logentry);
-         $em->flush();
-         unlink($logfile);
-
-         // Target id will be empty when internally used for commands
-         $targetId = $logentry->getTargetId();
-         if(empty($targetId)){
-             return;
-         }
-
-         /**
-          * @var \Netvlies\PublishBundle\Entity\Target $target
-          */
-         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($logentry->getTargetId());
-
-         $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION';
-         $revision = shell_exec($command);
-         $target->setCurrentRevision($revision);
-         $em->persist($target);
-         $em->flush();
      }
 }

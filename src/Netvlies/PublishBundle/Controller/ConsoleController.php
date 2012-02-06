@@ -123,7 +123,6 @@ class ConsoleController extends Controller {
 
     /**
      * @todo Deployment should have an interface so we can make a generic method for every kind of type
-     * @todo or extend deployLog? Probably better not!
      * No route is it is internally redirected
      *
      * @param Deployment $deployment
