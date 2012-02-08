@@ -51,11 +51,14 @@ class IdToTarget implements DataTransformerInterface
      *
      * @throws UnexpectedTypeException if the given value is not an array
      */
-    public function reverseTransform($id)
+    public function reverseTransform($choice)
     {
-        if (is_null($id)) {
+        if (is_null($choice) || !isset($choice['target'])) {
               return null;
         }
+
+        $id = $choice['target'];
+
         $target = $this->entityManager->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         return $target;
     }
