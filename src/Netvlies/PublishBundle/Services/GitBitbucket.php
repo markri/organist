@@ -17,6 +17,7 @@ class GitBitbucket
     protected $user;
     protected $password;
     protected $owner;
+    protected $ownerpassword;
     protected $cachectl;
 
     /**
@@ -41,6 +42,7 @@ class GitBitbucket
         $this->user = $container->getParameter('bitbucketuser');
         $this->password = $container->getParameter('bitbucketpassword');
         $this->owner = $container->getParameter('bitbucketrepoowner');
+        $this->ownerpassword = $container->getParameter('bitbucketrepoownerpassword');
 
         $frontendOptions = array(
            'lifetime' => 7200, // cache lifetime of 2 hours
@@ -71,8 +73,10 @@ class GitBitbucket
             throw new \Exception('Application needs to be set before any other methods can be used');
         }
 
-
-
+        $key = $this->app->getRepokey();
+        if(empty($key)){
+            throw new \Exception('Repo key must be set');
+        }
     }
 
     /**
@@ -150,6 +154,10 @@ class GitBitbucket
         curl_close($ch);
 
         $assoc = json_decode($json, true);
+        if(is_null($assoc)){
+            return array();
+        }
+
         $changesets = $assoc['changesets'];
         $topdownchangesets = array_reverse($changesets);
         $allowednodes = $topdownchangesets[0]['parents'];
@@ -189,4 +197,47 @@ class GitBitbucket
     public function getBuildFile(){
         return $this->getAbsolutePath().'/build.xml';
     }
+
+    public function getSingleRepository(){
+
+        $this->checkApp();
+
+       // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Repositories
+       $ch = curl_init();
+       $url = 'https://api.bitbucket.org/1.0/repositories/'.$this->owner.'/'.$this->app->getRepoKey().'/';
+
+       curl_setopt($ch, CURLOPT_URL, $url);
+       curl_setopt($ch, CURLOPT_USERPWD, $this->user.':'.$this->password);
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $json = curl_exec($ch);
+       curl_close($ch);
+
+        return json_decode($json);
+    }
+
+    public function createRepository(){
+
+        $this->checkApp();
+
+        // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Repositories
+        $ch = curl_init();
+        $url = 'https://api.bitbucket.org/1.0/repositories/';
+
+        $post = array(
+            'name' => $this->app->getRepokey(),
+            'scm' => 'git',
+            'is_private'=> 'True'
+        );
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->owner.':'.$this->ownerpassword);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $result = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        echo $result;
+        return $result && $status==200;
+    }
+
 }

@@ -18,8 +18,10 @@
                     {% block target %}{% endblock %}
 
                     {%block console%}
-                        <h2>Deploy Output</h2>
+                        <h2>Console Output</h2>
                         <iframe src="{{path('netvlies_publish_console_exec', {'script': scriptpath})}}" width="830" height="505"></iframe>
+                        <br/><br/>
+                        Command: {{command}}
                     {%endblock%}
                 </div>
             </section>

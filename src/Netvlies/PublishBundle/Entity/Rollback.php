@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Netvlies\PublishBundle\Entity\Rollback
- *@todo extend DeploymentLog, so this record will be saved where logitem is appended afterwards
  */
 class Rollback
 {
