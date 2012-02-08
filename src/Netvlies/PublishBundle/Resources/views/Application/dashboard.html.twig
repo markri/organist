@@ -44,7 +44,7 @@
     {{ parent() }}
     <script>
 
-    $('#netvlies_publishbundle_applicationdeploy_target').change( function() {
+    $('#netvlies_publishbundle_applicationdeploy_target_target').change( function() {
 
         if($(this).val()==''){
             return;
@@ -55,6 +55,7 @@
             data: "id=" + $(this).val(),
             url:"{{ path('netvlies_publish_target_getreference') }}",
             beforeSend: function(){
+
                 $('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();
             },            
             success: function(msg){
@@ -77,7 +78,7 @@
 
         $.ajax({
             type: "GET",
-            data: "id=" + $('#netvlies_publishbundle_applicationdeploy_target').val()  + "&ref="+$(this).val(),
+            data: "id=" + $('#netvlies_publishbundle_applicationdeploy_target_target').val()  + "&ref="+$(this).val(),
             url:"{{ path('netvlies_publish_target_loadchangeset') }}",
             beforeSend: function(){
                 $('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();

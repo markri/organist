@@ -190,11 +190,10 @@ class TargetController extends Controller {
                     break;
             }
 
-
             $target->setMysqldb($app->getName());
             $target->setMysqluser($app->getName());
             $target->setMysqlpw($app->getMysqlpw());
-            $target->setLabel($target->__toString());
+            $target->setLabel('('.$env->getType().') '.$target->getPrimaryDomain());
         }
 
         $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
@@ -259,6 +258,9 @@ class TargetController extends Controller {
 
         $em  = $this->getDoctrine()->getEntityManager();
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+        if(is_null($target)){
+            throw new \Exception('couldnt find target by id '.$id);
+        }
         $app = $target->getApplication();
 
         $gitService = $this->get('git');

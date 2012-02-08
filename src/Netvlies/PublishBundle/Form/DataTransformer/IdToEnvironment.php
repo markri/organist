@@ -48,14 +48,15 @@ class IdToEnvironment implements DataTransformerInterface
      * @param array $array
      *
      * @return array
-     *
      * @throws UnexpectedTypeException if the given value is not an array
      */
-    public function reverseTransform($id)
+    public function reverseTransform($choice)
     {
-        if (is_null($id)) {
+        if (empty($choice) || !isset($choice['environment'])) {
               return null;
         }
+
+        $id = $choice['environment'];
         $env = $this->entityManager->getRepository('NetvliesPublishBundle:Environment')->findOneById($id);
         return $env;
     }
