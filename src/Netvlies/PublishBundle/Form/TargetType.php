@@ -14,40 +14,45 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\PublishBundle\Entity\TargetRepository;
-use Netvlies\PublishBundle\Entity\Deployment;
+use Netvlies\PublishBundle\Form\ChoiceList\TargetsType;
+use Netvlies\PublishBundle\Form\DataTransformer\IdToTarget;
 
 
 
-class FormApplicationDeployType extends AbstractType
+class TargetType extends AbstractType
 {
+
+    private $em;
+
+    public function __construct($em){
+        $this->em = $em;
+    }
 
     public function buildForm(FormBuilder $builder, array $options)
     {
-        $app = $options['app'];
 
+        $targetChoice = new TargetsType($this->em, $options['app']);
         $builder
-            ->add('target', 'target_selector', array(
-                'app' => $app,
-                'required'=>true)
-            )
-            ->add('reference', 'choice', array(
-                'choice_list'=>$options['branchchoice'],
-                'label'=>'Branch/Tag to use'
-            ));
+                ->add('target', 'choice', array(
+                        'label' => ' ',
+                        'choice_list'=>$targetChoice,
+                        'required' => true,
+                ))
+                ->appendClientTransformer(new IdToTarget($this->em));;
+
     }
 
     public function getDefaultOptions(array $options)
     {
-        $options['branchchoice'] = null;
-        $options['app'] = null;
         $options['csrf_protection'] = false;
+        $options['app'];
 
         return $options;
     }
 
     public function getName()
     {
-        return 'netvlies_publishbundle_applicationdeploy';
+        return 'netvlies_publishbundle_targettype';
     }
 
 }

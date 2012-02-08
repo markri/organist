@@ -63,6 +63,7 @@ class TargetController extends Controller {
             if($form->isValid()){
                 $em->persist($target);
                 $em->flush($target);
+
                 return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$target->getApplication()->getId())));
             }
         }
@@ -164,16 +165,19 @@ class TargetController extends Controller {
                     $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
                     $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
+                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
                     break;
                 case 'A':
                     $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
                     $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
+                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
                     break;
                 case 'P':
                     $target->setPrimaryDomain('www.'.$app->getName().'.nl');
                     $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
+                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
                     break;
             }
 
@@ -186,10 +190,11 @@ class TargetController extends Controller {
                     break;
             }
 
+
             $target->setMysqldb($app->getName());
             $target->setMysqluser($app->getName());
             $target->setMysqlpw($app->getMysqlpw());
-            $target->setLabel('Target settings for '.$target->getPrimaryDomain());
+            $target->setLabel($target->__toString());
         }
 
         $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());

@@ -35,6 +35,7 @@ class EnvironmentType extends AbstractType
         $envChoice = new EnvironmentChoice($this->em);
         $builder
                 ->add('environment', 'choice', array(
+                        'label' => ' ',
                         'choice_list'=>$envChoice,
                         'required' => true,
                 ))

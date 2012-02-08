@@ -51,16 +51,7 @@ class ApplicationController extends Controller {
          */
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
-
-        $query = $oEntityManager->createQuery('
-            SELECT t FROM Netvlies\PublishBundle\Entity\Target t
-            INNER JOIN t.environment e
-            WHERE t.application = :app
-            ORDER BY e.type, e.hostname
-        ');
-
-        $query->setParameter('app', $app);
-        $targets = $query->getResult();
+        $targets = $oEntityManager->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($app);
 
         $allTwigParams = array();
         $allTwigParams['application'] = $app;

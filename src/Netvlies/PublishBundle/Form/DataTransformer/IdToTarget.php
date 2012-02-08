@@ -16,7 +16,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 
-class IdToEnvironment implements DataTransformerInterface
+class IdToTarget implements DataTransformerInterface
 {
 
     private $entityManager;
@@ -32,14 +32,14 @@ class IdToEnvironment implements DataTransformerInterface
      *
      * @throws UnexpectedTypeException if the given value is not an array
      */
-    public function transform($env)
+    public function transform($target)
     {
-        if (is_null($env)) {
+        if (is_null($target)) {
               return null;
         }
 
         $return = array();
-        $return['environment']=$env->getId();
+        $return['target']=$target->getId();
 
         return $return;
     }
@@ -56,8 +56,8 @@ class IdToEnvironment implements DataTransformerInterface
         if (is_null($id)) {
               return null;
         }
-        $env = $this->entityManager->getRepository('NetvliesPublishBundle:Environment')->findOneById($id);
-        return $env;
+        $target = $this->entityManager->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+        return $target;
     }
 
     

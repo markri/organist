@@ -18,41 +18,45 @@ class FormTargetEditType extends AbstractType
 
         $builder
             ->add('environment', 'environment_selector', array(
+                'label' => 'Environment *',
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username)',
+                'label'=>'Username. (in which homedir it will be deployed, just username) *',
                 'required'=>true,
             ))
             ->add('label', 'text', array(
-                'label'=>'Label (e.g. "Settings for myapp.dev1.netvlies.net"',
+                'label'=>'Label (e.g. "Settings for myapp.dev1.netvlies.net") *',
                 'required'=>true)
             )
             ->add('primarydomain', 'text', array(
-                'label'=>'Primary domain (e.g. myapp.dev1.netvlies.net)',
+                'label'=>'Primary domain (e.g. myapp.dev1.netvlies.net) *',
                 'required'=>true)
             )
             ->add('mysqldb', 'text', array(
-                'required'=>true,
+                'required'=>false,
                 'label'=>'MySQL database')
             )
             ->add('mysqluser', 'text', array(
-                'required'=>true,
+                'required'=>false,
                 'label'=>'MySQL user')
             )
             ->add('mysqlpw', 'text', array(
-                'required'=>true,
+                'required'=>false,
                 'label'=>'MySQL password')
             )
             ->add('approot', 'text', array(
                 'required'=>true,
-                'label'=>'Absolute approot')
+                'label'=>'Absolute approot *')
             )
             ->add('webroot', 'text', array(
                 'required'=>true,
-                'label'=>'Absolute webroot')
+                'label'=>'Absolute webroot *')
+            )
+            ->add('caproot', 'text', array(
+                'required'=>false,
+                'label'=>'Capistrano root')
             );
-
 
 
     }
@@ -61,7 +65,6 @@ class FormTargetEditType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $options['csrf_protection'] = false;
-        $options['em'] = null;
         return $options;
     }
 
