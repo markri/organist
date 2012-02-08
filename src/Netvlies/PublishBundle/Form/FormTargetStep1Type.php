@@ -18,10 +18,11 @@ class FormTargetStep1Type extends AbstractType
         $builder
             ->add('environment', 'choice', array(
                 'choice_list'=>$options['envchoice'],
+                'label' => 'Environment *',
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username)',
+                'label'=>'Username. (in which homedir it will be deployed, just username) *',
                 'required'=>true,
             ));
     }

@@ -49,6 +49,7 @@ class EnvironmentRepository extends EntityRepository
         ", $rsm);
 
         $result = $query->getResult();
+
         return $result;
     }
 

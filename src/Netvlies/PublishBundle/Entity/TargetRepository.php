@@ -3,6 +3,9 @@
 namespace Netvlies\PublishBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
+
+use PDO;
 
 /**
  * TargetRepository
@@ -18,15 +21,47 @@ class TargetRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery('
-            SELECT d FROM Netvlies\PublishBundle\Entity\Deployment d
-            WHERE d.application = :app
-            AND d.environment = :env
+            SELECT t FROM Netvlies\PublishBundle\Entity\Target t
+            WHERE t.application = :app
+            AND t.environment = :env
         ');
 
         $query->setParameter('app', $application);
         $query->setParameter('env', $environment);
 
         return $query->getResult();
+    }
+
+
+    /**
+     * Yuck, but currently no solution for having this query hydrated to objects in one time
+     *
+     * @param $app
+     * @return array
+     */
+    public function getOrderedByOTAP($app){
+
+        $query = "
+            SELECT t.id FROM Target t
+            INNER JOIN Environment e ON t.environment_id = e.id
+            WHERE t.application_id = :id
+            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P')";
+
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($query);
+        $stmt->bindValue('id', $app->getId());
+        $stmt->execute();
+        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $results = array();
+
+        // Especially this part feels wrong. On the other hand, how many targets are there at most? just a few. Usually
+        // 4 at most. so acceptable for now
+        foreach($ids as $id){
+            $results[] = $target = $this->findOneById($id);
+        }
+
+        return $results;
     }
 
 

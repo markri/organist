@@ -26,7 +26,6 @@ class Target
     protected $id;
 
     /**
-     * @var Environment $environment
      * @Assert\NotBlank(message="environment is required/key could not be found")
      * @ORM\ManyToOne(targetEntity="Environment")
      */
@@ -104,6 +103,12 @@ class Target
      * @ORM\Column(name="webroot", type="string", length=255)
      */
     protected $webroot;
+
+    /**
+     * @var string $caproot
+     * @ORM\Column(name="caproot", type="string", length=255)
+     */
+    protected $caproot;
 
 
 
@@ -196,7 +201,7 @@ class Target
 
     public function __toString()
     {
-        return $this->environment->getType().' ('.$this->getPrimaryDomain().')';
+        return $this->label;
     }
 
     /**
@@ -331,5 +336,21 @@ class Target
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * @param  $caproot
+     */
+    public function setCaproot($caproot)
+    {
+        $this->caproot = $caproot;
+    }
+
+    /**
+     * @return
+     */
+    public function getCaproot()
+    {
+        return $this->caproot;
     }
 }

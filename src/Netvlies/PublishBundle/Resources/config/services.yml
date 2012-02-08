@@ -14,6 +14,11 @@ services:
         tags:
             - { name: form.type, alias: environment_selector }
 
+    netvlies.publish.form.target_selector:
+        class: Netvlies\PublishBundle\Form\TargetType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: target_selector }
 
 #    netvlies.publish.form.create_target_step2:
 #        class: Netvlies\PublishBundle\Form\FormTargetStep2Type
