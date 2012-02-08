@@ -2,6 +2,7 @@
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
 {% block head %}
+    {{ parent() }}
     <script type="text/javascript">
         function randompass(field) {
             if(typeof field == 'string') var field = document.getElementById(field);
@@ -17,30 +18,39 @@
 {% endblock %}
 
 {% block content %}
+    <div id="content-wrapper">
 
-        <h2>{{application.name}}</h2>
-
-        <form action="" method="POST">
-
-            {{ form_errors(form) }}
-            Note: after hitting the save button following actions will be executed:<br>
+        <section id="content">
+            <header>
+                <h1>{{application.name}}</h1>
+            </header>
+            <hr />
+            <div id="text">
+            Project is not initialized. I need some extra data, so you can use this project in this tool.<br>
+            After hitting the save button following actions will be executed:<br>
             <ul>
-                <li>A new Git Repository will be created</li>
-                <li>Base files will be imported into Git</li>
-                <li>A git ignore file will be generated</li>
-                <li>Default deployment descriptors will be generated</li>
+                <li>A new Git Repository will be created at <strong>{{application.gitrepossh}}</strong> (if not exists)</li>
+                <li>Base files will be added</li>
+                <li>A git ignore file will be added</li>
+                <li>Default deployment descriptors will be added</li>
+                <li>All added files will be pushed into Git</li>
             </ul>
+
+            Nothing will be added/pushed if repository already exists, project will only be intialized into this tool.
             <br>
+            <form method="POST">
 
-            {{ form_row(form.name) }}
-            {{ form_row(form.customer) }}
-            {{ form_row(form.type) }}
-            {{ form_row(form.mysqlpw) }} <a href="#" onclick="return !randompass('{{form.mysqlpw.get('id')}}');">Generate random password</a>
-            <br><br>
+                {{ form_errors(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.customer) }}
+                {{ form_row(form.type) }}
+                {{ form_row(form.mysqlpw) }} <a href="#" onclick="return !randompass('{{form.mysqlpw.get('id')}}');">Generate random password</a>
+                <br><br>
 
+                <input type="submit" value="Initialize" />
 
-            <input type="submit" value="Opslaan" />
-
-        </form>
-
+            </form>
+            </div>
+        </section>
+    </div>
 {% endblock %}

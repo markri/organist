@@ -16,17 +16,19 @@ class FormApplicationEnrichType extends AbstractType
             ->add('type', 'entity', array(
                 'class' => 'NetvliesPublishBundle:ApplicationType',
                 'property'=> 'label',
+                'label' => 'Application type',
                 'empty_value'=> '-- choose type --',
                 'expanded' => false,
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('mysqlpw', 'text', array('label'=>'MySQL wachtwoord', 'required'=>true ))
+            ->add('mysqlpw', 'text', array('label'=>'Default MySQL password', 'required'=>true ))
             ;
     }
 
     public function getDefaultOptions(array $options)
     {
+        $options['csrf_protection'] = false;
         return $options;
     }
 

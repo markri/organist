@@ -30,7 +30,7 @@ class FormApplicationDeployType extends AbstractType
                 'app' => $app,
                 'required'=>true)
             )
-            ->add('reference', 'choice', array(
+            ->add('revision', 'choice', array(
                 'choice_list'=>$options['branchchoice'],
                 'label'=>'Branch/Tag to use'
             ));

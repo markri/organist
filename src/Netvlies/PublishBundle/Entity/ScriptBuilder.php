@@ -46,17 +46,6 @@ class ScriptBuilder
 
 
     /**
-     * Returns encoded script url for updating local git repository. Which can be used as a link to the consolecontroller
-     * @return string
-     */
-//    public function getGitUpdateScript($application){
-//        //$scriptBuilder = new ScriptBuilder(time());
-//        $this->setWorkingDirectory($application->getAbsolutePath());
-//        $this->addLine('git pull --all');
-//        return $this->getEncodedScriptPath();
-//    }
-
-    /**
      * Add chunk of script (string)
      * @param $scriptChunk
      */

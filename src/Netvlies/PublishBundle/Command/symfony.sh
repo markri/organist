@@ -93,6 +93,7 @@ function createproject
 	git add -A
 	git commit -m "Initial commit"
 	#@todo add remote upstream before pushing
+
 	
 	git push
 }

@@ -54,25 +54,8 @@ class getSettingsCommand extends ContainerAwareCommand
              $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneByPrimaryDomain($pd);
          }
 
-
-
-//         $app = $target->getApplication();
-         /**
-          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
-          */
-//         $gitService = $this->getContainer()->get('git');
-//         $gitService->setApplication($app);
-//
-//         $branches = $gitService->getRemoteBranches();
-//
-//         if(!in_array($branch, $branches)){
-//            throw new \Exception('No such branch '.$branch);
-//         }
-
-//         $reference = array_search($branch, $branches);
-
          $console = new ConsoleController();
-         $params = $console->getSettings($this->getContainer(), $target, $branch);
+         $params = $console->getParameters($this->getContainer(), $target, $branch);
 
         foreach($params as $key=>$value){
             echo $key.'='.$value."\n";

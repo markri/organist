@@ -39,7 +39,8 @@ unset SSH_AUTH_SOCK
 
 # process log and remove temp script and log
 echo "Saving log and clearing temporary files"
-`$console publish:processlog --uid=$scriptid --exitcode=$exitcode`
+$console publish:processlog --uid=$scriptid --exitcode=$exitcode
+echo ""
 
 # check if script was succesfull
 if [ $exitcode != '0' ]
@@ -56,5 +57,7 @@ fi
 
 # Self destruct
 rm $script
+
+read -n1 -t1
 
 exit $exitcode
