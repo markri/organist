@@ -110,4 +110,10 @@ class ApplicationType
     {
         return $this->rollbackCommand;
     }
+
+    public function getInitScriptPath()
+    {
+        return dirname(__DIR__).'/Resources/apptypes/'.$this->getName().'/init.sh';
+    }
+
 }

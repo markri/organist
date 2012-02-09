@@ -9,8 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
-//use Netvlies\PublishBundle\Entity\Deployment;
-//use Netvlies\PublishBundle\Entity\Rollback;
 use Netvlies\PublishBundle\Entity\ConsoleAction;
 
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
@@ -197,11 +195,9 @@ class ApplicationController extends Controller {
                 }
                 elseif($repoExists && !$pathExists){
                     // just path doesnt exist. So just clone the app and redirect
-
-
-                    //@todo clone app into dir
-
-
+                    return $this->forward('NetvliesPublishBundle:Git:clone', array(
+                        'id'  => $app->getId()
+                    ));
                 }
                 elseif(!$repoExists && $pathExists){
                     // huh? How is this possible?
@@ -211,47 +207,25 @@ class ApplicationController extends Controller {
                 // Repo and local clone doesnt exist
                 $gitService->createRepository();
 
-//                git clone asdfasdf
-//                cd $name
-//              	wget $symfony_download
-//               	tar -zxvf $symfony_file
-//               	echo ""
-//                mv Symfony/* .
-//                rm -f $symfony_file
-//                rm -rf Symfony
-//                cp templates (.gitignore, parameters.ini.O, ...)
-//                git add -A
-//               	git commit -m "Initial commit"
-//               	#@todo add remote upstream before pushing
-//
-//               	git push
-
-
-
-
-
-
-                // Do create a new consoleAction
-                // and include some commands in it or set scriptbuilder in command?
-                // Than execute it through console
-                exit;
-                $type = $app->getType()->getName();
-
-                switch($type){
-                    case 'OMS':
-
-                        break;
-                    case 'Symfony2':
-                        // execute symfony.sh from command dir to create and import new symfony2 project
-
-                        break;
-                    case 'Basissite v1':
-
-                        break;
-                    case 'Custom':
-
-                        break;
+                $scriptPath = $app->getType()->getInitScriptPath();
+                if(!file_exists($scriptPath)){
+                    // Nothing to do, so just clone app into repo path
+                    return $this->forward('NetvliesPublishBundle:Git:clone', array(
+                        'id'  => $app->getId()
+                    ));
                 }
+
+                // Fetch init script and assign to consoleaction
+                $lines = file($scriptPath, FILE_IGNORE_NEW_LINES);
+                $action = new ConsoleAction();
+                $action->setCommand($lines);
+                $action->setApplication($app);
+                $action->setContainer($this->container);
+
+                // Execute currently build consoleAction
+                return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
+                    'consoleAction'  => $action
+                ));
             }
         }
 

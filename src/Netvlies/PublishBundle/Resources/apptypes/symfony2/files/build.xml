@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Project" default="info">
+
+    <target name="info">
+
+        <echo msg="-- place info here --" />
+
+    </target>
+
+	<target name="setup_O" description="- Init server">
+        <ssh
+            username="${username}"
+            host="${hostname}"
+            pubkeyfile="${pubkeyfile}"
+            privkeyfile="${privkeyfile}"
+            command="ls ${approot} | grep 'No such file or directory'"
+            property="exists" />
+
+        <!-- check if project is already there -->
+        <if>
+            <equals arg1="${exists}" arg2="" />
+            <then>
+                <fail message="Uh-oh project seems to be already there. Please remove it and come back again || be satisfied" />
+            </then>
+        </if>
+
+        <!-- Initial deployment -->
+        <echo msg="executing: ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd ${approot}; git checkout -b workingcopy ${revision}'"/>
+        <exec command="ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd ${approot}; git checkout -b workingcopy ${revision}'" />
+
+        <!-- create database and user -->
+        <echo msg="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'"/>
+        <exec command="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
+        <echo msg="${output}"/>
+
+        <!-- set parameters in parameters.ini file and install vendors -->
+        <ssh
+            username="${username}"
+            host="${hostname}"
+            pubkeyfile="${pubkeyfile}"
+            privkeyfile="${privkeyfile}"
+            command="
+                sed -i -e 's/#mysqldb#/${mysqldb}/' ${approot}/app/config/parameters.ini.${otap};
+                sed -i -e 's/#mysqluser#/${mysqluser}/' ${approot}/app/config/parameters.ini.${otap};
+                sed -i -e 's/#mysqlpw#/${mysqlpw}/' ${approot}/app/config/parameters.ini.${otap};
+                ln -fs ${approot}/app/config/parameters.ini.${otap} ${approot}/app/config/parameters.ini;
+                cd ${approot};
+                bin/vendors install;
+            " />
+
+        <!-- create vhost and reload -->
+      	<!--@todo support multiple variable domain names -->
+        <ssh
+            username="${sudouser}"
+            host="${hostname}"
+            pubkeyfile="${pubkeyfile}"
+            privkeyfile="${privkeyfile}"
+            command="sudo ${bridgebin} apache -dn ${primarydomain} -s /${approot} -d /${webroot}" />
+	</target>
+
+
+	<target name="update_db" description="Will update database structure on server (doctrine:schema:update --force)">
+		<ssh 
+			username="${username}"
+			host="${hostname}"
+			pubkeyfile="${pubkeyfile}" 
+			privkeyfile="${privkeyfile}" 
+			command="
+				cd vhosts/nvs-terugblik/current; 
+				app/console doctrine:schema:update --force" />
+	</target>	
+
+</project>
