@@ -33,7 +33,18 @@
         <exec command="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
         <echo msg="${output}"/>
 
+        <!-- setting ACL right -->
+        <echo msg="Setting ACL permissions for log and cache folder"/>
+        <ssh
+            username="${sudouser}"
+            host="${hostname}"
+            pubkeyfile="${pubkeyfile}"
+            privkeyfile="${privkeyfile}"
+            command="sudo #{bridgebin} symfony2acl -b ${approot} -u ${username}" />
+
+
         <!-- set parameters in parameters.ini file and install vendors -->
+        <echo msg="Setting parameters.ini and doing bin/vendors install. This can take a while..."/>
         <ssh
             username="${username}"
             host="${hostname}"
@@ -45,11 +56,11 @@
                 sed -i -e 's/#mysqlpw#/${mysqlpw}/' ${approot}/app/config/parameters.ini.${otap};
                 ln -fs ${approot}/app/config/parameters.ini.${otap} ${approot}/app/config/parameters.ini;
                 cd ${approot};
-                bin/vendors install;
+                bin/vendors install --reinstall;
             " />
 
         <!-- create vhost and reload -->
-      	<!--@todo support multiple variable domain names -->
+        <echo msg="Updating vhost and reloading apache"/>
         <ssh
             username="${sudouser}"
             host="${hostname}"
@@ -58,16 +69,5 @@
             command="sudo ${bridgebin} apache -dn ${primarydomain} -s /${approot} -d /${webroot}" />
 	</target>
 
-
-	<target name="update_db" description="Will update database structure on server (doctrine:schema:update --force)">
-		<ssh 
-			username="${username}"
-			host="${hostname}"
-			pubkeyfile="${pubkeyfile}" 
-			privkeyfile="${privkeyfile}" 
-			command="
-				cd vhosts/nvs-terugblik/current; 
-				app/console doctrine:schema:update --force" />
-	</target>	
 
 </project>

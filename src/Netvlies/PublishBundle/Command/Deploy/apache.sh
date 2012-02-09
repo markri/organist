@@ -84,7 +84,7 @@ function createvhost
 
 	#apache reload
 	echo "Checking current apache config (with new vhost file)"
-	$apache_daemon configtest
+	$apache_daemon -t
 	exitcode=$?
 	if [ $exitcode != 0 ]
 	then
@@ -93,7 +93,7 @@ function createvhost
 		exit
 	fi
 
-	$apache_daemon reload
+	$apache_daemon gracefull
 }
 
 

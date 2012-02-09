@@ -13,9 +13,9 @@ use Netvlies\PublishBundle\Entity\ConsoleAction;
 
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\PublishBundle\Form\FormApplicationEnrichType;
-
 use Netvlies\PublishBundle\Form\FormApplicationDeployType;
 use Netvlies\PublishBundle\Form\FormApplicationRollbackType;
+use Netvlies\PublishBundle\Form\FormApplicationDeployOType;
 use Netvlies\PublishBundle\Form\ChoiceList\BranchesType;
 
 
@@ -49,6 +49,10 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+        $repokey = $app->getRepokey();
+        if(empty($repokey)){
+            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
+        }
 
         $targets = $oEntityManager->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($app);
 
@@ -69,10 +73,9 @@ class ApplicationController extends Controller {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-
         $repokey = $app->getRepokey();
         if(empty($repokey)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$id)));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
 
         $allTwigParams = array();
@@ -93,6 +96,11 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+        $repokey = $app->getRepokey();
+        if(empty($repokey)){
+            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
+        }
+
         $currentReference = $app->getReferenceToFollow();
 
         $gitService = $this->get('git');
@@ -248,6 +256,10 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+        $repokey = $app->getRepokey();
+        if(empty($repokey)){
+            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
+        }
 
         $gitService = $this->get('git');
         $gitService->setApplication($app);
@@ -258,6 +270,7 @@ class ApplicationController extends Controller {
 
         $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
         $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$app));
+        $deployOForm = $this->createForm(new FormApplicationDeployOType(), $consoleAction, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
@@ -281,12 +294,25 @@ class ApplicationController extends Controller {
                     ));
                 }
             }
+
+
+            if ($request->request->has($deployOForm->getName())){
+                $deployOForm->bindRequest($request);
+                $consoleAction->setCommand($app->getType()->getDeployOCommand());
+                if($deployOForm->isValid()){
+                    return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
+                        'consoleAction'  => $consoleAction
+                    ));
+                }
+            }
         }
 
         return array(
             'deployForm' => $deployForm->createView(),
             'rollbackForm' => $rollbackForm->createView(),
+            'deployOForm' => $deployOForm->createView(),
             'application' => $app,
         );
     }
+
 }

@@ -32,6 +32,10 @@ class TargetsType implements ChoiceListInterface
 		$return = array(''=>'-- Choose a target --');
 		
 		foreach($targets as $target){
+            if($target->getEnvironment()->getType()=='O'){
+                // Since this form element is only used on dashboard for
+                continue;
+            }
 			$return[$target->getId()] = $target->getLabel();
 		}
 		

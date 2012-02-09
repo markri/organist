@@ -16,51 +16,80 @@ default_run_options[:pty] = true
 
 namespace :deploy do
 
-  after "deploy:setup", "deploy:media:setup"
-  after "deploy:symlink", "deploy:media:symlink"
-  
-  after "deploy:setup", "deploy:cache:setup"
-  after "deploy:symlink", "deploy:cache:symlink"  
+    after "deploy:setup", "deploy:media:setup"
+    after "deploy:setup", "deploy:cache:setup"
+    after "deploy:setup", "deploy:setupdb"
 
-  after "deploy:symlink", "deploy:htacl:symlink"
+    after "deploy:symlink", "deploy:cache:symlink"
+    after "deploy:symlink", "deploy:media:symlink"
+    after "deploy:symlink", "deploy:htacl:symlink"
 
-  namespace :media do
-    desc "Create the media dir in shared path."
-	
-    task :setup do
-      run "cd #{shared_path}; mkdir -p media; chmod 777 media"
+    after "deploy:update_code", "deploy:updatevhost"
+
+    namespace :media do
+        desc "Create the media dir in shared path."
+
+        task :setup do
+          run "cd #{shared_path}; mkdir -p media; chmod 777 media"
+        end
+
+        desc "Link media from shared to common."
+        task :symlink do
+          # in case media folder is in repository remove it, it;'s already there
+          run "cd #{current_path}; rm -rf media; ln -s #{shared_path}/media ."
+        end
     end
-
-    desc "Link media from shared to common."
-    task :symlink do
-	  # in case media folder is in repository remove it, it;'s already there
-      run "cd #{current_path}; rm -rf media; ln -s #{shared_path}/media ."
-    end
-
-  end
   
-  namespace :cache do
+    namespace :cache do
     desc "Create the cache dir in shared path."
-	
-    task :setup do
-      run "cd #{shared_path}; mkdir -p cache; chmod 777 cache"
+        task :setup do
+          run "cd #{shared_path}; mkdir -p cache; chmod 777 cache"
+        end
+
+        desc "Link cache from shared to common."
+        task :symlink do
+          # in case cache folder is in repository remove it, it;'s already there
+          run "cd #{current_path}; rm -rf cache; ln -s #{shared_path}/cache ."
+        end
     end
 
+
+    desc "Setup database"
+    task :setupdb do
+		set :user, "#{sudouser}"
+		sessions.values.each { |session| session.close }
+		sessions.clear
+
+        run "sudo #{bridgebin} mysql -u #{project} -p #{mysqlpw} -d #{project}"
+
+		set :user, "#{username}"
+		sessions.values.each { |session| session.close }
+		sessions.clear
+    end
+
+
+    desc "update vhost if otap=T"
+    task :updatevhost do
+        # This will run the setfacl command on the cache and logs directory of the symfony2 app
+        set :user, "#{sudouser}"
+        sessions.values.each { |session| session.close }
+        sessions.clear
+
+        if "#{otap}" == "T"
+            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{approot} -d #{webroot}"
+        end
+
+        set :user, "#{username}"
+        sessions.values.each { |session| session.close }
+        sessions.clear
+    end
+
+
+    namespace :htacl do
     desc "Link cache from shared to common."
-    task :symlink do
-	  # in case cache folder is in repository remove it, it;'s already there
-      run "cd #{current_path}; rm -rf cache; ln -s #{shared_path}/cache ."
+        task :symlink do
+            run "cd #{current_path}; rm cms/.htpasswd; ln -s #{shared_path}/.htpasswd cms/"
+            run "cd #{current_path}; rm cms/.htaccess; ln -s #{shared_path}/.htaccess cms/"
+        end
     end
-
-  end  
-
-  namespace :htacl do
-    desc "Link cache from shared to common."
-    task :symlink do
-      run "cd #{current_path}; rm cms/.htpasswd; ln -s #{shared_path}/.htpasswd cms/"
-      run "cd #{current_path}; rm cms/.htaccess; ln -s #{shared_path}/.htaccess cms/"
-    end
-
-  end  
-  
 end

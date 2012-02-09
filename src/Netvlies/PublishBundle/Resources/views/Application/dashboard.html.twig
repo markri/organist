@@ -34,6 +34,14 @@
                 <input type="submit" value="Rollback"/>
             </form>
 
+
+            <hr />
+            <h2>Setup development</h2>
+            <form id="#setupO_form" name="setupO_form" method="POST">
+                {{ form_errors(deployOForm) }}
+                {{ form_widget(deployOForm) }}
+                <input type="submit" value="Setup"/>
+            </form>
         </div>
 
     </section>
