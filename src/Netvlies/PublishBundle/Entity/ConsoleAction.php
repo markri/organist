@@ -132,6 +132,9 @@ class ConsoleAction
         $this->target = $target;
     }
 
+    /**
+     * @return \Netvlies\PublishBundle\Entity\Target
+     */
     public function getTarget()
     {
         return $this->target;

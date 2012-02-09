@@ -77,6 +77,9 @@ class ConsoleController extends Controller {
 		// Entity attributes
         $params['project'] = $app->getName();
         $params['gitrepo'] = $app->getGitrepoSSH();
+        $params['repokey'] = $app->getRepokey();
+        $params['initfiles'] = dirname(__DIR__).'/Resources/apptypes/'.$consoleAction->getApplicationType()->getName().'/files/*';
+        $params['repositorypath'] = $container->getParameter('repositorypath');
         $params['pubkeyfile'] = $container->getParameter('pubkeyfile');
         $params['privkeyfile'] = $container->getParameter('privkeyfile');
         $params['sudouser'] = $container->getParameter('sudouser');
@@ -90,6 +93,7 @@ class ConsoleController extends Controller {
             $params['webroot'] = $target->getWebroot();
             $params['approot'] = $target->getApproot();
             $params['caproot'] = $target->getCaproot();
+            $params['primarydomain'] = $target->getPrimaryDomain();
         }
 
         if(!is_null($environment)){
@@ -136,7 +140,6 @@ class ConsoleController extends Controller {
             throw new \Exception('Console action is missing some required parameters (command|application|container)');
         }
 
-        $target = $consoleAction->getTarget();
         $revision = $consoleAction->getRevision();
 
         /**
@@ -216,19 +219,23 @@ class ConsoleController extends Controller {
 
         // Prepare log entry
         $em  = $this->getDoctrine()->getEntityManager();
+        $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
+        $environment = $consoleAction->getEnvironment();
+        $target = $consoleAction->getTarget();
+        $hostname = isset($environment)?$environment->getHostname():'';
+        $type = isset($environment)?$environment->getType():'';
+        $targetId = isset($target)?$consoleAction->getTarget()->getId():'';
+
         $log = new DeploymentLog();
         $log->setCommand($command);
         $log->setDatetimeStart(new \DateTime());
-
-        $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
-        $environment = $target->getEnvironment();
         $log->setUser($user);
-        $log->setTargetId($target->getId());
+        $log->setTargetId($targetId);
         $log->setRevision($revision);
-        $log->setHost($environment->getHostname());
-        $log->setType($environment->getType());
+        $log->setHost($hostname);
+        $log->setType($type);
         $log->setUid($uid);
-        $log->setRevision('');
+
         $em->persist($log);
         $em->flush();
 

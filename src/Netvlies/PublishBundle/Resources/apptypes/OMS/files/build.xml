@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Project" default="info">
+
+    <target name="info">
+
+        <echo msg="-- place info here --" />
+
+    </target>
+    
+</project>

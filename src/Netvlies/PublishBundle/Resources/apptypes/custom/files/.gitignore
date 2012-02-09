@@ -1,0 +1,22 @@
+# SASS
+.sass-cache
+
+# PhpStorm
+.idea
+
+# Eclipse
+.buildpath
+.project
+.settings
+
+# Netbeans
+nbproject
+
+# Coda
+*._*
+
+# OS-related
+thumbs.db
+.DS_Store
+WS_FTP.LOG
+desktop.ini
