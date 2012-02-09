@@ -106,7 +106,7 @@ class Target
 
     /**
      * @var string $caproot
-     * @ORM\Column(name="caproot", type="string", length=255)
+     * @ORM\Column(name="caproot", type="string", length=255, nullable=true)
      */
     protected $caproot;
 

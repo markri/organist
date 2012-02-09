@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\Target;
+use Netvlies\PublishBundle\Entity\ConsoleAction;
 use Netvlies\PublishBundle\Form\FormTargetEditType;
 use Netvlies\PublishBundle\Form\FormTargetStep1Type;
 use Netvlies\PublishBundle\Form\FormTargetStep2Type;
@@ -162,10 +163,16 @@ class TargetController extends Controller {
                     $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
                     break;
                 case 'T':
-                    $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
-                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
+                    if($target->getUsername()=='tester'){
+                        $target->setPrimaryDomain($app->getName().'.'.$env->getHostname());
+                    }
+                    else{
+                        $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    }
+
+                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName().'/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
+                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName());
                     break;
                 case 'A':
                     $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
@@ -207,7 +214,20 @@ class TargetController extends Controller {
             if($formStep2->isValid()){
                 $em->persist($target);
                 $em->flush($target);
-                return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
+
+                if($target->getEnvironment()->getType()=='O'){
+                    return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
+                }
+
+                $command = $target->getApplication()->getType()->getSetupTAPCommand();
+                $consoleAction = new ConsoleAction();
+                $consoleAction->setTarget($target);
+                $consoleAction->setCommand($command);
+                $consoleAction->setContainer($this->container);
+
+                return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
+                    'consoleAction'  => $consoleAction
+                ));
             }
         }
 

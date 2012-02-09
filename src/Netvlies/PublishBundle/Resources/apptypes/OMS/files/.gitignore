@@ -1,6 +1,11 @@
 # OMS default
-/cache/*
-/media/*
+/cache
+/lucene
+/cms/db_config_local.php
+/classes/Zend
+/media/files
+/media/rtf
+
 
 # SASS
 .sass-cache

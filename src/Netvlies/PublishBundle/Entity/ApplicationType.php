@@ -40,6 +40,11 @@ class ApplicationType
     private $deployCommand;
 
     /**
+     * @ORM\Column(name="deployOCommand", type="string", length=255)
+     */
+    private $deployOCommand;
+
+    /**
      * @ORM\Column(name="copyCommand", type="string", length=255)
      */
     private $copyContentCommand;
@@ -48,6 +53,11 @@ class ApplicationType
      * @ORM\Column(name="rollbackCommand", type="string", length=255)
      */
     private $rollbackCommand;
+
+    /**
+     * @ORM\Column(name="setupTAPCommand", type="string", length=255)
+     */
+    private $setupTAPCommand;
 
 
 
@@ -114,6 +124,26 @@ class ApplicationType
     public function getInitScriptPath()
     {
         return dirname(__DIR__).'/Resources/apptypes/'.$this->getName().'/init.sh';
+    }
+
+    public function setDeployOCommand($deployOCommand)
+    {
+        $this->deployOCommand = $deployOCommand;
+    }
+
+    public function getDeployOCommand()
+    {
+        return $this->deployOCommand;
+    }
+
+    public function setSetupTAPCommand($setupTAPCommand)
+    {
+        $this->setupTAPCommand = $setupTAPCommand;
+    }
+
+    public function getSetupTAPCommand()
+    {
+        return $this->setupTAPCommand;
     }
 
 }
