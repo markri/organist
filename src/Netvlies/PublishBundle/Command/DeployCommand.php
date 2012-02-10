@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Netvlies\PublishBundle\Entity\DeploymentLog;
-use Netvlies\PublishBundle\Entity\Deployment;
+use Netvlies\PublishBundle\Entity\ConsoleAction;
 use Netvlies\PublishBundle\Controller\ConsoleController;
 
 class DeployCommand extends ContainerAwareCommand
@@ -50,12 +50,15 @@ class DeployCommand extends ContainerAwareCommand
          * @var \Netvlies\PublishBundle\Entity\Target $target
          */
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneByid($id);
-
-        $deployment = new Deployment();
-        $deployment->setReference($reference);
-        $deployment->setTarget($target);
         $console = $this->getContainer()->get('console_controller');
-        $execParams = $console->deployAction($deployment);
+
+        $consoleAction = new ConsoleAction();
+        $consoleAction->setTarget($target);
+        $consoleAction->setRevision($reference);
+        $consoleAction->setContainer($this->getContainer());
+        $consoleAction->setCommand($target->getApplication()->getType()->getDeployCommand());
+
+        $execParams = $console->prepareCommandAction($consoleAction);
         $scriptPath = $execParams['scriptpath'];
 
         $script = base64_decode($scriptPath);

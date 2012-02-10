@@ -72,7 +72,8 @@ function createvhost
 			echo "	ServerAlias ${domains[$i]}" >> $vhost
 			let i++
 		done	
-		
+
+		# @todo Check if logs dir exists otherwise apache will break!
 		echo "	ErrorLog $serverroot/logs/error.log" >> $vhost
 		echo "	TransferLog $serverroot/logs/transfer.log" >> $vhost
 		echo "	<Directory $docroot>" >> $vhost
@@ -93,7 +94,7 @@ function createvhost
 		exit
 	fi
 
-	$apache_daemon gracefull
+	$apache_daemon -k gracefull
 }
 
 
