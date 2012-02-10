@@ -43,7 +43,7 @@
             command="sudo #{bridgebin} symfony2acl -b ${approot} -u ${username}" />
 
 
-        <!-- set parameters in parameters.ini file and install vendors -->
+        <!-- set parameters in parameters.ini file and install vendors and create schema -->
         <echo msg="Setting parameters.ini and doing bin/vendors install. This can take a while..."/>
         <ssh
             username="${username}"
@@ -57,6 +57,7 @@
                 ln -fs ${approot}/app/config/parameters.ini.${otap} ${approot}/app/config/parameters.ini;
                 cd ${approot};
                 bin/vendors install --reinstall;
+                app/console doctrine:schema:create;
             " />
 
         <!-- create vhost and reload -->
@@ -66,7 +67,7 @@
             host="${hostname}"
             pubkeyfile="${pubkeyfile}"
             privkeyfile="${privkeyfile}"
-            command="sudo ${bridgebin} apache -dn ${primarydomain} -s /${approot} -d /${webroot}" />
+            command="sudo ${bridgebin} apache -dn ${primarydomain} -s ${homedirsBase}/${username} -d ${webroot}" />
 	</target>
 
 

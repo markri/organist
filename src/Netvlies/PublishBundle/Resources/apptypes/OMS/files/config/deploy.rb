@@ -24,7 +24,7 @@ namespace :deploy do
     after "deploy:symlink", "deploy:media:symlink"
     after "deploy:symlink", "deploy:htacl:symlink"
 
-    after "deploy:update_code", "deploy:updatevhost"
+    after "deploy:update_code", "deploy:dbconfig", "deploy:updatevhost"
 
     namespace :media do
         desc "Create the media dir in shared path."
@@ -68,20 +68,29 @@ namespace :deploy do
     end
 
 
-    desc "update vhost if otap=T"
+	desc 'Link parameters.ini.$env to parameters.ini DB params enclosed with # will be replaced'
+	task :dbconfig do
+        run "sed -i -e 's/#primarydomain#/#{primarydomain}/' #{release_path}/cms/db_config_local.inc.php"
+        run "sed -i -e 's/#mysqldb#/#{mysqldb}/' #{release_path}/cms/db_config_local.inc.php"
+        run "sed -i -e 's/#mysqluser#/#{mysqluser}/' #{release_path}/cms/db_config_local.inc.php"
+        run "sed -i -e 's/#mysqlpw#/#{mysqlpw}/' #{release_path}/cms/db_config_local.inc.php"
+	end
+
+
+    desc 'update vhost if otap=T'
     task :updatevhost do
-        # This will run the setfacl command on the cache and logs directory of the symfony2 app
-        set :user, "#{sudouser}"
-        sessions.values.each { |session| session.close }
-        sessions.clear
+        if "#{otap}" == 'T'
+            set :user, "#{sudouser}"
+            sessions.values.each { |session| session.close }
+            sessions.clear
 
-        if "#{otap}" == "T"
-            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{approot} -d #{webroot}"
+            # serverroot (-s) is the path were the logs directory needs to be
+            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{homedirsBase}/#{username} -d #{webroot}"
+
+            set :user, "#{username}"
+            sessions.values.each { |session| session.close }
+            sessions.clear
         end
-
-        set :user, "#{username}"
-        sessions.values.each { |session| session.close }
-        sessions.clear
     end
 
 

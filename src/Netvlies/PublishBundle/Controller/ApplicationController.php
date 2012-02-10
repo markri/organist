@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\ConsoleAction;
+use Netvlies\PublishBundle\Entity\UserFiles;
 
 use Netvlies\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\PublishBundle\Form\FormApplicationEnrichType;
@@ -174,6 +175,17 @@ class ApplicationController extends Controller {
 
                 $em->persist($app);
                 $em->flush();
+
+                if($app->getType()->getName()=='symfony2'){
+                    // Add vendor as shared directory for symfony2
+                    $userFile = new UserFiles();
+                    $userFile->setApplication($app);
+                    $userFile->setPath('vendor');
+                    $userFile->setType('D');
+
+                    $em->persist($userFile);
+                    $em->flush();
+                }
 
                 /**
                  * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
