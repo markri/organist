@@ -98,7 +98,7 @@ namespace :deploy do
             sessions.values.each { |session| session.close }
             sessions.clear
 
-            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{approot} -d #{webroot}"
+            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{approot}/#{app_path} -d #{webroot}"
 
             set :user, "#{username}"
             sessions.values.each { |session| session.close }
