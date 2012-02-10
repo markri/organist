@@ -45,10 +45,12 @@ namespace :deploy do
 
     desc 'Initial vendors install if needed'
     task :vendorcheck do
-		exists = capture("if [ -d \"#{shared_path}/vendor\" ]; then echo \"true\"; fi")
+		exists = capture("if [ -d \"#{shared_path}/vendor/symfony\" ]; then echo \"true\"; fi")
 		
 		if "#{exists}".strip != "true"
 			set :vendors_mode, "reinstall"
+			# also create db schema on initial deployment
+			run "#{release_path}/app/console doctrine:schema:create"
 		end
     end	
 	
@@ -65,19 +67,6 @@ namespace :deploy do
 		sessions.values.each { |session| session.close }
 		sessions.clear
     end
-
-
-#    desc "Link shared files and dirs"
-#    task :sharedsymlinks do
-#
-#		shared_files.each { |x|
-#			run "rm -f #{release_path}/#{x}; ln -fs #{shared_path}/#{x} #{release_path}/#{x}"
-#		}
-#
-#		shared_children.each { |x|
-#			run "rm -rf #{release_path}/#{x}; ln -fs #{shared_path}/#{x} #{release_path}/#{x}"
-#		}
-#   end
 
 
 	desc 'Link parameters.ini.$env to parameters.ini DB params enclosed with # will be replaced'
@@ -98,7 +87,8 @@ namespace :deploy do
             sessions.values.each { |session| session.close }
             sessions.clear
 
-            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{approot}/#{app_path} -d #{webroot}"
+            # serverroot (-s) is the path were the logs directory needs to be
+            run "sudo #{bridgebin} apache -dn #{primarydomain} -s #{homedirsBase}/#{username} -d #{webroot}"
 
             set :user, "#{username}"
             sessions.values.each { |session| session.close }

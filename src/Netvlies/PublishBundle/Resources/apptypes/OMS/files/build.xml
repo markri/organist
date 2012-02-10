@@ -6,5 +6,72 @@
         <echo msg="-- place info here --" />
 
     </target>
+
+
+    <target name="setup_O" description="- Init server">
+           <ssh
+               username="${username}"
+               host="${hostname}"
+               pubkeyfile="${pubkeyfile}"
+               privkeyfile="${privkeyfile}"
+               command="ls ${approot} | grep 'No such file or directory'"
+               property="exists" />
+
+           <!-- check if project is already there -->
+           <if>
+               <equals arg1="${exists}" arg2="" />
+               <then>
+                   <fail message="Uh-oh project seems to be already there. Please remove it and come back again || be satisfied" />
+               </then>
+           </if>
+
+           <!-- Initial deployment -->
+           <echo msg="executing: ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd ${approot}; git checkout -b workingcopy ${revision}'"/>
+           <exec command="ssh -A ${username}@${hostname}
+            'git clone ${gitrepo} ${approot};
+            cd ${approot};
+            git checkout -b workingcopy ${revision};
+            git remote add oms git@bitbucket.org:netvlies/nvs-oms.git;
+            chmod 777 cache;
+            chmod 777 media;'" />
+
+
+           <!-- create database and user -->
+           <echo msg="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'"/>
+           <exec command="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
+           <echo msg="${output}"/>
+
+
+
+            <!-- set parameters in parameters.ini file and install vendors -->
+            <echo msg="Setting db_config_local.inc.php and create schema"/>
+            <ssh
+                username="${username}"
+                host="${hostname}"
+                pubkeyfile="${pubkeyfile}"
+                privkeyfile="${privkeyfile}"
+                command="
+                    sed -i -e 's/#primarydomain#/${primarydomain}/' ${approot}/cms/db_config_local.inc.php;
+                    sed -i -e 's/#mysqldb#/${mysqldb}/' ${approot}/cms/db_config_local.inc.php;
+                    sed -i -e 's/#mysqluser#/${mysqluser}/' ${approot}/cms/db_config_local.inc.php;
+                    sed -i -e 's/#mysqlpw#/${mysqlpw}/' ${approot}/cms/db_config_local.inc.php;
+                    mysql -u ${mysqluser} -p ${mysqldb} --password=${mysqlpw} &lt; ${approot}/sql/db.sql;
+                " />
+
+
+           <!-- create vhost and reload -->
+           <echo msg="Updating vhost and reloading apache"/>
+           <ssh
+               username="${sudouser}"
+               host="${hostname}"
+               pubkeyfile="${pubkeyfile}"
+               privkeyfile="${privkeyfile}"
+               command="sudo ${bridgebin} apache -dn ${primarydomain} -s ${homedirsBase}/${username} -d /${webroot}" />
+
+           <echo msg="Please run: http://${primarydomain}/scripts/core/setup.php"/>
+           <echo msg="Then go to http://wiki.netvlies.nl/index.php/Installatie_(OMS) and follow steps from 'Inrichten'"/>
+   	</target>
+
+
     
 </project>
