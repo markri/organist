@@ -78,7 +78,7 @@ class ConsoleController extends Controller {
         $params['project'] = $app->getName();
         $params['gitrepo'] = $app->getGitrepoSSH();
         $params['repokey'] = $app->getRepokey();
-        $params['initfiles'] = dirname(__DIR__).'/Resources/apptypes/'.$consoleAction->getApplicationType()->getName().'/files/*';
+        $params['initfiles'] = dirname(__DIR__).'/Resources/apptypes/'.$consoleAction->getApplicationType()->getName().'/files/.';
         $params['repositorypath'] = $container->getParameter('repositorypath');
         $params['pubkeyfile'] = $container->getParameter('pubkeyfile');
         $params['privkeyfile'] = $container->getParameter('privkeyfile');
