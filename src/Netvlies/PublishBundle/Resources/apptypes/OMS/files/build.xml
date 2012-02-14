@@ -12,6 +12,7 @@
            <ssh
                username="${username}"
                host="${hostname}"
+               port="${sshport}"
                pubkeyfile="${pubkeyfile}"
                privkeyfile="${privkeyfile}"
                command="ls ${approot} | grep 'No such file or directory'"
@@ -27,7 +28,8 @@
 
            <!-- Initial deployment -->
            <echo msg="executing: ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd ${approot}; git checkout -b workingcopy ${revision}'"/>
-           <exec command="ssh -A ${username}@${hostname}
+           <exec command="
+            ssh -A -p ${sshport} ${username}@${hostname}
             'git clone ${gitrepo} ${approot};
             cd ${approot};
             git checkout -b workingcopy ${revision};
@@ -38,7 +40,7 @@
 
            <!-- create database and user -->
            <echo msg="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'"/>
-           <exec command="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
+           <exec command="ssh -A -p ${sshport} ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
            <echo msg="${output}"/>
 
 
@@ -48,6 +50,7 @@
             <ssh
                 username="${username}"
                 host="${hostname}"
+                port="${sshport}"
                 pubkeyfile="${pubkeyfile}"
                 privkeyfile="${privkeyfile}"
                 command="
@@ -64,6 +67,7 @@
            <ssh
                username="${sudouser}"
                host="${hostname}"
+               port="${sshport}"
                pubkeyfile="${pubkeyfile}"
                privkeyfile="${privkeyfile}"
                command="sudo ${bridgebin} apache -dn ${primarydomain} -s ${homedirsBase}/${username} -d /${webroot}" />

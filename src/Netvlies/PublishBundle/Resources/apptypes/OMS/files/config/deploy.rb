@@ -9,6 +9,8 @@ set :scm, :git
 set :deploy_via, :rsync_with_remote_cache
 set :local_cache, ''
 set :rsync_options, '-az --delete --exclude=Capfile --exclude=build.xml --exclude=config/ --exclude=.gitignore --delete-excluded'
+set :port, #{sshport}
+
 
 set :use_sudo, false
 default_run_options[:pty] = true
