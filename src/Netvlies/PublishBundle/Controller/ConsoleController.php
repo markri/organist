@@ -161,7 +161,7 @@ class ConsoleController extends Controller {
         $uid = md5(time().rand(0, 10000));
         $scriptBuilder = new ScriptBuilder($uid);
 
-        // Change dir to local copy if exists
+        // Change dir to local checkout copy if exists. Can;t hurt right?
         $scriptBuilder->addLine('if [ -d "'.$gitService->getAbsolutePath().'" ]; then cd '.$gitService->getAbsolutePath().'; fi');
 
         foreach($commands as $command){
@@ -191,7 +191,7 @@ class ConsoleController extends Controller {
                         $capParams[] = '-S'.$key.'='.$value;
                     }
                     //@todo need to remove this as soon as capistrano targets are called natively instead of executing them through phing
-                    $shellargs[] = '-Dcapparams'.escapeshellarg(implode(' ', $capParams));
+                    //$shellargs[] = '-Dcapparams'.escapeshellarg(implode(' ', $capParams));
                 }
                 elseif(strpos(trim($command), 'cap')===0){
                     // Capistrano execution
