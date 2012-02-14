@@ -14,6 +14,7 @@ set :scm, :git
 set :deploy_via, :rsync_with_remote_cache
 set :local_cache, ''
 set :rsync_options, '-az --delete --exclude=Capfile --exclude=build.xml --exclude=config/ --exclude=.gitignore --delete-excluded'
+set :port, #{sshport}
 
 set :revision, "#{revision}"
 

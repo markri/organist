@@ -101,6 +101,7 @@ class ConsoleController extends Controller {
             $params['hostname'] = $environment->getHostname();
             $params['otap'] = $environment->getType();
             $params['bridgebin'] = $environment->getDeploybridgecommand();
+            $params['sshport'] = $environment->getSshPort();
         }
 
 		// user files and dirs

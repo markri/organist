@@ -17,6 +17,7 @@ set :keep_releases, 5
 set :ssh_options, {:forward_agent => true}
 set :default_run_options, {:pty => true}
 set :use_sudo, false
+set :port, #{sshport}
 
 # Additional directory and file settings for deployment
 set :shared_files, "#{userfiles}".split(/,/)
