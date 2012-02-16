@@ -44,6 +44,9 @@ class ConsoleController extends Controller {
      */
     public function execAction($script){
         $script = base64_decode($script);
+        if(!file_exists($script)){
+            throw new \Exception('Whoops... You cant execute the same script again by just refreshing the page! :-)');
+        }
         return array('script' => $script);
     }
 
@@ -127,9 +130,7 @@ class ConsoleController extends Controller {
     /**
      *
      * @param ConsoleAction $consoleAction
-     * @return array
      * @throws \Exception
-     * @Template()
      */
     public function prepareCommandAction(ConsoleAction $consoleAction){
 
@@ -228,7 +229,7 @@ class ConsoleController extends Controller {
         $targetId = isset($target)?$consoleAction->getTarget()->getId():'';
 
         $log = new DeploymentLog();
-        $log->setCommand($command);
+        $log->setCommand(implode('; ', $commands));
         $log->setDatetimeStart(new \DateTime());
         $log->setUser($user);
         $log->setTargetId($targetId);
@@ -240,13 +241,33 @@ class ConsoleController extends Controller {
         $em->persist($log);
         $em->flush();
 
+        // We must redirect in order to prevent reposting the same command.
+        return $this->redirect($this->generateUrl('netvlies_publish_console_executecommand', array(
+            'id'=>$app->getId(),
+            'command'=>implode('; ', $commands),
+            'scriptpath'=>$scriptBuilder->getEncodedScriptPath()
+        )));
+    }
+
+
+    /**
+     * @Route("/console/frame/exec/{id}/{scriptpath}/{command}")
+     * @Template()
+     */
+    public function executeCommandAction($id, $command, $scriptpath){
+        // We must redirect in order to make use of the apache proxy setting which path is fixed in httpd.conf
+        // So therefore this method will just render a template where an iframe is loaded with an anyterm console where the command is executed
+        // The script (encoded scriptpath) will be selfdestructed at the end, so re-executing is impossible by then
         $twigParams = array();
+        $em  = $this->getDoctrine()->getEntityManager();
+        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
         $twigParams['application'] = $app;
         $twigParams['command'] = $command;
-        $twigParams['scriptpath'] = $scriptBuilder->getEncodedScriptPath();
+        $twigParams['scriptpath'] = $scriptpath;
 
-        // We must redirect in order to make use of the apache proxy setting which path is fixed in httpd.conf
-        // So therefore this method will just render a template where an iframe is within to control the real execution command
         return $twigParams;
     }
+
+
 }
