@@ -32,7 +32,7 @@ class ScriptBuilder
         }
 
         if(!file_exists($this->scriptBasePath)){
-            throw new Exception('Couldnt create script directory');
+            throw new \Exception('Couldnt create script directory');
         }
 
         $this->createScriptFile($uid);
