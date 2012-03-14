@@ -50,7 +50,7 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getRepokey();
+        $repokey = $app->getScmKey();
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
@@ -74,7 +74,7 @@ class ApplicationController extends Controller {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getRepokey();
+        $repokey = $app->getScmKey();
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
@@ -97,16 +97,14 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getRepokey();
+        $repokey = $app->getScmKey();
+
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
 
-        $currentReference = $app->getReferenceToFollow();
-
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
-        $remoteBranches = $gitService->getRemoteBranches();
+        $scmService = $this->get($app->getScmService());
+        $remoteBranches = $scmService->getBranches($app);
 
         $form = $this->createForm(new FormApplicationEditType(), $app, array('branchchoice' => new BranchesType($remoteBranches)));
         $request = $this->getRequest();
@@ -116,20 +114,8 @@ class ApplicationController extends Controller {
             $form->bindRequest($request);
 
             if($form->isValid()){
-
-                $newReference = $app->getReferenceToFollow();
-                $app->setBranchToFollow($remoteBranches[$newReference]);
-                $this->getRequest()->getSession()->remove('remoteBranches');
-
-                $em->persist($app);
-                $em->flush();
-
-                if($currentReference == $newReference){
-                    return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$id)));
-                }
-                else{
-                    return $this->redirect($this->generateUrl('netvlies_publish_git_checkout', array('id'=>$id, 'reference'=>$newReference)));
-                }
+                //$this->getRequest()->getSession()->remove('remoteBranches');
+                $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$id)));
             }
         }
 
@@ -160,8 +146,8 @@ class ApplicationController extends Controller {
 
         $app->setMysqlpw($passwd);
         $repository = 'git@bitbucket.org:netvlies/'.$app->getName().'.git';
-        $app->setRepokey($app->getName());
-        $app->setGitrepoSSH($repository);
+        $app->setScmKey($app->getName());
+        $app->setScmURL($repository);
 
         $form = $this->createForm(new FormApplicationEnrichType(), $app);
         $request = $this->getRequest();
@@ -188,22 +174,15 @@ class ApplicationController extends Controller {
                 }
 
                 /**
-                 * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+                 * @var \Netvlies\PublishBundle\Services\GitBitbucket $scmService
                  */
-                $gitService = $this->get('git');
-                $gitService->setApplication($app);
+                $scmService = $this->get($app->getScmService());
 
-                $repoObject = $gitService->getSingleRepository();
-                $repoExists = false;
+                $repoExists = $scmService->existRepo($app);
                 $pathExists = false;
 
-                if(!is_null($repoObject)){
-                    // repository exists.
-                    // Clone if directory absolute path doesnt exist and exit
-                    $repoExists = true;
-                }
-
-                if(file_exists($gitService->getAbsolutePath())){
+                $appPath = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
+                if(file_exists($appPath)){
                     // We're finished. Because directory already exists. Which means that it is already cloned
                     // We're not going to change existing checkout
                     $pathExists = true;
@@ -225,11 +204,11 @@ class ApplicationController extends Controller {
                 }
 
                 // Repo and local clone doesnt exist
-                $result = $gitService->createRepository();
+                $result = $scmService->createRepository();
 				if(!$result){
 					echo 'Couldnt create repository. Connection failed';
 					exit;
-				}				
+				}
 
                 $scriptPath = $app->getType()->getInitScriptPath();
                 if(!file_exists($scriptPath)){
@@ -272,21 +251,20 @@ class ApplicationController extends Controller {
          * @var \Netvlies\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getRepokey();
+        $repokey = $app->getScmKey();
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
 
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
-        $remoteBranches = $gitService->getRemoteBranches(true);
+        $scmService = $this->get($app->getScmService());
+        $branches = $scmService->getBranches($app);
         $consoleAction = new ConsoleAction();
         $consoleAction->setContainer($this->container);
         $consoleAction->setApplication($app);
 
-        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
+        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BranchesType($branches), 'app'=>$app));
         $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$app));
-        $deployOForm = $this->createForm(new FormApplicationDeployOType(), $consoleAction, array('branchchoice' => new BranchesType($remoteBranches), 'app'=>$app));
+        $deployOForm = $this->createForm(new FormApplicationDeployOType(), $consoleAction, array('branchchoice' => new BranchesType($branches), 'app'=>$app));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
@@ -294,7 +272,23 @@ class ApplicationController extends Controller {
             if ($request->request->has($deployForm->getName())){
                 $deployForm->bindRequest($request);
                 $consoleAction->setCommand($app->getType()->getDeployCommand());
+
                 if($deployForm->isValid()){
+
+                    // We update the current branch and revision to desired state. Although it should be done afterwards.
+                    // But this will prevent other users from deploying based on a state that that is currently in progress
+                    // The revision will be updated afterwards anyway in the processlogcommand
+		    //@todo this is still dangerous, e.g. server is unreachable than revision is still updated!
+                    if(!array_key_exists($consoleAction->getRevision(), $branches)){
+                        throw new \Exception('Whoops somebody just updated the git repository between previous dashboard load and now');
+                    }
+
+                    $target = $consoleAction->getTarget();
+                    $target->setCurrentBranch($branches[$consoleAction->getRevision()]);
+                    $target->setCurrentRevision($consoleAction->getRevision());
+                    $em->persist($target);
+                    $em->flush();
+
                     return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
                         'consoleAction'  => $consoleAction
                     ));

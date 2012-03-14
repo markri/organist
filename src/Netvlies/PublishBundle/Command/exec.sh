@@ -12,9 +12,9 @@ logfile=$logbase""$scriptid".log"
 
 # Forward BitBucket key so we can temporarily use bitbucket on remote server (if remote connection is made with SSH agent forwarding)
 # ONLY THE RSA KEY!!! Which is for bitbucket. Other  key id_dsa should NOT be added (security)
-# @todo maybe we should move this into the script in the scriptbuilder??
+# @todo maybe we should move this into the script in the scriptbuilder?? We can use BB keys from parameters.ini!
 eval `ssh-agent`
-`ssh-add $HOME/.ssh/id_rsa`
+`ssh-add $HOME/.ssh/id_rsa_git`
 
 # keep track of execution time
 start=$(date +%s)
@@ -26,7 +26,7 @@ echo `cat -A $script` >> $logfile
 echo "" >> $logfile
 
 # execute script
-$script | tee -a $logfile
+$script 2>&1 | tee -a $logfile
 exitcode=${PIPESTATUS[0]}
 
 # calculate duration

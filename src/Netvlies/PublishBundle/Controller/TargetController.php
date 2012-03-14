@@ -252,9 +252,8 @@ class TargetController extends Controller {
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $app = $target->getApplication();
 
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
-        $remoteBranches = $gitService->getRemoteBranches();
+        $scmService = $this->get($app->getScmService());
+        $remoteBranches = $scmService->getBranches($app);
 
         /**
          * @var \Netvlies\PublishBundle\Entity\Target $target
@@ -264,7 +263,7 @@ class TargetController extends Controller {
         $oldRef = $target->getCurrentRevision();
         $newRef = array_search($branch, $remoteBranches);
 
-        return $this->handleChangesetsRendering($gitService, $oldRef, $newRef);
+        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
 
     }
 
@@ -283,19 +282,18 @@ class TargetController extends Controller {
         }
         $app = $target->getApplication();
 
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
+        $scmService = $this->get($app->getScmService());
 
         $oldRef = $target->getCurrentRevision();
         $newRef = $this->get('request')->query->get('ref');
 
-        return $this->handleChangesetsRendering($gitService, $oldRef, $newRef);
+        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
     }
 
 
 
-    protected function handleChangesetsRendering($gitService, $oldRef, $newRef){
-        $changesets = $gitService->getLastChangesets($newRef);
+    protected function handleChangesetsRendering($scmService, $app, $oldRef, $newRef){
+        $changesets = $scmService->getChangesets($app, $oldRef, $newRef);
 
         if(empty($newRef) && count($changesets)>0){
             $newRef = $changesets[0]['raw_node'];
@@ -320,7 +318,7 @@ class TargetController extends Controller {
         $params['messages'] = $messages;
         $params['oldref'] = $oldRef;
         $params['newref'] = $newRef;
-        $params['bburl'] = $gitService->getBitbucketChangesetURL();
+        $params['bburl'] = $scmService->getChangesetURL();
 
         return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
     }

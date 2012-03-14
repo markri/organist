@@ -50,7 +50,7 @@ namespace :deploy do
 		if "#{exists}".strip != "true"
 			set :vendors_mode, "reinstall"
 			# also create db schema on initial deployment
-			run "#{release_path}/app/console doctrine:schema:create"
+			# run "#{release_path}/app/console doctrine:schema:create"
 		end
     end	
 	

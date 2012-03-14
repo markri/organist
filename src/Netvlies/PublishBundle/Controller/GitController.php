@@ -34,20 +34,10 @@ class GitController extends Controller
         * @var \Netvlies\PublishBundle\Entity\Application $oApp
         */
         $oApp = $oRepository->find($id);
-        $oApp->setBranchToFollow('master');
-
-        $oEntityManager->persist($oApp);
-        $oEntityManager->flush();
-
-        /**
-        * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
-        */
-        $gitService = $this->get('git');
-        $gitService->setApplication($oApp);
-        $sSiteRepository = $gitService->getAbsolutePath();
+        $sSiteRepository = $oApp->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
 
         $consoleAction = new ConsoleAction();
-        $consoleAction->setCommand('git clone '.escapeshellarg($oApp->getGitrepoSSH()).' '.escapeshellarg($sSiteRepository));
+        $consoleAction->setCommand('git clone '.escapeshellarg($oApp->getScmURL()).' '.escapeshellarg($sSiteRepository));
         $consoleAction->setApplication($oApp);
         $consoleAction->setContainer($this->container);
 
@@ -64,7 +54,7 @@ class GitController extends Controller
      public function checkoutAction($id, $reference) {
 
          // Check if repo base path is there and writable
-         $sPath = $this->container->getParameter('repositorypath');
+         $sPath = $this->container->getParameter('netvlies_publish.repositorypath');
          $oDir = new \SplFileInfo($sPath);
 
          if (!$oDir->isDir() || !$oDir->isWritable()) {
@@ -73,13 +63,7 @@ class GitController extends Controller
 
          $oEntityManager = $this->getDoctrine()->getEntityManager();
          $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-
-         /**
-          * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
-          */
-         $gitService = $this->get('git');
-         $gitService->setApplication($app);
-         $sSiteRepository = $gitService->getAbsolutePath();
+         $sSiteRepository = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
 
          $commands = array(
              'cd '.escapeshellarg($sSiteRepository),

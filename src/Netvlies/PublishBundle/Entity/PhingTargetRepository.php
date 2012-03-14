@@ -20,6 +20,7 @@ class PhingTargetRepository extends EntityRepository
 
         $oEntityManager = $this->getEntityManager();
 
+        // This will break...
         if(!file_exists($app->getBuildFile())){
             return;
         }
