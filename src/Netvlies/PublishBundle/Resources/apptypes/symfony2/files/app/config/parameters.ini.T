@@ -1,6 +1,8 @@
 ; These parameters can be imported into other config files
 ; by enclosing the key with % (like %database_user%)
 ; Comments start with ';', as in php.ini
+; variables enclosed by # are replaced during deployment, with proper values for that environment
+
 [parameters]
     database_driver   = pdo_mysql
     database_host     = localhost

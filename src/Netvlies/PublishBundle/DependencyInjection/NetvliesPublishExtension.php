@@ -22,6 +22,19 @@ class NetvliesPublishExtension extends Extension
     {        
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter('netvlies_publish.sudouser', $config['sudouser']);
+        $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
+
+        foreach($config['scm'] as $scmType => $scm){
+            foreach($scm as $scmService => $serviceParams){
+                foreach($serviceParams as $key=>$value){
+                    $container->setParameter('netvlies_publish.'.$scmType.'.'.$scmService.'.'.$key, $value);
+                }
+            }
+        }
+        $container->setParameter('netvlies_publish.scm.gi', $config['repositorypath']);
+
+
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

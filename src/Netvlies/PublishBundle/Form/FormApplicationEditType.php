@@ -21,12 +21,7 @@ class FormApplicationEditType extends AbstractType
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('gitrepoSSH', 'text', array('required'=>true, 'label'=>'SSH link to your git repository', 'read_only' => true))
-            ->add('referenceToFollow', 'choice', array(
-                'choice_list'=>$options['branchchoice'],
-                'label'=>'Branch/Tag to use for deployment descriptors'
-            ))
-
+            ->add('scmURL', 'text', array('required'=>true, 'label'=>'SCM url to your repository', 'read_only' => true))
             ;
     }
 

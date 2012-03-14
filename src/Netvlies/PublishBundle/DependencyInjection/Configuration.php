@@ -20,9 +20,27 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('netvlies_publish');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode->children()
+            ->scalarNode('sudouser')->end()
+            ->scalarNode('repositorypath')->end()
+            ->arrayNode('scm')
+                ->children()
+                    ->arrayNode('git')
+                        ->useAttributeAsKey('key')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('privatekey')->end()
+                                ->scalarNode('owner')->end()
+                                ->scalarNode('owner')->end()
+                                ->scalarNode('ownerpassword')->end()
+                                ->scalarNode('committer')->end()
+                                ->scalarNode('committerpassword')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
 
         return $treeBuilder;
     }

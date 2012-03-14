@@ -11,7 +11,6 @@ use Netvlies\PublishBundle\Entity\ScriptBuilder;
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"name"})})
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\ApplicationRepository")
- * @todo custom parameters can be added which will be passed allong when executing something in consolecontroller
  */
 class Application
 {
@@ -41,15 +40,20 @@ class Application
     private $type;
 
     /**
-     * @Assert\Regex(pattern="/^git@bitbucket.org:.*?.git$/", match=true, message="Use GIT SSH connection string from Bitbucket")
-     * @ORM\Column(name="gitrepoSSH", type="string", length=255, nullable=true)
+     * @ORM\Column(name="scmURL", type="string", length=255, nullable=true)
      */
-    private $gitrepoSSH;
+    private $scmURL;
 
     /**
-     * @ORM\Column(name="repokey", type="string", length=255, nullable=true)
+     * @ORM\Column(name="scmKey", type="string", length=255, nullable=true)
      */
-    private $repokey;
+    private $scmKey;
+
+    /**
+     * @var string $scmService
+     * @ORM\Column(name="scmService", type="string", length=255, nullable=true)
+     */
+    private $scmService;
 
     /**
      * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
@@ -61,22 +65,6 @@ class Application
      * @ORM\OneToMany(targetEntity="UserFiles", mappedBy="application")
      */
     private $userFiles;
-
-    /**
-     * @var string $branchToFollow
-     * @ORM\Column(name="branchtofollow", type="string", length=255, nullable=true)
-     */
-    private $branchToFollow;
-
-    /**
-     * @var string $branchToFollow
-     * @ORM\Column(name="referencetofollow", type="string", length=255, nullable=true)
-     */
-    private $referenceToFollow;
-
-
-    //private $referenceToDeploy;
-
 
 
     /**
@@ -130,23 +118,21 @@ class Application
     }
 
     /**
-     * Set gitrepoSSH
-     *
-     * @param string $gitrepoSSH
+     * Set SCM URL
+     * @param string $scmURL
      */
-    public function setGitrepoSSH($gitrepoSSH)
+    public function setScmURL($scmURL)
     {
-        $this->gitrepoSSH = $gitrepoSSH;
+        $this->scmURL = $scmURL;
     }
 
     /**
-     * Get gitrepoSSH
-     *
+     * Get SCM URL
      * @return string 
      */
-    public function getGitrepoSSH()
+    public function getScmURL()
     {
-        return $this->gitrepoSSH;
+        return $this->scmURL;
     }
 
     /**
@@ -185,62 +171,62 @@ class Application
         return $this->customer;
     }
 
-
+    /**
+     * @param $mysqlpw
+     */
     public function setMysqlpw($mysqlpw)
     {
         $this->mysqlpw = $mysqlpw;
     }
 
+    /**
+     * @return mixed
+     */
     public function getMysqlpw()
     {
         return $this->mysqlpw;
     }
 
-//    public function setReferenceToDeploy($referenceToDeploy)
-//    {
-//        $this->referenceToDeploy = $referenceToDeploy;
-//    }
-//
-//    public function getReferenceToDeploy()
-//    {
-//        return $this->referenceToDeploy;
-//    }
-
-
-    public function setRepokey($repokey)
+    /**
+     * @todo is this even needed when we have scmUrl?
+     * @param $repokey
+     */
+    public function setScmKey($scmKey)
     {
-        $this->repokey = $repokey;
-    }
-
-    public function getRepokey()
-    {
-        return $this->repokey;
-    }
-
-    public function setBranchToFollow($branchToFollow)
-    {
-        $this->branchToFollow = $branchToFollow;
-    }
-
-    public function getBranchToFollow()
-    {
-        return $this->branchToFollow;
+        $this->scmKey = $scmKey;
     }
 
     /**
-     * @param string $referenceToFollow
+     * @return mixed
      */
-    public function setReferenceToFollow($referenceToFollow)
+    public function getScmKey()
     {
-        $this->referenceToFollow = $referenceToFollow;
+        return $this->scmKey;
+    }
+
+    /**
+     * @param string $scmService
+     */
+    public function setScmService($scmService)
+    {
+        $this->scmService = $scmService;
     }
 
     /**
      * @return string
      */
-    public function getReferenceToFollow()
+    public function getScmService()
     {
-        return $this->referenceToFollow;
+        return $this->scmService;
+    }
+
+    /**
+     * @param $repoBasePath
+     * @return string
+     */
+    public function getAbsolutePath($repoBasePath)
+    {
+        return $repoBasePath.'/'.$this->getScmKey();
     }
 
 

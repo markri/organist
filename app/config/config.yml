@@ -59,14 +59,31 @@ jms_security_extra:
     secure_all_services: false
 
 
-parameters:
-    privkeyfile: /var/lib/jenkins/.ssh/id_dsa
-    pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
+netvlies_publish:
+#        #@todo refactor privkeyfile and pubkeyfile (they should be removed). Because we shouldnt use keyfiles in phing
+#        # Let the system itself decide (just like capistrano)
+#        #@todo add other services like github
     sudouser: deploy
     repositorypath: /var/www/vhosts/publish/web/repos
-    # @todo add other services like github or maybe even svn repos?
+    scm:
+        git:
+            bitbucket:
+                privatekey: /var/lib/jenkins/.ssh/id_rsa_git
+                owner: netvlies
+                ownerpassword: n3tvl13sb1tbuck3t
+                committer: nvs_ci
+                committerpassword: 33x54Yq7CY
+
+
+
+parameters:
+    #privkeyfile: /var/lib/jenkins/.ssh/id_dsa
+    #pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
+    sudouser: deploy
+    repositorypath: /var/www/vhosts/publish/web/repos
+
     bitbucketuser: nvs_ci
     bitbucketpassword: 33x54Yq7CY
     bitbucketrepoowner: netvlies
-    bitbucketrepoownerpassword: 
+    bitbucketrepoownerpassword: n3tvl13sb1tbuck3t
     

@@ -32,7 +32,7 @@ class DeployCommand extends ContainerAwareCommand
             ->setName('publish:deploy')
             ->setDescription('Make a deployment through command line')
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'Target id')
-            ->addOption('reference', null, InputOption::VALUE_OPTIONAL, 'Reference/revision', 'refs/heads/master');
+            ->addOption('reference', null, InputOption::VALUE_OPTIONAL, 'Reference/revision', 'master');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -1,5 +1,5 @@
 services:
-    git:
+    bitbucket:
         class:   Netvlies\PublishBundle\Services\GitBitbucket
         arguments: [@service_container]
 

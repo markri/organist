@@ -76,13 +76,13 @@ class ConsoleController extends Controller {
 
 		// Entity attributes
         $params['project'] = $app->getName();
-        $params['gitrepo'] = $app->getGitrepoSSH();
-        $params['repokey'] = $app->getRepokey();
+        $params['gitrepo'] = $app->getScmURL();
+        $params['repokey'] = $app->getScmKey();
         $params['initfiles'] = dirname(__DIR__).'/Resources/apptypes/'.$consoleAction->getApplicationType()->getName().'/files/.';
-        $params['repositorypath'] = $container->getParameter('repositorypath');
-        $params['pubkeyfile'] = $container->getParameter('pubkeyfile');
-        $params['privkeyfile'] = $container->getParameter('privkeyfile');
-        $params['sudouser'] = $container->getParameter('sudouser');
+        $params['repositorypath'] = $container->getParameter('netvlies_publish.repositorypath');
+        //$params['pubkeyfile'] = $container->getParameter('pubkeyfile');
+        //$params['privkeyfile'] = $container->getParameter('privkeyfile');
+        $params['sudouser'] = $container->getParameter('netvlies_publish.sudouser');
         $params['revision'] = $revision;
 
         if(!is_null($target)){
@@ -143,10 +143,9 @@ class ConsoleController extends Controller {
         $revision = $consoleAction->getRevision();
 
         /**
-         * @var \Netvlies\PublishBundle\Services\GitBitbucket $gitService
+         * @var \Netvlies\PublishBundle\Services\GitBitbucket $scmService
          */
-        $gitService = $this->get('git');
-        $gitService->setApplication($app);
+        $scmService = $this->get($app->getScmService());
         $params = $this->getParameters($consoleAction);
 
         if(is_array($command)){
@@ -159,9 +158,10 @@ class ConsoleController extends Controller {
         // Build script. Set CWD to local checkout of application
         $uid = md5(time().rand(0, 10000));
         $scriptBuilder = new ScriptBuilder($uid);
+        $appPath = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
 
         // Change dir to local copy if exists
-        $scriptBuilder->addLine('if [ -d "'.$gitService->getAbsolutePath().'" ]; then cd '.$gitService->getAbsolutePath().'; fi');
+        $scriptBuilder->addLine('if [ -d "'.$appPath.'" ]; then cd '.$appPath.'; fi');
 
         foreach($commands as $command){
             // Parse command line options
@@ -173,7 +173,7 @@ class ConsoleController extends Controller {
                     $command = str_replace('${'.$match.'}', $params[$match], $command);
                 }
                 elseif($match=='buildfile'){
-                    $command = str_replace('${buildfile}', $gitService->getBuildFile(), $command);
+                    $command = str_replace('${buildfile}', $appPath.'/build.xml', $command);
                 }
             }
 
