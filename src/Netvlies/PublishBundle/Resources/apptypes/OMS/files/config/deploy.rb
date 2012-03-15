@@ -11,6 +11,8 @@ set :local_cache, ''
 set :rsync_options, '-az --delete --exclude=Capfile --exclude=build.xml --exclude=config/ --exclude=.gitignore --delete-excluded'
 set :shared_children, "#{userdirs}".split(/,/)
 set :shared_files, "#{userfiles}".split(/,/)
+set :port, #{sshport}
+
 set :use_sudo, false
 default_run_options[:pty] = true
 

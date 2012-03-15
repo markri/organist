@@ -138,14 +138,18 @@ class ApplicationController extends Controller {
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
-        $chars = '3456789abcdefghjkmnpqrtuvwxyz3456789ABCDEFGHJKLMNPQRTUVWXY3456789';
+        // Copied chars array from current password generator
+        $chars = '345678934567893456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXY';
         $passwd = '';
         for($i = 0; $i < 10; $i++) {
             $passwd .= substr($chars, rand(0, strlen($chars)), 1);
         }
 
         $app->setMysqlpw($passwd);
-        $repository = 'git@bitbucket.org:netvlies/'.$app->getName().'.git';
+
+		//@todo wrong parameter use here, and wrong repo url etc.
+		$repoOwner = $this->container->getParameter('bitbucketrepoowner');
+        $repository = 'git@bitbucket.org:'.$repoOwner.'/'.$app->getName().'.git';
         $app->setScmKey($app->getName());
         $app->setScmURL($repository);
 
