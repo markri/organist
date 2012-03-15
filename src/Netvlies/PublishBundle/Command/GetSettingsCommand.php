@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Netvlies\PublishBundle\Entity\DeploymentLog;
+use Netvlies\PublishBundle\Entity\ConsoleLog;
 use Netvlies\PublishBundle\Controller\ConsoleController;
 
 class getSettingsCommand extends ContainerAwareCommand

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Netvlies\PublishBundle\Entity\DeploymentLog;
+use Netvlies\PublishBundle\Entity\ConsoleLog;
 
 
 class ProcessLogCommand extends ContainerAwareCommand
@@ -59,9 +59,9 @@ class ProcessLogCommand extends ContainerAwareCommand
 
          foreach($uids as $uid){
              /**
-              * @var \Netvlies\PublishBundle\Entity\DeploymentLog $logentry
+              * @var \Netvlies\PublishBundle\Entity\ConsoleLog $logentry
               */
-             $logentry = $em->getRepository('NetvliesPublishBundle:DeploymentLog')->findOneByUid($uid);
+             $logentry = $em->getRepository('NetvliesPublishBundle:ConsoleLog')->findOneByUid($uid);
 
              if(is_null($logentry)){
                  echo "Warning: No log entry available to update...";

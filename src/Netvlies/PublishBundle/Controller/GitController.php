@@ -12,8 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\PublishBundle\Entity\Application;
-use Netvlies\PublishBundle\Entity\ScriptBuilder;
-use Netvlies\PublishBundle\Entity\DeploymentLog;
+use Netvlies\PublishBundle\Entity\ConsoleLog;
 use Netvlies\PublishBundle\Entity\ConsoleAction;
 use Netvlies\PublishBundle\Form\FormApplicationType;
 

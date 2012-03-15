@@ -4,7 +4,6 @@ namespace Netvlies\PublishBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Netvlies\PublishBundle\Entity\ScriptBuilder;
 
 /**
  * Netvlies\PublishBundle\Entity\Application

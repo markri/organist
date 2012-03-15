@@ -60,11 +60,12 @@ jms_security_extra:
 
 
 netvlies_publish:
-#        #@todo refactor privkeyfile and pubkeyfile (they should be removed). Because we shouldnt use keyfiles in phing
-#        # Let the system itself decide (just like capistrano)
-#        #@todo add other services like github
+    #@todo private and public key for connecting through phing is still used
+    #@todo add other services like github
+    #@todo add other scm like svn mercurial
+
     sudouser: deploy
-    repositorypath: /var/www/vhosts/publish/web/repos
+    repositorypath: /home/mdekrijger/Projects
     scm:
         git:
             bitbucket:
@@ -74,16 +75,4 @@ netvlies_publish:
                 committer: nvs_ci
                 committerpassword: 33x54Yq7CY
 
-
-
-parameters:
-    #privkeyfile: /var/lib/jenkins/.ssh/id_dsa
-    #pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
-    sudouser: deploy
-    repositorypath: /var/www/vhosts/publish/web/repos
-
-    bitbucketuser: nvs_ci
-    bitbucketpassword: 33x54Yq7CY
-    bitbucketrepoowner: netvlies
-    bitbucketrepoownerpassword: n3tvl13sb1tbuck3t
     

@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\EnvironmentRepository")
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="OTAPhost", columns={"type", "hostname"}), @ORM\UniqueConstraint(name="keyname", columns={"keyname"})})
- * @todo custom parameters can be added which will be passed allong when executing something in consolecontroller
  */
 class Environment
 {

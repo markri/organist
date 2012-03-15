@@ -20,4 +20,10 @@ interface ScmInterface
 
     function existRepo($app);
 
+    /**
+     * @abstract
+     * return strin if set or null when no keyfile is present
+     */
+    function getKeyfile();
+
 }

@@ -12,8 +12,7 @@ use Netvlies\PublishBundle\Entity\Application;
 use Netvlies\PublishBundle\Entity\Deployment;
 use Netvlies\PublishBundle\Entity\Rollback;
 
-use Netvlies\PublishBundle\Entity\ScriptBuilder;
-use Netvlies\PublishBundle\Entity\DeploymentLog;
+use Netvlies\PublishBundle\Entity\ConsoleLog;
 use Netvlies\PublishBundle\Entity\ConsoleAction;
 
 use Netvlies\PublishBundle\Form\FormApplicationType;
@@ -145,9 +144,10 @@ class ConsoleController extends Controller {
         $revision = $consoleAction->getRevision();
 
         /**
-         * @var \Netvlies\PublishBundle\Services\GitBitbucket $scmService
+         * @var \Netvlies\PublishBundle\Services\Scm\GitBitbucket $scmService
          */
         $scmService = $this->get($app->getScmService());
+
         $params = $this->getParameters($consoleAction);
 
         if(is_array($command)){
@@ -158,12 +158,21 @@ class ConsoleController extends Controller {
         }
 
         // Build script. Set CWD to local checkout of application
-        $uid = md5(time().rand(0, 10000));
-        $scriptBuilder = new ScriptBuilder($uid);
+        $scriptBuilder = $this->get('scriptbuilder');
         $appPath = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
+        $keyfile = $scmService->getKeyfile();
 
         // Change dir to local copy if exists
-        $scriptBuilder->addLine('if [ -d "'.$appPath.'" ]; then cd '.$appPath.'; fi');
+        if(file_exists($appPath)){
+            $scriptBuilder->addLine('cd '.$appPath);
+        }
+
+        // Set keyfile if present
+        if(!empty($keyfile)){
+            $scriptBuilder->addLine('eval `ssh-agent`');
+            $scriptBuilder->addLine('`ssh-add '.$keyfile.'`');
+        }
+
 
         foreach($commands as $command){
             // Parse command line options
@@ -184,15 +193,12 @@ class ConsoleController extends Controller {
 
                 $shellargs = array();
 
-
                 if(strpos(trim($command), 'phing')===0){
                     // Phing execution
                     foreach($params as $key=>$value){
                         $shellargs[] = '-D'.$key.'='.escapeshellarg($value);
                         $capParams[] = '-S'.$key.'='.$value;
                     }
-                    //@todo need to remove this as soon as capistrano targets are called natively instead of executing them through phing
-                    //$shellargs[] = '-Dcapparams'.escapeshellarg(implode(' ', $capParams));
                 }
                 elseif(strpos(trim($command), 'cap')===0){
                     // Capistrano execution
@@ -202,8 +208,8 @@ class ConsoleController extends Controller {
                 }
                 else{
                     // Simple shell execution
-                    throw new \Exception('Command type not yet implemented! use (phing|cap) '.$command);
                     //@todo set all params by using export
+                    throw new \Exception('Command type not yet implemented! use (phing|cap) '.$command);
                 }
 
                 // Set params in command
@@ -219,6 +225,12 @@ class ConsoleController extends Controller {
             $scriptBuilder->addLine($command);
         }
 
+        if(!empty($keyfile)){
+            $scriptBuilder->addLine('ssh-agent -k > /dev/null 2>&1');
+            $scriptBuilder->addLine('unset SSH_AGENT_PID');
+            $scriptBuilder->addLine('unset SSH_AUTH_SOCK');
+        }
+
         // Prepare log entry
         $em  = $this->getDoctrine()->getEntityManager();
         $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
@@ -228,7 +240,7 @@ class ConsoleController extends Controller {
         $type = isset($environment)?$environment->getType():'';
         $targetId = isset($target)?$consoleAction->getTarget()->getId():'';
 
-        $log = new DeploymentLog();
+        $log = new ConsoleLog();
         $log->setCommand(implode('; ', $commands));
         $log->setDatetimeStart(new \DateTime());
         $log->setUser($user);
@@ -245,7 +257,7 @@ class ConsoleController extends Controller {
         return $this->redirect($this->generateUrl('netvlies_publish_console_executecommand', array(
             'id'=>$app->getId(),
             'command'=>implode('; ', $commands),
-            'scriptpath'=>$scriptBuilder->getEncodedScriptPath()
+            'scriptpath'=>base64_encode($scriptBuilder->getScriptPath())
         )));
     }
 

@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Netvlies\PublishBundle\Entity\TargetRepository")
- * @todo custom parameters can be added which will be passed allong when executing something in consolecontroller
  */
 class Target
 {

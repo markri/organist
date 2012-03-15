@@ -80,7 +80,7 @@ class TargetController extends Controller {
     /**
      *
      * @Route("/target/delete/{id}")
-     * @todo add confirmation
+     * @todo add confirmation, javascript would be sufficient
      */
     public function deleteAction($id){
         $em  = $this->getDoctrine()->getEntityManager();

@@ -10,10 +10,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table()
  * @ORM\Entity()
- *
- * @todo this functions as a kind of template. In here a template key must be added so these can be found in  resources\views\applicationType
- *
- *
  */
 class ApplicationType
 {

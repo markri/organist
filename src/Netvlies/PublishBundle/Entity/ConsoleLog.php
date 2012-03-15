@@ -6,13 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Netvlies\PublishBundle\Entity\DeploymentLog
- * @todo rename to ConsoleLog
+ * Netvlies\PublishBundle\Entity\ConsoleLog
  *
  * @ORM\Table()
  * @ORM\Entity
   */
-class DeploymentLog
+class ConsoleLog
 {
     /**
      * @var integer $id
@@ -82,7 +81,7 @@ class DeploymentLog
 
 
     /**
-     * @todo soft link So targets can still be deleted without constraints to deploymentLog
+     * @todo soft link So targets can still be deleted without constraints to consoleLog, to set null
      * This variable is used as a temporary backreference to update current status (revision etc)
      * @var int $targetId
      * @ORM\Column(name="targetid", type="integer", nullable="true")
@@ -95,9 +94,6 @@ class DeploymentLog
      * @ORM\Column(name="revision", type="string", length=255, nullable="true")
      */
     private $revision;
-
-
-
 
 
     /**
