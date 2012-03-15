@@ -1,6 +1,7 @@
 services:
+    # services
     bitbucket:
-        class:   Netvlies\PublishBundle\Services\GitBitbucket
+        class:   Netvlies\PublishBundle\Services\Scm\GitBitbucket
         arguments: [@service_container]
 
     console_controller:
@@ -8,6 +9,11 @@ services:
         calls:
             - [ setContainer, [ @service_container ] ]
 
+    scriptbuilder:
+        class:  Netvlies\PublishBundle\Services\ScriptBuilder
+
+
+    # form types
     netvlies.publish.form.environment_selector:
         class: Netvlies\PublishBundle\Form\EnvironmentType
         arguments: ["@doctrine.orm.entity_manager"]
@@ -19,9 +25,3 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: form.type, alias: target_selector }
-
-#    netvlies.publish.form.create_target_step2:
-#        class: Netvlies\PublishBundle\Form\FormTargetStep2Type
-#        arguments: [@doctrine.orm.entity_manager]
-#        tags:
-#            - { name: form.type, alias: create_target_step2 }

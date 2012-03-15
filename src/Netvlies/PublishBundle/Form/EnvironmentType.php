@@ -19,7 +19,6 @@ use Netvlies\PublishBundle\Form\ChoiceList\EnvironmentsType as EnvironmentChoice
 use Netvlies\PublishBundle\Form\DataTransformer\IdToEnvironment;
 
 
-
 class EnvironmentType extends AbstractType
 {
 

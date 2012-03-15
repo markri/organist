@@ -146,12 +146,10 @@ class ApplicationController extends Controller {
         }
 
         $app->setMysqlpw($passwd);
-
-		//@todo wrong parameter use here, and wrong repo url etc.
-		$repoOwner = $this->container->getParameter('bitbucketrepoowner');
-        $repository = 'git@bitbucket.org:'.$repoOwner.'/'.$app->getName().'.git';
         $app->setScmKey($app->getName());
-        $app->setScmURL($repository);
+
+        $scmService = $this->get($app->getScmService());
+        $app->setScmURL($scmService->getScmURL($app));
 
         $form = $this->createForm(new FormApplicationEnrichType(), $app);
         $request = $this->getRequest();
@@ -176,11 +174,6 @@ class ApplicationController extends Controller {
                     $em->persist($userFile);
                     $em->flush();
                 }
-
-                /**
-                 * @var \Netvlies\PublishBundle\Services\GitBitbucket $scmService
-                 */
-                $scmService = $this->get($app->getScmService());
 
                 $repoExists = $scmService->existRepo($app);
                 $pathExists = false;
@@ -282,7 +275,7 @@ class ApplicationController extends Controller {
                     // We update the current branch and revision to desired state. Although it should be done afterwards.
                     // But this will prevent other users from deploying based on a state that that is currently in progress
                     // The revision will be updated afterwards anyway in the processlogcommand
-		    //@todo this is still dangerous, e.g. server is unreachable than revision is still updated!
+		            //@todo this is still dangerous, e.g. server is unreachable than revision is still updated! better is to have a PID file per project
                     if(!array_key_exists($consoleAction->getRevision(), $branches)){
                         throw new \Exception('Whoops somebody just updated the git repository between previous dashboard load and now');
                     }

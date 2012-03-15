@@ -73,7 +73,7 @@ function createvhost
 			let i++
 		done	
 
-		# @todo Check if logs dir exists otherwise apache will break!
+		# @todo Check if logs dir exists otherwise apache will break! Make agreement on where to save logs in general
 		echo "	ErrorLog $serverroot/logs/error.log" >> $vhost
 		echo "	TransferLog $serverroot/logs/transfer.log" >> $vhost
 		echo "	<Directory $docroot>" >> $vhost

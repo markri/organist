@@ -4,11 +4,10 @@
  * Creation date: 25-1-12
  */
 
-
 namespace Netvlies\PublishBundle\Services\Scm;
 
-
 use Netvlies\PublishBundle\Entity\Application;
+
 
 class GitBitbucket implements ScmInterface
 {
@@ -18,6 +17,7 @@ class GitBitbucket implements ScmInterface
     protected $password;
     protected $owner;
     protected $ownerpassword;
+    protected $keyfile;
 
     /**
      * @param $repositoryBasePath
@@ -36,6 +36,7 @@ class GitBitbucket implements ScmInterface
         $this->password = $container->getParameter('netvlies_publish.git.bitbucket.committerpassword');
         $this->owner = $container->getParameter('netvlies_publish.git.bitbucket.owner');
         $this->ownerpassword = $container->getParameter('netvlies_publish.git.bitbucket.ownerpassword');
+        $this->keyfile = $container->getParameter('netvlies_publish.git.bitbucket.privatekeyfile');
 
         if(!file_exists($this->basePath)){
             throw new \Exception('Repository base path doesnt exist, please change your config.yml');
@@ -43,43 +44,51 @@ class GitBitbucket implements ScmInterface
     }
 
     /**
+     * This will be executed locally. So be sure to fetch latest updates from bitbucket otherwise new branches will be missing
      * @return array
      * @todo load from local branches (we should assume up to date local repository)
      */
     public function getBranches($app){
 
-        $appPath = $app->getAbsolutePath($this->basePath);
-        if(!file_exists($appPath)){
-            throw new \Exception('Repository path doesnt exist '.$appPath);
-        }
 
-        $command = 'cd '.$appPath.'; git ls-remote 2>&1; echo $?;';
-        $output = shell_exec($command);
-        $exitcode = trim(substr($output, -2));
+        //git branch -v --abbrev=40
 
-        if($exitcode!='0'){
-            throw new \Exception('Cant read remote branches. Do you have a correct ssh key setup?');
-        }
 
-        $regex = '/\n(.{40})\s*(.*)$/im';
-        $matches = array();
-        $numberfound = preg_match_all($regex, $output, $matches);
 
-        if($numberfound == 0){
-            return array();
-        }
-
-        $refs = $matches[1];
-        $branchnames = $matches[2];
-
-        $return = array_combine($refs, $branchnames);
-
-        return $return;
+        // Code below is for remote branches
+//        $appPath = $app->getAbsolutePath($this->basePath);
+//        if(!file_exists($appPath)){
+//            throw new \Exception('Repository path doesnt exist '.$appPath);
+//        }
+//
+//        $command = 'cd '.$appPath.'; git ls-remote 2>&1; echo $?;';
+//        $output = shell_exec($command);
+//        $exitcode = trim(substr($output, -2));
+//
+//        if($exitcode!='0'){
+//            throw new \Exception('Cant read remote branches. Do you have a correct ssh key setup?');
+//        }
+//
+//        $regex = '/\n(.{40})\s*(.*)$/im';
+//        $matches = array();
+//        $numberfound = preg_match_all($regex, $output, $matches);
+//
+//        if($numberfound == 0){
+//            return array();
+//        }
+//
+//        $refs = $matches[1];
+//        $branchnames = $matches[2];
+//
+//        $return = array_combine($refs, $branchnames);
+//
+//        return $return;
     }
 
 
 
     /**
+     * This will be executed locally
      * @todo refactor in changeset object
      * @todo load from local changes
      * @param $toRef Latest reference to calculate from.
@@ -123,7 +132,8 @@ class GitBitbucket implements ScmInterface
     /**
      * @return string
      */
-    public function getChangesetURL($app){
+    public function getChangesetURL($app)
+    {
         return 'https://bitbucket.org/'.$this->owner.'/'.$app->getScmKey().'/changesets';
     }
 
@@ -132,7 +142,8 @@ class GitBitbucket implements ScmInterface
      * @param $app
      * @return bool
      */
-    public function existRepo($app){
+    public function existRepo($app)
+    {
        // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Repositories
        $ch = curl_init();
        $url = 'https://api.bitbucket.org/1.0/repositories/'.$this->owner.'/'.$app->getScmKey().'/';
@@ -150,8 +161,8 @@ class GitBitbucket implements ScmInterface
     /**
      * @return bool
      */
-    public function createRepository($app){
-
+    public function createRepository($app)
+    {
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Repositories
         $ch = curl_init();
         $url = 'https://api.bitbucket.org/1.0/repositories/';
@@ -171,6 +182,24 @@ class GitBitbucket implements ScmInterface
         curl_close($ch);
 
         return $result!==false && $status==200;
+    }
+
+    /**
+     * Return private key
+     * @return string
+     */
+    public function getKeyfile()
+    {
+        return $this->keyfile;
+    }
+
+    /**
+     * @param $app
+     * @return string
+     */
+    public function getScmURL($app)
+    {
+        return 'git@bitbucket.org:'.$this->owner.'/'.$app->getName().'.git';
     }
 
 }
