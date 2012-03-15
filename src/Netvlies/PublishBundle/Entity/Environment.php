@@ -70,6 +70,12 @@ class Environment
     private $defaultUser;
 
 
+    /**
+     * @var string $sshPort
+     * @ORM\Column(name="sshPort", type="string", length=4)
+     */
+    private $sshPort;
+
 
     /**
      * Get id
@@ -210,5 +216,15 @@ class Environment
     public function getDefaultUser()
     {
         return $this->defaultUser;
+    }
+
+    public function setSshPort($sshPort)
+    {
+        $this->sshPort = $sshPort;
+    }
+
+    public function getSshPort()
+    {
+        return $this->sshPort;
     }
 }

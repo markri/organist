@@ -9,7 +9,8 @@
 		
 		<ssh 
 			username="${username}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="ls /${approot} | grep 'No such file or directory'" 
@@ -27,7 +28,8 @@
 						<echo msg="Removing previous setup..."/>
 						<ssh 
 							username="${username}" 
-							host="${hostname}" 
+							host="${hostname}"
+                            port="${sshport}"
 							pubkeyfile="${pubkeyfile}" 
 							privkeyfile="${privkeyfile}" 
 							command="rm -rf /${approot}"/>
@@ -40,18 +42,19 @@
 		</if> 
 		
 		<!-- Initial deployment -->
-		<echo msg="executing: ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd /${approot}; git checkout -b workingcopy ${revision}'"/>
-		<exec command="ssh -A ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd /${approot}; git checkout -b workingcopy ${revision}'" />
+		<echo msg="executing: ssh -A -p ${sshport} ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd /${approot}; git checkout -b workingcopy ${revision}'"/>
+		<exec command="ssh -A -p ${sshport} ${username}@${hostname} 'git clone ${gitrepo} ${approot}; cd /${approot}; git checkout -b workingcopy ${revision}'" />
 
 		<!-- create database and user -->
-		<echo msg="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'"/>
-		<exec command="ssh -A ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
+		<echo msg="ssh -A -p ${sshport} ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'"/>
+		<exec command="ssh -A -p ${sshport} ${sudouser}@${hostname} 'sudo ${bridgebin} mysql -u ${project} -p ${mysqlpw} -d ${project}'" outputProperty="output"/>
 		<echo msg="${output}"/>
 		
 		<!-- Generate config files -->
 		<ssh 
 			username="${username}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="
@@ -67,7 +70,8 @@
 		<!--@todo support multiple variable domain names -->
 		<ssh 
 			username="${sudouser}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="sudo ${bridgebin} apache -dn ${project}.${hostname} -s /${approot} -d /${webroot}" />
@@ -86,6 +90,7 @@
 		<input propertyname="dest_user" defaultValue="support">Please supply user to connect to destination host: </input>
 		<input propertyname="dest_path" defaultValue="/home/${dest_user}/vhosts/${project}">Please supply destinationpath where to deploy in: </input>
 
+        <!-- @todo put ssh port in here -->
 		<property name="command" value="
 			mkdir -p ${rsyncdir};
 			rm -f ${filelist};
@@ -123,7 +128,8 @@
 		<!-- create dump -->
 		<ssh 
 			username="${username}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="mysqldump -h localhost ${mysqldb} -u ${mysqluser} --password=${mysqlpw} > ${dumpfile}" 
@@ -134,7 +140,8 @@
 		<!-- download dump -->
 		<scp
 			username="${username}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			fetch="true"
@@ -145,7 +152,8 @@
 		<!-- remove initially created dump on source server -->
 		<ssh 
 			username="${username}" 
-			host="${hostname}" 
+			host="${hostname}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="rm ${dumpfile}" 
@@ -158,7 +166,8 @@
 		-->
 		<scp
 			username="${dest_user}" 
-			host="${dest_host}" 
+			host="${dest_host}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			fetch="false"
@@ -172,7 +181,8 @@
 		-->
 		<ssh 
 			username="${dest_user}" 
-			host="${dest_host}" 
+			host="${dest_host/}"
+            port="${sshport}"
 			pubkeyfile="${pubkeyfile}" 
 			privkeyfile="${privkeyfile}" 
 			command="
