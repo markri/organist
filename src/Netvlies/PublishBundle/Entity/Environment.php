@@ -68,7 +68,6 @@ class Environment
      */
     private $defaultUser;
 
-
     /**
      * @var string $sshPort
      * @ORM\Column(name="sshPort", type="string", length=4)
@@ -225,5 +224,37 @@ class Environment
     public function getSshPort()
     {
         return $this->sshPort;
+    }
+
+    /**
+     * @param string $mysqlAdminPassword
+     */
+    public function setMysqlAdminPassword($mysqlAdminPassword)
+    {
+        $this->mysqlAdminPassword = $mysqlAdminPassword;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqlAdminPassword()
+    {
+        return $this->mysqlAdminPassword;
+    }
+
+    /**
+     * @param string $mysqlAdminUser
+     */
+    public function setMysqlAdminUser($mysqlAdminUser)
+    {
+        $this->mysqlAdminUser = $mysqlAdminUser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqlAdminUser()
+    {
+        return $this->mysqlAdminUser;
     }
 }

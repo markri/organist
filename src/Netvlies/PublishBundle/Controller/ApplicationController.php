@@ -272,10 +272,6 @@ class ApplicationController extends Controller {
 
                 if($deployForm->isValid()){
 
-                    // We update the current branch and revision to desired state. Although it should be done afterwards.
-                    // But this will prevent other users from deploying based on a state that that is currently in progress
-                    // The revision will be updated afterwards anyway in the processlogcommand
-		            //@todo this is still dangerous, e.g. server is unreachable than revision is still updated! better is to have a PID file per project
                     if(!array_key_exists($consoleAction->getRevision(), $branches)){
                         throw new \Exception('Whoops somebody just updated the git repository between previous dashboard load and now');
                     }

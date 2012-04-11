@@ -35,6 +35,7 @@ class Anyterm
     public function prepareCommand(ConsoleAction $consoleAction)
     {
 
+        //@todo make PID file with current username and handle appropiateley if pid file is there
         $command = $consoleAction->getCommand();
         $app = $consoleAction->getApplication();
         $container = $consoleAction->getContainer();
