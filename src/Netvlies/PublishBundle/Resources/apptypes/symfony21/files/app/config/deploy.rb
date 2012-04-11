@@ -25,7 +25,7 @@ set :copy_exclude, ['.git', 'Capfile', 'build.xml', '.gitignore', 'web/app_dev.p
 
 # Symfony related settings
 set :app_path,    'app'
-set :update_vendors, true
+set :update_vendors, false
 set :vendors_mode, 'install'
 set :use_composer, true
 
@@ -50,9 +50,9 @@ namespace :deploy do
 		
 		if "#{exists}".strip != "true"
 			set :vendors_mode, "reinstall"
-			# also create db schema on initial deployment
-			# run "#{release_path}/app/console doctrine:schema:create"
 		end
+		
+		run "cd #{release_path} && curl -s http://getcomposer.org/installer | php"
     end	
 	
 
@@ -92,7 +92,7 @@ namespace :deploy do
 		run "sed -i -e 's/#mysqluser#/#{mysqluser}/' #{release_path}/app/config/parameters.#{otap}.yml"
 		run "sed -i -e 's/#mysqlpw#/#{mysqlpw}/' #{release_path}/app/config/parameters.#{otap}.yml"
 
-		run "ln -fs #{release_path}/app/config/parameters.#{otap}.yml #{release_path}/app/config/parameters.ini"
+		run "ln -fs #{release_path}/app/config/parameters.#{otap}.yml #{release_path}/app/config/parameters.yml"
 	end
 
     desc 'update vhost if otap=T'
