@@ -21,7 +21,9 @@ namespace :deploy do
 
 	# Make sure that all shared_childs are 777 mode writable (should be suitable for OMS and Symfony2)
 	after "deploy:finalize_update", "deploy:shared_childs_writable"
-    after "deploy:update_code", "deploy:dbconfig", "deploy:updatevhost"
+    	after "deploy:update_code", "deploy:dbconfig", "deploy:updatevhost"
+	# Cleanup to max 5 releases
+	after 'deploy:symlink', 'deploy:cleanup'
 
 
     desc "Setup database"

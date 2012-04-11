@@ -1,0 +1,126 @@
+#!/usr/bin/php -q
+<?php
+// Be sure to have this script in file mode 700 and ownned by root:root
+// This script functions as a container for some commands to execute as root. So anything that isnt available in here cant be executed by user deploy
+    
+$arguments = $_SERVER['argv'];
+
+if(count($arguments)<2){
+	showhelp();
+	exit;
+}
+
+$filename = $arguments[0];
+$currentdir = dirname(__FILE__);
+$user = '';
+$password = '';
+$database = '';
+
+// Delete first argument (which is mysql)
+array_shift($arguments);
+
+
+while(!empty($arguments)){
+
+	$argument = array_shift($arguments);
+	
+	switch($argument){
+		case '-h':
+		case '--help':
+			showhelp();
+			exit(0);
+			break;
+		case '-u':
+		case '--user':
+			$user = array_shift($arguments);
+			break;
+		case '-p':
+		case '--password':
+			$password = array_shift($arguments);
+			break;
+		case '-d':
+		case '--database':
+			$database = array_shift($arguments);
+			break;
+		default:
+			echo "$argument is not a valid option";
+			showhelp();
+			exit(1);
+			break;
+	}
+}
+
+validate($user, $password, $database);
+createmysql($user, $password, $database);
+
+
+function showhelp()
+{
+	
+	echo "\n";
+	echo "Creates a mysql user and database in local mysql environment\n";
+    echo "Usage: mysql [options]\n";
+	echo "-h, --help                 This help\n";
+	echo "-p, --password             MySQL password to use\n";
+	echo "-u, --user                 MySQL username to use\n";
+	echo "-d, --database             MySQL database to use. If not given the username will be used as dbname\n";
+	echo "\n";
+	
+}
+
+
+function validate($user, $password, &$database)
+{
+	if(empty($user) || empty($password))
+	{
+		showhelp();
+		exit(1);
+	}
+	
+	if(empty($database)){
+		$database=$user;
+	}
+}
+
+function createmysql($user, $password, $database)
+{
+	# get global settings
+	include 'settings.php';
+
+	$dbexists=shell_exec('mysql -e '.escapeshellarg('SHOW DATABASES LIKE "'.$database.'"').' -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+	$userexists=shell_exec('mysql -e '.escapeshellarg('"SELECT * FROM mysql.user WHERE USER LIKE \''.$user.'\'"').' -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+
+	$dbcreate=true;
+	$usercreate=true;
+
+	# DB creation
+	if(!empty($dbexists))
+	{
+		echo "Database exists skipping database creation, moving on to user creation\n";
+		$dbcreate=false;
+	}
+
+	if($dbcreate)
+	{
+		echo "Creating database $database\n";
+		shell_exec('mysql -e '.escapeshellarg('CREATE DATABASE \''.$database.'\'').' -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+	}
+
+	# User creation
+	if(!empty($userexists))
+	{
+		echo "User exists skipping user creation\n";
+		$usercreate=false;
+	}
+
+	if($usercreate)
+	{
+		echo "Creating user $user\n";
+		shell_exec('mysql -e '.escapeshellarg('CREATE USER \''.$user.'\'@\'localhost\' IDENTIFIED BY \''.$password.'\'').' -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+		
+		echo "Granting privileges on $database\n";
+		shell_exec('mysql -e '.escapeshellarg('GRANT ALL PRIVILEGES ON '.$database.'.* TO \''.$user.'\'@localhost').' -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+		shell_exec('mysql -e "FLUSH PRIVILEGES" -u '.escapeshellarg($mysql_user).' '.escapeshellarg('--password='.$mysql_pw));
+	}
+}
+?>

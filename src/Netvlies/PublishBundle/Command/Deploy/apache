@@ -1,0 +1,142 @@
+#!/usr/bin/php -q
+<?php
+// Be sure to have this script in file mode 700 and ownned by root:root
+// This script functions as a container for some commands to execute as root. So anything that isnt available in here cant be executed by user deploy
+    
+$arguments = $_SERVER['argv'];
+
+if(count($arguments)<2){
+	showhelp();
+	exit;
+}
+
+$filename = $arguments[0];
+$currentdir = dirname(__FILE__);
+$domain = '';
+$docroot = '';
+$logdir = '';
+
+// Delete first argument (which is apache)
+array_shift($arguments);
+
+
+while(!empty($arguments)){
+
+	$argument = array_shift($arguments);
+	
+	
+	switch($argument){
+		case '-h':
+		case '--help':
+			showhelp();
+			exit(0);
+			break;
+		case '-dn':
+		case '--domain':
+			$domain = array_shift($arguments);
+			break;
+		case '-d':
+		case '--docroot':
+			$docroot = array_shift($arguments);
+			break;
+		case '-l':
+		case '--logdir':
+			$logdir = array_shift($arguments);
+			break;
+		default:
+			echo "$argument is not a valid option";
+			showhelp();
+			exit(1);
+			break;
+	}
+}
+
+
+
+validate($domain, $docroot, $logdir);
+createvhost($domain, $docroot, $logdir);
+
+function showhelp()
+{
+	echo "\n";
+	echo "Creates a vhost file for apache and reloads apache config\n";
+    echo "Usage: apache [options]\n";
+	echo "-h, --help            This help\n";
+	echo "-dn, --domain         Domain to configure, can be used multiple times for multiple domains\n";
+	echo "-d, --docroot         From where apache should serve files\n";
+	echo "-l, --logdir          From where apache should serve files\n";
+	echo "\n";
+}
+
+
+function validate($domain, $docroot, $logdir)
+{
+	if(empty($domain) || empty($docroot) || empty($logdir)){
+		showhelp();
+		exit(1);
+	}
+	
+	if(!file_exists($docroot) || !file_exists($logdir)){
+		echo "Docroot and/or logdir do not exist! \n";
+		exit(1);
+	}
+}
+
+
+function createvhost($domain, $docroot, $logdir)
+{
+	include __DIR__.'/settings.php';
+	
+	$vhost=$vhost_base.'/'.$domain.'.conf';
+	$createvhost=true;
+
+	if(file_exists($vhost)){
+		copy($vhost, $vhost.'.bak');
+		unlink($vhost);
+		if(file_exists($vhost)){
+			echo "Couldnt remove/backup already existing vhost";
+			exit(1);
+		}
+	}
+
+	if($createvhost){
+		echo "Creating $vhost\n";
+		shell_exec("touch ".escapeshellarg($vhost));
+		
+		if(!file_exists($vhost)){
+			echo "Couldnt create vhost file";
+			exit(1);
+		}
+		
+		$fp = fopen($vhost, 'w');
+		
+		fwrite($fp, "<VirtualHost *:80>\n");
+		fwrite($fp, "	DocumentRoot $docroot\n");
+		fwrite($fp, "	ServerName $domain\n");
+		fwrite($fp, "	ErrorLog $logdir/error.log\n");
+		fwrite($fp, "	TransferLog $logdir/transfer.log\n");
+		fwrite($fp, "	<Directory $docroot>\n");
+		fwrite($fp, "		AllowOverride All\n");
+		fwrite($fp, "	</Directory>\n");
+		fwrite($fp, "</VirtualHost>\n");
+		fclose($fp);
+	}
+		
+	#apache reload
+	echo "Checking current apache config (with new vhost file)\n";
+	exec($httpd_daemon.' -t', $output, $exitcode);
+	
+	if($exitcode != 0){
+		var_dump($output);
+		echo "Whoops, I probably created a wrong vhost file, wich cant be reloaded into apache.  So I left apache running with its current config\n";
+		echo "Contact hosting to manually fix this vhost ($vhost) and ask for reload.\n";
+		exit(1);
+	}
+
+	exec($httpd_daemon.' graceful', $output, $exitcode);
+	if($exitcode != 0){
+		var_dump($output);
+		echo "MAJOR ALERT! COULDNT RESTART HTTPD DAEMON. CONTACT HOSTING IMMEDIATELY!\n";
+		exit(1);
+	}	
+}

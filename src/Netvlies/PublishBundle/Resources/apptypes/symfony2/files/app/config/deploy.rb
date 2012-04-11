@@ -38,7 +38,7 @@ namespace :deploy do
 	after 'deploy:update_code', 'deploy:update_acl'
 
 	# Symfony2 related targets in Capifony
-	before 'deploy:finalize_update', 'deploy:parameters_symlink', 'deploy:vendorcheck'
+	before 'deploy:finalize_update', 'deploy:parameters_symlink', 'deploy:vendorcheck', 'deploy:shared_childs_writable'
 
 	# Cleanup to max 5 releases
 	after 'deploy:symlink', 'deploy:cleanup', 'deploy:updatevhost'
@@ -68,6 +68,21 @@ namespace :deploy do
 		sessions.values.each { |session| session.close }
 		sessions.clear
     end
+	
+	
+	desc 'Make sure that shared dirs are fully writable with chmod 777'
+	task :shared_childs_writable do
+		if shared_children
+			shared_children.each do |link|
+				run "chmod 777 #{shared_path}/#{link}"
+			end
+		end
+		if shared_files
+			shared_files.each do |link|
+				run "chmod 777 #{shared_path}/#{link}"
+			end
+		end		
+	end	
 
 
 	desc 'Link parameters.ini.$env to parameters.ini DB params enclosed with # will be replaced'
