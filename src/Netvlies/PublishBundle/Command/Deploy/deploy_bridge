@@ -14,34 +14,32 @@ $filename = $arguments[0];
 $currentdir = dirname(__FILE__);
 $action  = $arguments[1];
 
-// Delete first two arguments to use later on
+// Delete first two arguments (they are deploy_bridge and action)
 array_shift($arguments);
 array_shift($arguments);
+
+// Escaping argument values before passing them through
+$arguments = array_map('escapeshellarg', $arguments);
 
 switch($action){
 
 	case 'apache':
-		echo shell_exec($currentdir.'/apache.sh '.implode(' ',$arguments));
+		echo shell_exec($currentdir.'/apache '.implode(' ',$arguments));
 		break;
 	case 'mysql':
-		echo shell_exec($currentdir.'/mysql.sh '.implode(' ',$arguments));
-		break;
-	case 'replaceinfile':
-		echo shell_exec($currentdir.'/replaceinfile.sh '.implode(' ',$arguments));
+		echo shell_exec($currentdir.'/mysql '.implode(' ',$arguments));
 		break;
 	case 'testsettings':
-		echo shell_exec($currentdir.'/testsettings.sh '.implode(' ',$arguments));
+		echo shell_exec($currentdir.'/testsettings '.implode(' ',$arguments));
 		break;
 	case 'symfony2acl':
-		echo shell_exec($currentdir.'/symfony2acl.sh '.implode(' ',$arguments));
+		echo shell_exec($currentdir.'/symfony2acl '.implode(' ',$arguments));
 		break;
 	default:
 		showhelp();
 		break;
 }
-	
-	
-	
+
 function showhelp(){
 	global $filename;
 	
@@ -51,11 +49,10 @@ function showhelp(){
 	echo " mysql\n";
 	echo " replaceinfile\n";
 	echo " testsettings\n";
+	echo " symfony2acl\n";
 	echo "\n";
 	echo "Please use '$filename <action> --help' to get suboptions\n";
 	
 }
-	
-	
-	
+
 ?>

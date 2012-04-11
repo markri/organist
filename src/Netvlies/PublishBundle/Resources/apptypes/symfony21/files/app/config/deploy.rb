@@ -17,7 +17,6 @@ set :keep_releases, 5
 set :ssh_options, {:forward_agent => true}
 set :default_run_options, {:pty => true}
 set :use_sudo, false
-set :port, #{sshport}
 
 # Additional directory and file settings for deployment
 set :shared_files, "#{userfiles}".split(/,/)
@@ -26,8 +25,9 @@ set :copy_exclude, ['.git', 'Capfile', 'build.xml', '.gitignore', 'web/app_dev.p
 
 # Symfony related settings
 set :app_path,    'app'
-set :update_vendors, true
+set :update_vendors, false
 set :vendors_mode, 'install'
+set :use_composer, true
 
 namespace :deploy do
 
@@ -50,9 +50,9 @@ namespace :deploy do
 		
 		if "#{exists}".strip != "true"
 			set :vendors_mode, "reinstall"
-			# also create db schema on initial deployment
-			# run "#{release_path}/app/console doctrine:schema:create"
 		end
+		
+		run "cd #{release_path} && curl -s http://getcomposer.org/installer | php"
     end	
 	
 
@@ -69,7 +69,6 @@ namespace :deploy do
 		sessions.clear
     end
 
-	
 	desc 'Make sure that shared dirs are fully writable with chmod 777'
 	task :shared_childs_writable do
 		if shared_children
@@ -82,18 +81,18 @@ namespace :deploy do
 				run "chmod 777 #{shared_path}/#{link}"
 			end
 		end		
-	end
-
+	end		
+	
 
 	desc 'Link parameters.ini.$env to parameters.ini DB params enclosed with # will be replaced'
 	task :parameters_symlink do
 
 		# Create parameters.ini for env
-		run "sed -i -e 's/#mysqldb#/#{mysqldb}/' #{release_path}/app/config/parameters.ini.#{otap}"
-		run "sed -i -e 's/#mysqluser#/#{mysqluser}/' #{release_path}/app/config/parameters.ini.#{otap}"
-		run "sed -i -e 's/#mysqlpw#/#{mysqlpw}/' #{release_path}/app/config/parameters.ini.#{otap}"
+		run "sed -i -e 's/#mysqldb#/#{mysqldb}/' #{release_path}/app/config/parameters.#{otap}.yml"
+		run "sed -i -e 's/#mysqluser#/#{mysqluser}/' #{release_path}/app/config/parameters.#{otap}.yml"
+		run "sed -i -e 's/#mysqlpw#/#{mysqlpw}/' #{release_path}/app/config/parameters.#{otap}.yml"
 
-		run "ln -fs #{release_path}/app/config/parameters.ini.#{otap} #{release_path}/app/config/parameters.ini"
+		run "ln -fs #{release_path}/app/config/parameters.#{otap}.yml #{release_path}/app/config/parameters.yml"
 	end
 
     desc 'update vhost if otap=T'

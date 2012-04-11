@@ -1,0 +1,39 @@
+#!/usr/bin/php -q
+<?php
+
+include __DIR__.'/settings.php';
+
+$count=0;
+
+if(!file_exists($vhost_base)){
+	echo "Directory set in vhost_base $vhost_base doesnt exist!\n";
+	$count++;
+}
+
+
+$result=exec("which $httpd_daemon", $output, $exitcode);
+if($exitcode != 0){
+	echo "Httpd deamon not found\n";
+	$count++;
+}
+
+$result=exec('mysql -e "SELECT 1" -u '.escapeshellarg($mysql_user).' --password='.escapeshellarg($mysql_pw), $output, $exitcode);
+if($exitcode != 0){
+	echo "Wrong MySQL credentials\n";
+	$count++;
+}
+
+$result=exec('grep '.escapeshellarg("^$httpd_user:").' /etc/passwd', $output, $exitcode);
+if($exitcode != 0){
+	echo "Unknown user $httpd_user. Please assign the apache ACL user. Usually named 'apache'\n";
+	$count++;
+}
+
+
+if($count==0){
+	echo "Settings OK!\n";
+}
+else{
+	echo "In total $count warning(s)\n"	;
+	echo "Please see messages and correct your settings\n";
+}

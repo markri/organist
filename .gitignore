@@ -4,5 +4,4 @@
 /vendor
 /app/cache
 /app/logs
-deps.lock
 bootstrap.php.cache

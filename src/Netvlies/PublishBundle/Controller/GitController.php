@@ -17,7 +17,9 @@ use Netvlies\PublishBundle\Entity\ConsoleAction;
 use Netvlies\PublishBundle\Form\FormApplicationType;
 
 
-
+/**
+ * @todo move this to bitbucket service
+ */
 class GitController extends Controller
 {
 
