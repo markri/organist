@@ -22,8 +22,10 @@ interface ScmInterface
 
     /**
      * @abstract
-     * return strin if set or null when no keyfile is present
+     * return string if set or null when no keyfile is present
      */
     function getKeyfile();
+
+    function updateRepository($app);
 
 }

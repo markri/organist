@@ -31,16 +31,21 @@ class GitBitbucket implements ScmInterface
      */
     public function __construct($container){
 
-        $this->basePath = $container->getParameter('netvlies_publish.repositorypath');
-        $this->user = $container->getParameter('netvlies_publish.git.bitbucket.committer');
-        $this->password = $container->getParameter('netvlies_publish.git.bitbucket.committerpassword');
-        $this->owner = $container->getParameter('netvlies_publish.git.bitbucket.owner');
-        $this->ownerpassword = $container->getParameter('netvlies_publish.git.bitbucket.ownerpassword');
-        $this->keyfile = $container->getParameter('netvlies_publish.git.bitbucket.privatekeyfile');
+        $this->basePath =      $container->getParameter('netvlies_publish.repositorypath');
+        $this->user =          $container->getParameter('netvlies_publish.scm.bitbucket.committer');
+        $this->password =      $container->getParameter('netvlies_publish.scm.bitbucket.committerpassword');
+        $this->owner =         $container->getParameter('netvlies_publish.scm.bitbucket.owner');
+        $this->ownerpassword = $container->getParameter('netvlies_publish.scm.bitbucket.ownerpassword');
+        $this->keyfile =       $container->getParameter('netvlies_publish.scm.bitbucket.privatekey');
 
         if(!file_exists($this->basePath)){
             throw new \Exception('Repository base path doesnt exist, please change your config.yml');
         }
+    }
+
+    public function updateRepository($app)
+    {
+
     }
 
     /**

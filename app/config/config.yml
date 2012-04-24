@@ -60,19 +60,17 @@ jms_security_extra:
 
 
 netvlies_publish:
-    #@todo private and public key for connecting through phing is still used
-    #@todo add other services like github
-    #@todo add other scm like svn mercurial
 
+    #@todo maybe remove sudouser param?
     sudouser: deploy
-    repositorypath: /home/mdekrijger/Projects
-    scm:
-        git:
-            bitbucket:
-                privatekey: /var/lib/jenkins/.ssh/id_rsa_git
-                owner: netvlies
-                ownerpassword: n3tvl13sb1tbuck3t
-                committer: nvs_ci
-                committerpassword: 33x54Yq7CY
 
-    
+    repositorypath: /home/vagrant/repos
+    anyterm_user: vagrant # this local user is used for connecting to remote hosts, running the anyterm console, git actions
+    anyterm_exec_port: 7778 # port where all actions are logged and executed through web interface
+    scm:
+        bitbucket:
+            privatekey: /home/vagrant/.ssh/id_rsa_git
+            owner: netvlies
+            ownerpassword:
+            committer: nvs_ci
+            committerpassword: 
