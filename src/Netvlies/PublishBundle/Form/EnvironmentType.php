@@ -10,13 +10,13 @@
 namespace Netvlies\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\PublishBundle\Entity\TargetRepository;
 use Netvlies\PublishBundle\Entity\Deployment;
 use Netvlies\PublishBundle\Form\ChoiceList\EnvironmentsType as EnvironmentChoice;
 use Netvlies\PublishBundle\Form\DataTransformer\IdToEnvironment;
+use Symfony\Component\Form\FormBuilderInterface;
 
 
 class EnvironmentType extends AbstractType
@@ -28,7 +28,7 @@ class EnvironmentType extends AbstractType
         $this->em = $em;
     }
 
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
         $envChoice = new EnvironmentChoice($this->em);

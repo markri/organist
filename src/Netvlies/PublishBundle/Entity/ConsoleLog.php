@@ -24,13 +24,13 @@ class ConsoleLog
 
     /**
      * @var string $host
-     * @ORM\Column(name="host", type="string", length=255, nullable="true")
+     * @ORM\Column(name="host", type="string", length=255, nullable=true)
      */
     private $host;
 
     /**
      * @var string $type
-     * @ORM\Column(name="type", type="string", length=1, nullable="true")
+     * @ORM\Column(name="type", type="string", length=1, nullable=true)
      */
     private $type;
 
@@ -43,7 +43,7 @@ class ConsoleLog
 
     /**
      * @var DateTime $datetimeEnd
-     * @ORM\Column(name="datetimeend", type="datetime", nullable="true")
+     * @ORM\Column(name="datetimeend", type="datetime", nullable=true)
      */
     private $datetimeEnd;
 
@@ -69,13 +69,13 @@ class ConsoleLog
 
     /**
      * @var string $log
-     * @ORM\Column(name="log", type="text", nullable="true")
+     * @ORM\Column(name="log", type="text", nullable=true)
      */
     private $log;
 
     /**
      * @var string $exitcode
-     * @ORM\Column(name="exitcode", type="string", nullable="true")
+     * @ORM\Column(name="exitcode", type="string", nullable=true)
      */
     private $exitCode;
 
@@ -84,14 +84,14 @@ class ConsoleLog
      * @todo soft link So targets can still be deleted without constraints to consoleLog, to set null
      * This variable is used as a temporary backreference to update current status (revision etc)
      * @var int $targetId
-     * @ORM\Column(name="targetid", type="integer", nullable="true")
+     * @ORM\Column(name="targetid", type="integer", nullable=true)
      */
     private $targetId;
 
 
     /**
      * @var string $revision
-     * @ORM\Column(name="revision", type="string", length=255, nullable="true")
+     * @ORM\Column(name="revision", type="string", length=255, nullable=true)
      */
     private $revision;
 

@@ -10,7 +10,7 @@
 namespace Netvlies\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\PublishBundle\Entity\TargetRepository;
@@ -28,7 +28,7 @@ class TargetType extends AbstractType
         $this->em = $em;
     }
 
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
         $targetChoice = new TargetsType($this->em, $options['app']);
