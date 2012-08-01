@@ -18,61 +18,51 @@ class Environment
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
+
+    /**
+     * @var string $keyName
+     * @Assert\NotBlank(message="Unique keyname is required")
+     * @ORM\Column(name="keyName", type="string", length=255)
+     */
+    protected $keyName;
 
     /**
      * @ORM\Column(name="type", type="string", length=255)
      * @Assert\NotBlank(message="type is required")
      * @Assert\Choice(choices = {"O", "T", "A", "P"}, message="Choose a valid servertype: O, T, A or P")
      */
-    private $type;
+    protected $type;
 
     /**
      * @ORM\Column(name="hostname", type="string", length=255)
      * @Assert\NotBlank(message="hostname is required")
      */
-    private $hostname;
+    protected $hostname;
 
     /**
      * @ORM\Column(name="sudoUser", type="string", length=255)
      * @Assert\NotBlank(message="sudoUser is required")
      */
-    private $sudoUser = 'deploy';
-
-
-    /**
-     * @var string $homedirsBase
-     * @Assert\Regex(pattern="#^/.*$#", match=true, message="Please use an absolute path")
-     * @ORM\Column(name="homedirsBase", type="string", length=255, nullable=true)
-     */
-    private $homedirsBase = '/home';
-
-
-    /**
-     * @var string $keyname
-     * @Assert\NotBlank(message="Unique keyname is required")
-     * @ORM\Column(name="keyname", type="string", length=255)
-     */
-    private $keyname;
-
-
-    /**
-     * @var string $deploybridgecommand
-     * @ORM\Column(name="deploybridgecommand", type="string", length=255)
-     */
-    private $deploybridgecommand;
-
-    /**
-     * @var string $defaultUser
-     * @ORM\Column(name="defaultuser", type="string", length=255)
-     */
-    private $defaultUser;
+    protected $sudoUser = 'deploy';
 
     /**
      * @var string $sshPort
      * @ORM\Column(name="sshPort", type="string", length=4)
      */
-    private $sshPort;
+    protected $sshPort;
+
+    /**
+     * @ORM\Column(name="mysqlAdminUser", type="string", length=255)
+     */
+    protected $mysqlAdminUser = 'root';
+
+    /**
+     * @ORM\Column(name="mysqlAdminPassword", type="string", length=255)
+     */
+    protected $mysqlAdminPassword;
+
+
 
 
     /**
@@ -83,6 +73,22 @@ class Environment
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param string $keyName
+     */
+    public function setKeyName($keyName)
+    {
+        $this->keyName = $keyName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->keyName;
     }
 
     /**
@@ -146,84 +152,35 @@ class Environment
     }
 
     /**
-     * @param string $homedirsBase
+     * @param $sshPort
      */
-    public function setHomedirsBase($homedirsBase)
-    {
-        $this->homedirsBase = $homedirsBase;
-    }
-
-    /**
-     * @return string
-     */
-    public function getHomedirsBase()
-    {
-        return $this->homedirsBase;
-    }
-
-    /**
-     * @param string $keyname
-     */
-    public function setKeyname($keyname)
-    {
-        $this->keyname = $keyname;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKeyname()
-    {
-        return $this->keyname;
-    }
-
-    /**
-     * To identify this entity in forms
-     */
-    public function __toString(){
-        return $this->getType().' ('.$this->getHostname().')';
-    }
-
-    /**
-     * @param string $deploybridgecommand
-     */
-    public function setDeploybridgecommand($deploybridgecommand)
-    {
-        $this->deploybridgecommand = $deploybridgecommand;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDeploybridgecommand()
-    {
-        return $this->deploybridgecommand;
-    }
-
-    /**
-     * @param string $defaultUser
-     */
-    public function setDefaultUser($defaultUser)
-    {
-        $this->defaultUser = $defaultUser;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDefaultUser()
-    {
-        return $this->defaultUser;
-    }
-
     public function setSshPort($sshPort)
     {
         $this->sshPort = $sshPort;
     }
 
+    /**
+     * @return string
+     */
     public function getSshPort()
     {
         return $this->sshPort;
+    }
+
+    /**
+     * @param string $mysqlAdminUser
+     */
+    public function setMysqlAdminUser($mysqlAdminUser)
+    {
+        $this->mysqlAdminUser = $mysqlAdminUser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqlAdminUser()
+    {
+        return $this->mysqlAdminUser;
     }
 
     /**
@@ -243,18 +200,10 @@ class Environment
     }
 
     /**
-     * @param string $mysqlAdminUser
+     * To identify this entity in forms
      */
-    public function setMysqlAdminUser($mysqlAdminUser)
+    public function __toString()
     {
-        $this->mysqlAdminUser = $mysqlAdminUser;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMysqlAdminUser()
-    {
-        return $this->mysqlAdminUser;
+        return $this->getType().' ('.$this->getHostname().')';
     }
 }

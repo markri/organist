@@ -18,42 +18,49 @@ class ApplicationType
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="keyname", type="string", length=255)
      */
-    private $name;
+    protected $keyName;
 
     /**
-     * @ORM\Column(name="label", type="string", length=255)
+     * @ORM\Column(name="displayName", type="string", length=255)
      */
-    private $label;
+    protected $displayName;
+
 
     /**
-     * @ORM\Column(name="deployCommand", type="string", length=255)
+     * @ORM\Column(name="initScript", type="string", length=255)
      */
-    private $deployCommand;
+    protected $initScript;
 
-    /**
-     * @ORM\Column(name="deployOCommand", type="string", length=255)
-     */
-    private $deployOCommand;
 
-    /**
-     * @ORM\Column(name="copyCommand", type="string", length=255)
-     */
-    private $copyContentCommand;
-
-    /**
-     * @ORM\Column(name="rollbackCommand", type="string", length=255)
-     */
-    private $rollbackCommand;
-
-    /**
-     * @ORM\Column(name="setupTAPCommand", type="string", length=255)
-     */
-    private $setupTAPCommand;
+//    /**
+//     * @ORM\Column(name="deployCommand", type="string", length=255)
+//     */
+//    protected $deployCommand;
+//
+//    /**
+//     * @ORM\Column(name="deployOCommand", type="string", length=255)
+//     */
+//    protected $deployOCommand;
+//
+//    /**
+//     * @ORM\Column(name="copyCommand", type="string", length=255)
+//     */
+//    protected $copyContentCommand;
+//
+//    /**
+//     * @ORM\Column(name="rollbackCommand", type="string", length=255)
+//     */
+//    protected $rollbackCommand;
+//
+//    /**
+//     * @ORM\Column(name="setupTAPCommand", type="string", length=255)
+//     */
+//    protected $setupTAPCommand;
 
 
 
@@ -67,79 +74,34 @@ class ApplicationType
         return $this->id;
     }
 
-    public function setName($name)
+    public function setKeyName($keyName)
     {
-        $this->name = $name;
+        $this->keyName = $keyName;
     }
 
-    public function getName()
+    public function getKeyName()
     {
-        return $this->name;
+        return $this->keyName;
     }
 
-    public function setLabel($label)
+    public function setDisplayName($displayName)
     {
-        $this->label = $label;
+        $this->displayName = $displayName;
     }
 
-    public function getLabel()
+    public function getDisplayName()
     {
-        return $this->label;
+        return $this->displayName;
     }
 
-    public function setCopyContentCommand($copyContentCommand)
+    public function setInitScript($initScript)
     {
-        $this->copyContentCommand = $copyContentCommand;
+        $this->initScript = $initScript;
     }
 
-    public function getCopyContentCommand()
+    public function getInitScript()
     {
-        return $this->copyContentCommand;
-    }
-
-    public function setDeployCommand($deployCommand)
-    {
-        $this->deployCommand = $deployCommand;
-    }
-
-    public function getDeployCommand()
-    {
-        return $this->deployCommand;
-    }
-
-    public function setRollbackCommand($rollbackCommand)
-    {
-        $this->rollbackCommand = $rollbackCommand;
-    }
-
-    public function getRollbackCommand()
-    {
-        return $this->rollbackCommand;
-    }
-
-    public function getInitScriptPath()
-    {
-        return dirname(__DIR__).'/Resources/apptypes/'.$this->getName().'/init.sh';
-    }
-
-    public function setDeployOCommand($deployOCommand)
-    {
-        $this->deployOCommand = $deployOCommand;
-    }
-
-    public function getDeployOCommand()
-    {
-        return $this->deployOCommand;
-    }
-
-    public function setSetupTAPCommand($setupTAPCommand)
-    {
-        $this->setupTAPCommand = $setupTAPCommand;
-    }
-
-    public function getSetupTAPCommand()
-    {
-        return $this->setupTAPCommand;
+        return $this->initScript;
     }
 
 }

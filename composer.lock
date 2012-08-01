@@ -1,9 +1,15 @@
 {
-    "hash": "ab7ccf177098603cace942212179431f",
+    "hash": "28b5c92d89e1e32d20f79ab511261d83",
     "packages": [
         {
             "package": "doctrine/common",
             "version": "2.2.2"
+        },
+        {
+            "package": "doctrine/data-fixtures",
+            "version": "dev-master",
+            "source-reference": "779c3dfe446b6da893be87b908d6be28345d1e01",
+            "commit-date": "1341780535"
         },
         {
             "package": "doctrine/dbal",
@@ -14,8 +20,20 @@
         {
             "package": "doctrine/doctrine-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "1.0.x-dev",
+            "alias-version": "1.0.9999999.9999999-dev"
+        },
+        {
+            "package": "doctrine/doctrine-bundle",
+            "version": "dev-master",
             "source-reference": "c9ea46d1f0c48bb88bb87b44214fe44e03c0c692",
             "commit-date": "1341405737"
+        },
+        {
+            "package": "doctrine/doctrine-fixtures-bundle",
+            "version": "dev-master",
+            "source-reference": "a5103a71bcd9b2f851ca6c16519a077784a3184a",
+            "commit-date": "1341472847"
         },
         {
             "package": "doctrine/orm",
@@ -150,15 +168,14 @@
             "commit-date": "1342953178"
         }
     ],
-    "packages-dev": [
-
-    ],
+    "packages-dev": null,
     "aliases": [
 
     ],
     "minimum-stability": "dev",
     "stability-flags": {
         "doctrine/doctrine-bundle": 20,
+        "doctrine/doctrine-fixtures-bundle": 20,
         "twig/extensions": 20,
         "symfony/assetic-bundle": 20,
         "symfony/swiftmailer-bundle": 20,

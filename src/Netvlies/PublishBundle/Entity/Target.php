@@ -40,6 +40,7 @@ class Target
     /**
      * @var string $primaryDomain
      * @ORM\Column(name="primaryDomain", type="string", length=255, nullable=true)
+     * @todo assign multiple domains with SSL option
      */	
     protected $primaryDomain;
 
@@ -61,19 +62,20 @@ class Target
      * @var string $currentRevision
      *
      * @ORM\Column(name="mysqldb", type="string", length=255, nullable=true)
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      */
     protected $mysqldb;
 
     /**
      * @var string $currentRevision
-     *
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      * @ORM\Column(name="mysqluser", type="string", length=255, nullable=true)
      */
     protected $mysqluser;
 
     /**
      * @var string $currentRevision
-     *
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
      */
     protected $mysqlpw;
@@ -81,12 +83,14 @@ class Target
 
     /**
      * @ORM\Column(name="currentBranch", type="string", length=255, nullable=true)
+     * @todo should be refactored to lastDeployedBranch
      */
     protected $currentBranch;
 
     /**
      * @var string $currentRevision
      *
+     * @todo should be refactored to lastDeployedRevision
      * @ORM\Column(name="currentRevision", type="string", length=255, nullable=true)
      */
     protected $currentRevision;
@@ -94,20 +98,28 @@ class Target
     /**
      * @var string $approot
      * @ORM\Column(name="approot", type="string", length=255)
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      */
     protected $approot;
 
     /**
      * @var string $webroot
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      * @ORM\Column(name="webroot", type="string", length=255)
      */
     protected $webroot;
 
     /**
      * @var string $caproot
+     * @todo this shouldnt be required for a target, move this to a parameter repository
      * @ORM\Column(name="caproot", type="string", length=255, nullable=true)
      */
     protected $caproot;
+
+    /**
+     * @var
+     */
+    protected $deployDir;
 
 
 

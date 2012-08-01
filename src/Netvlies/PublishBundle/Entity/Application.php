@@ -39,25 +39,21 @@ class Application
     private $type;
 
     /**
-     * @ORM\Column(name="scmURL", type="string", length=255, nullable=true)
-     */
-    private $scmURL;
-
-    /**
-     * @ORM\Column(name="scmKey", type="string", length=255, nullable=true)
-     */
-    private $scmKey;
-
-    /**
      * @var string $scmService
      * @ORM\Column(name="scmService", type="string", length=255, nullable=true)
      */
     private $scmService;
 
     /**
-     * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
+     * @ORM\Column(name="scmKey", type="string", length=255, nullable=true)
      */
-    private $mysqlpw;
+    private $scmKey;
+
+
+    /**
+     * @ORM\Column(name="defaultMysqlPass", type="string", length=255, nullable=true)
+     */
+    private $defaultMysqlPass;
 
     /**
      * @var object $userFiles
@@ -116,23 +112,6 @@ class Application
         return $this->name;
     }
 
-    /**
-     * Set SCM URL
-     * @param string $scmURL
-     */
-    public function setScmURL($scmURL)
-    {
-        $this->scmURL = $scmURL;
-    }
-
-    /**
-     * Get SCM URL
-     * @return string 
-     */
-    public function getScmURL()
-    {
-        return $this->scmURL;
-    }
 
     /**
      * Set userFiles
@@ -173,21 +152,20 @@ class Application
     /**
      * @param $mysqlpw
      */
-    public function setMysqlpw($mysqlpw)
+    public function setDefaultMysqlPass($defaultMysqlPass)
     {
-        $this->mysqlpw = $mysqlpw;
+        $this->defaultMysqlPass = $defaultMysqlPass;
     }
 
     /**
      * @return mixed
      */
-    public function getMysqlpw()
+    public function getDefaultMysqlPass()
     {
-        return $this->mysqlpw;
+        return $this->defaultMysqlPass;
     }
 
     /**
-     * @todo is this even needed when we have scmUrl?
      * @param $repokey
      */
     public function setScmKey($scmKey)
@@ -218,15 +196,5 @@ class Application
     {
         return $this->scmService;
     }
-
-    /**
-     * @param $repoBasePath
-     * @return string
-     */
-    public function getAbsolutePath($repoBasePath)
-    {
-        return $repoBasePath.'/'.$this->getScmKey();
-    }
-
 
 }
