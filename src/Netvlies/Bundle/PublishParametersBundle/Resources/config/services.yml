@@ -1,0 +1,9 @@
+services:
+    # services
+
+    netvlies_publish_params_mysql:
+        class: Netvlies\Bundle\PublishParametersBundle\Admin\MysqlAdmin
+        calls:
+            - [ setContainer, [@service_container] ]
+        tags:
+            - { name: publishparam.admin }

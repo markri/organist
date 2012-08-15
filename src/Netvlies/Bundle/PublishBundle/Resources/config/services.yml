@@ -1,0 +1,36 @@
+services:
+    # services
+    gitbitbucket:
+        class:   Netvlies\Bundle\PublishBundle\Services\Scm\GitBitbucket
+        calls:
+            - [ setContainer, [ @service_container ] ]
+
+    console_controller:
+        class:    Netvlies\Bundle\PublishBundle\Controller\ConsoleController
+        calls:
+            - [ setContainer, [ @service_container ] ]
+
+    scriptbuilder:
+        class:  Netvlies\Bundle\PublishBundle\Services\ScriptBuilder
+
+
+    # form types
+    netvlies.publish.form.environment_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\EnvironmentType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: environment_selector }
+
+    netvlies.publish.form.target_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\TargetType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: target_selector }
+
+
+    netvlies_publish_twig_applicationselect:
+        class: Netvlies\Bundle\PublishBundle\Twig\Extensions\ApplicationSelect
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: twig.extension }

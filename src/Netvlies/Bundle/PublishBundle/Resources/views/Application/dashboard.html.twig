@@ -1,0 +1,67 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% block oms_project_name %}{{application.name}}{% endblock %}
+
+{% block content %}
+
+    <div id="content-wrapper">
+
+        <section id="content">
+            <header>
+                <h1>{{application.name}}</h1>
+                <a href>[ edit ]</a>
+            </header>
+            <hr />
+            <div id="text">
+
+            Customer: {{application.customer}}<br>
+            Name: {{application.name}}<br>
+            Repository type: {{application.scmService}}<br>
+            Type: {{application.type.displayName}}<br>
+            <br><br>
+
+            {% if application.targets | length > 0%}
+
+                <h2>Currently deployed versions</h2>
+                <table border="1" cellspacing="0">
+                <thead>
+                    <th>O</th>
+                    <th>T</th>
+                    <th>A</th>
+                    <th>P</th>
+                </thead>
+                <tr>
+                    {% set types = ['O', 'T', 'A', 'P'] %}
+                    {% for type in types %}
+                    <td>
+                        {% for target in application.targets if target.environment.type == type %}
+                            {% if not loop.first %}
+                            <hr>
+                            {%endif%}
+                            <a href>{{target.label}}</a><br>
+                            {%if target.lastDeployedBranch is not empty%}
+                                <a href="">{target.lastDeployedBranch}}</a><br>
+                            {%else%}
+                                Not deployed yet<br>
+                            {%endif%}
+                            <a href="">Last commandlog</a><br>
+                        {% endfor %}
+                    </td>
+                    {%endfor%}
+                </table>
+
+            {%endif%}
+            <br>
+
+                <h2>Last executed commands</h2>
+                <table border="1" cellspacing="0">
+                    <thead>
+                        <th>Commandlog</th>
+                    </thead>
+                </table>
+
+            </div>
+        </section>
+    </div>
+
+
+{% endblock %}

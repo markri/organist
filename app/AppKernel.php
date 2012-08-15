@@ -20,7 +20,8 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
-            new Netvlies\PublishBundle\NetvliesPublishBundle(),
+            new Netvlies\Bundle\PublishBundle\NetvliesPublishBundle(),
+            new Netvlies\Bundle\PublishParametersBundle\NetvliesPublishParametersBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
