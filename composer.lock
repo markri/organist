@@ -1,6 +1,18 @@
 {
-    "hash": "67fc5620f2f4d1cc1f42cd36c932ad9e",
+    "hash": "f1e35a62cdbf22bd000783ff70fa2690",
     "packages": [
+        {
+            "package": "cypresslab/gitelephant",
+            "version": "dev-master",
+            "source-reference": "v0.8.3",
+            "commit-date": "1345498911"
+        },
+        {
+            "package": "cypresslab/gitelephant-bundle",
+            "version": "dev-master",
+            "source-reference": "ac19ab0b454bb94f7cfe56e204058a1071db4dd8",
+            "commit-date": "1328889913"
+        },
         {
             "package": "doctrine/common",
             "version": "2.2.2"
@@ -182,6 +194,7 @@
         "symfony/monolog-bundle": 20,
         "sensio/distribution-bundle": 20,
         "sensio/framework-extra-bundle": 20,
-        "sensio/generator-bundle": 20
+        "sensio/generator-bundle": 20,
+        "cypresslab/gitelephant-bundle": 20
     }
 }

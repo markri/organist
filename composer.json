@@ -18,8 +18,15 @@
         "sensio/framework-extra-bundle": "dev-master",
         "sensio/generator-bundle": "dev-master",
         "jms/security-extra-bundle": "1.1.*",
-        "jms/di-extra-bundle": "1.0.*"
+        "jms/di-extra-bundle": "1.0.*",
+        "cypresslab/gitelephant-bundle": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git://github.com/matteosister/GitElephantBundle.git"
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
@@ -37,6 +44,7 @@
     "config": {
         "bin-dir": "bin"
     },
+
     "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",

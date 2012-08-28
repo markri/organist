@@ -155,7 +155,6 @@ class GitBitbucket implements ScmInterface
     }
 
 
-
     /**
      * This will be executed locally
      * @todo refactor in changeset object
@@ -163,7 +162,7 @@ class GitBitbucket implements ScmInterface
      * @param $toRef Latest reference to calculate from.
      * @return array|\false|mixed
      */
-	public function getChangesets($app, $fromRef, $toRef)
+	public function getChangesets(Application $app, $fromRef, $toRef)
     {
 
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Changesets

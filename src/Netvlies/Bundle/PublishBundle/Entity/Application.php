@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Netvlies\Bundle\PublishBundle\Entity\Application
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"name"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyName", columns={"keyName"})})
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ApplicationRepository")
  */
 class Application
@@ -21,8 +22,8 @@ class Application
     protected $id;
 
     /**
-     * keyname is used for scm key, db user, db name, environment user, etc
-     * @ORM\Column(name="keyName", type="string", length=255, nullable=true)
+     * keyname is used for db user, db name, environment user, etc
+     * @ORM\Column(name="keyName", type="string", length=16)
      */
     protected $keyName;
 

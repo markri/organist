@@ -1,0 +1,27 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+
+{% block content %}
+<div id="content-wrapper">
+
+    <section id="content">
+        <header>
+
+        </header>
+        <hr />
+        <div id="text">
+
+
+            <form action="" method="POST">
+
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+
+                <br/>
+                <input type="submit" value="Opslaan" />
+
+            </form>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

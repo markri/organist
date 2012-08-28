@@ -11,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Netvlies\Bundle\PublishBundle\Entity\ApplicationRepository;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\ConsoleAction;
+use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
+
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEnrichType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
@@ -20,7 +22,6 @@ use Netvlies\Bundle\PublishBundle\Form\ChoiceList\BranchesType;
 
 
 class ApplicationController extends Controller {
-
 
 
     /**
@@ -45,8 +46,23 @@ class ApplicationController extends Controller {
      */
     public function createAction()
     {
-        return array();
+
+        $form = $this->createForm(new ApplicationCreateType(), new Application(), array());
+        return array(
+            'form' => $form->createView()
+        );
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**

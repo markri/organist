@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationsSelectType;
 use Netvlies\Bundle\PublishBundle\Form\Model\ApplicationSelect;
+use GitElephant\Repository;
 
 
 class DefaultController extends Controller {
@@ -18,6 +19,7 @@ class DefaultController extends Controller {
      */
     public function indexAction()
     {
+        $bla = new Repository('/home/vagrant/repos/wb');
         return array();
     }
 

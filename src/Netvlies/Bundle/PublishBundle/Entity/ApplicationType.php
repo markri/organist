@@ -37,32 +37,6 @@ class ApplicationType
     protected $initScript;
 
 
-//    /**
-//     * @ORM\Column(name="deployCommand", type="string", length=255)
-//     */
-//    protected $deployCommand;
-//
-//    /**
-//     * @ORM\Column(name="deployOCommand", type="string", length=255)
-//     */
-//    protected $deployOCommand;
-//
-//    /**
-//     * @ORM\Column(name="copyCommand", type="string", length=255)
-//     */
-//    protected $copyContentCommand;
-//
-//    /**
-//     * @ORM\Column(name="rollbackCommand", type="string", length=255)
-//     */
-//    protected $rollbackCommand;
-//
-//    /**
-//     * @ORM\Column(name="setupTAPCommand", type="string", length=255)
-//     */
-//    protected $setupTAPCommand;
-
-
 
     public function setId($id)
     {

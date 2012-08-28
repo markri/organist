@@ -73,3 +73,9 @@ netvlies_publish:
             ownerpassword:
             committer: nvs_ci
             committerpassword:
+
+
+#cypress_git_elephant:
+#    binary_path: /usr/bin/git
+#    repositories:
+#        root: ~
