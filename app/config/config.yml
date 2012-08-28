@@ -60,20 +60,16 @@ swiftmailer:
 
 
 netvlies_publish:
-    #@todo maybe remove sudouser param?
-    sudouser: deploy
-
     repositorypath: /home/vagrant/repos
-    anyterm_user: vagrant # this local user is used for connecting to remote hosts, running the anyterm console, git actions
-    anyterm_exec_port: 7778 # port where all actions are logged and executed through web interface
+    anyterm_user: vagrant   # this local user is used for connecting to remote hosts for deployment and git user
+    anyterm_exec_port: 7778 # anyterm port
     scm:
         bitbucket:
-            privatekey: /home/vagrant/.ssh/id_rsa_git
-            owner: netvlies
-            ownerpassword:
-            committer: nvs_ci
-            committerpassword:
-
+            key: /home/vagrant/.ssh/id_rsa_git
+            user: netvlies
+        github:
+            user: mdekrijger
+            password: mdekrijger
 
 #cypress_git_elephant:
 #    binary_path: /usr/bin/git

@@ -47,7 +47,8 @@ class ApplicationController extends Controller {
     public function createAction()
     {
 
-        $form = $this->createForm(new ApplicationCreateType(), new Application(), array());
+        $form = $this->createForm(new ApplicationCreateType(), new Application(), array('scmtypes' => $this->container->getParameter('netvlies_publish.scmtypes')));
+
         return array(
             'form' => $form->createView()
         );

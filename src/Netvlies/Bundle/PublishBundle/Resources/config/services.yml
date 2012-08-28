@@ -4,6 +4,13 @@ services:
         class:   Netvlies\Bundle\PublishBundle\Services\Scm\GitBitbucket
         calls:
             - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: netvlies_scmservice, alias: gitbitbucket }
+
+
+
+
+
 
     console_controller:
         class:    Netvlies\Bundle\PublishBundle\Controller\ConsoleController

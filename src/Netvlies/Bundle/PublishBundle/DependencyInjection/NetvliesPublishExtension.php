@@ -22,10 +22,11 @@ class NetvliesPublishExtension extends Extension
     {        
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $container->setParameter('netvlies_publish.sudouser', $config['sudouser']);
+
         $container->setParameter('netvlies_publish.anyterm_user', $config['anyterm_user']);
         $container->setParameter('netvlies_publish.anyterm_exec_port', $config['anyterm_exec_port']);
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
+        //$container->setParameter('netvlies_publish.scmtypes', array_keys($config['scm']));
 
         foreach($config['scm'] as $scmService => $serviceParams){
             foreach($serviceParams as $key=>$value){

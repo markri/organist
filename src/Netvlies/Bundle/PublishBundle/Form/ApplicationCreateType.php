@@ -31,16 +31,25 @@ class ApplicationCreateType extends AbstractType
                 'property'=> 'displayName',
                 'label' => 'Application type',
                 'empty_value'=> '-- choose type --',
-                'expanded' => true,
+                'expanded' => false,
                 'multiple' => false,
                 'required'=>true)
             )
             ->add('scmService', 'choice', array(
+                'choices' => $options['scmtypes'],
                 'label'=>'SCM service',
                 'required'=>true )
             );
     }
 
+    public function getDefaultOptions(array $options)
+    {
+        $options = array(
+            'scmtypes' => array()
+        );
+
+        return $options;
+    }
 
     /**
      * Returns the name of this type.
