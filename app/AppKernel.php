@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Netvlies\Bundle\PublishBundle\NetvliesPublishBundle(),
             new Netvlies\Bundle\PublishParametersBundle\NetvliesPublishParametersBundle(),
+            new Netvlies\Bundle\PublishOMSBundle\NetvliesPublishOMSBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
