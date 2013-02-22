@@ -51,6 +51,7 @@ function showhelp(){
 	echo " mysql\n";
 	echo " replaceinfile\n";
 	echo " testsettings\n";
+	echo " symfony2acl\n";
 	echo "\n";
 	echo "Please use '$filename <action> --help' to get suboptions\n";
 	

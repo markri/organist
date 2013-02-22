@@ -122,7 +122,6 @@ class GitBitbucket
         $branchnames = $matches[2];
 
         $return = array_combine($refs, $branchnames);
-
         $this->cachectl->save($return, 'remotebranches_'.$this->app->getId());
 
         return $return;
@@ -139,7 +138,7 @@ class GitBitbucket
         $this->checkApp();
 
         if( ($result = $this->cachectl->load('changesets_'.$this->app->getId().$reference)) !== false ) {
-            return $result;
+            //return $result;
         }
 
         // @see documentation about following curl command at http://confluence.atlassian.com/display/BITBUCKET/Changesets

@@ -90,7 +90,7 @@ class Target
      *
      * @ORM\Column(name="currentRevision", type="string", length=255, nullable=true)
      */
-    protected $currentRevision;
+    protected $currentRevision = 'empty';
 
     /**
      * @var string $approot

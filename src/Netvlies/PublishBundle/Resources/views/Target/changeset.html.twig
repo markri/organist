@@ -3,7 +3,7 @@ Current ref: {{oldref}}<br>
 New ref: {{newref}}<br><br>
 
 {% if oldref == newref %}
-    Nothing to deploy. Current target is already up to date
+    Current target is already up to date
 {%else%}
     Changes that will be deployed:<br/>
 
@@ -25,10 +25,10 @@ New ref: {{newref}}<br><br>
     $('#netvlies_publishbundle_applicationdeploy_reference').val('{{ newref }}')
 </script>
 
-{% if oldref != newref %}
+
     <br/>
     <br/>
 
     <input value="Deploy" type="submit"/>
-{%endif%}
+
 

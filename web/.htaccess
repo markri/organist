@@ -1,14 +1,14 @@
 <ifModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ app_dev.php [QSA,L]
+    RewriteRule ^(.*)$ app.php [QSA,L]
 </IfModule>
 
-#AuthUserFile /var/www/vhosts/publish/web/.htpasswd
-#AuthGroupFile /dev/null
-#AuthName "Netvlies Publish tool authentication. Vraag Marco voor aanmaken account"
-#AuthType Basic
+AuthUserFile /var/www/vhosts/publish/web/.htpasswd
+AuthGroupFile /dev/null
+AuthName "Netvlies Publish tool authentication. Vraag Marco voor aanmaken account"
+AuthType Basic
 
-#<Limit GET POST>
-#require valid-user
-#</Limit>
+<Limit GET POST>
+require valid-user
+</Limit>

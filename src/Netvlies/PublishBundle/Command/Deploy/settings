@@ -3,8 +3,8 @@ vhost_base=/etc/httpd/sites.d
 # apache deamon for dynamic vhosts
 apache_daemon=apachectl
 # mysql admin credentials
-mysql_user=deploy
-mysql_pw=yadablaat123
+mysql_user=databees
+mysql_pw=monthlypass
 # user under which apache runs
 apache_user=apache
 PATH=$PATH:$HOME/bin:/usr/sbin:/usr/bin:/bin:/sbin

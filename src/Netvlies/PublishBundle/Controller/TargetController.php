@@ -151,6 +151,7 @@ class TargetController extends Controller {
         $target->setApplication($app);
         $target->setEnvironment($env);
         $target->setUsername($user);
+		
 
         if($request->getMethod() != 'POST'){
             // Skip this part if not needed
@@ -212,6 +213,7 @@ class TargetController extends Controller {
             $formStep2->bindRequest($request);
 
             if($formStep2->isValid()){
+				$target->setCurrentRevision('empty');
                 $em->persist($target);
                 $em->flush($target);
 

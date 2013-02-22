@@ -2,11 +2,11 @@
 cd ${repositorypath}
 git clone ${gitrepo}
 cd ${repokey}
-wget http://symfony.com/download?v=Symfony_Standard_2.0.10.tgz
-tar -zxvf Symfony_Standard_2.0.10.tgz
+wget http://symfony.com/download?v=Symfony_Standard_2.0.12.tgz
+tar -zxvf Symfony_Standard_2.0.12.tgz
 echo ""
 mv Symfony/* .
-rm -f Symfony_Standard_2.0.10.tgz
+rm -f Symfony_Standard_2.0.12.tgz
 rmdir Symfony
 rm app/config/parameters.ini
 rm app/bootstrap.php.cache

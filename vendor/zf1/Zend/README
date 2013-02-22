@@ -1,0 +1,14 @@
+Finally a nice way to have Zend Framework as a submodule
+========================================================
+
+To do this, follow these easy steps.
+
+First, browse to your current git repository. Then execute this command:
+
+    git submodule add git://github.com/komola/ZendFramework.git *your/path*
+
+After that, navigate to the folder and execute:
+
+    git checkout *the tagged version you'd like*
+
+After that, you're done!

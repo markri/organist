@@ -1,0 +1,31 @@
+# Symfony default
+/web/bundles/
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.ini
+/app/logs/*
+/build/
+/vendor/
+
+# SASS
+.sass-cache
+
+# PhpStorm
+.idea
+
+# Eclipse
+.buildpath
+.project
+.settings
+
+# Netbeans
+nbproject
+
+# Coda
+*._*
+
+# OS-related
+thumbs.db
+.DS_Store
+WS_FTP.LOG
+desktop.ini

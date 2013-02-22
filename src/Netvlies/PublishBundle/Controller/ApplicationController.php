@@ -225,7 +225,11 @@ class ApplicationController extends Controller {
                 }
 
                 // Repo and local clone doesnt exist
-                $gitService->createRepository();
+                $result = $gitService->createRepository();
+				if(!$result){
+					echo 'Couldnt create repository. Connection failed';
+					exit;
+				}
 
                 $scriptPath = $app->getType()->getInitScriptPath();
                 if(!file_exists($scriptPath)){

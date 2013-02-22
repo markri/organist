@@ -60,13 +60,14 @@ jms_security_extra:
 
 
 parameters:
-    privkeyfile: /var/lib/jenkins/.ssh/id_dsa
-    pubkeyfile: /var/lib/jenkins/.ssh/id_dsa.pub
+    privkeyfile: /var/lib/jenkins/.ssh/id_dsa_deployold
+    pubkeyfile: /var/lib/jenkins/.ssh/id_dsa_deployold.pub
     sudouser: deploy
     repositorypath: /var/www/vhosts/publish/web/repos
+
     # @todo add other services like github or maybe even svn repos?
     bitbucketuser: nvs_ci
-    bitbucketpassword: 33x54Yq7CY
+    bitbucketpassword: 
     bitbucketrepoowner: netvlies
     bitbucketrepoownerpassword: 
     
