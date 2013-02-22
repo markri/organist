@@ -1,8 +1,8 @@
 /web/repos
 /web/bundles
 .idea
-/vendor
+
 /app/cache
 /app/logs
-deps.lock
+
 bootstrap.php.cache
