@@ -275,4 +275,8 @@ $(function () {
 		}
 		return this;
 	};
+
+    $('.filter-list').liveFilter('.filter-box', 'li', {
+      filterChildSelector: 'a'
+    });
 });

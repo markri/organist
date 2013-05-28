@@ -12,6 +12,7 @@
 
         {% block oms_stylesheets %}
             <link rel="stylesheet" href="{{ asset('bundles/netvliespublish/css/style.css') }}">
+            <link rel="stylesheet" href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}">
         {% endblock %}
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
@@ -74,7 +75,9 @@
             </ul>
         </div>
 
-    {% block content %}{% endblock %}
+        {% block content %}
+            {% render "NetvliesPublishBundle:Application:listWidget" %}
+        {% endblock %}
     {% endblock %}
 
     {% block oms_javascripts %}
@@ -84,6 +87,7 @@
         <script>window.jQuery || document.write('<script src="{{ asset('bundles/netvliesoms/js/libs/jquery-1.7.min.js') }}"><\/script>')</script>
         <script src="{{ asset('bundles/netvliespublish/js/tiny_mce/jquery.tinymce.js') }}"></script>
         <script src="{{ asset('bundles/netvliespublish/js/libs/jquery-ui-1.8.16.custom.min.js') }}"></script>
+        <script src="{{ asset('bundles/netvliespublish/js/libs/jquery.liveFilter.js') }}"></script>
 
         <script defer src="{{ asset('bundles/netvliespublish/js/oms/objects.js') }}"></script>
         <script defer src="{{ asset('bundles/netvliespublish/js/script.js') }}"></script>

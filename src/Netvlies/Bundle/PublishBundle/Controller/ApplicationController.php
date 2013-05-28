@@ -28,9 +28,10 @@ class ApplicationController extends Controller {
      * Dashboard view
      *
      * @Route("/application/dashboard/{id}")
+     * @Template()
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @param Application $application
-     * @Template()
+     * @return array
      */
     public function dashboardAction(Application $application)
     {
@@ -46,7 +47,6 @@ class ApplicationController extends Controller {
      */
     public function createAction()
     {
-
         $form = $this->createForm(new ApplicationCreateType(), new Application(), array('scmtypes' => $this->container->getParameter('netvlies_publish.scmtypes')));
 
         return array(
@@ -54,27 +54,15 @@ class ApplicationController extends Controller {
         );
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * @Route("/application/edit/{id}")
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
-     * @param Application $application
+     * @param $application
+     * @return array
      */
     public function editAction($application)
     {
-
         $form = $this->createForm(new FormApplicationEditType(), $application, array('branchchoice' => null));
         $request = $this->getRequest();
 
@@ -107,11 +95,23 @@ class ApplicationController extends Controller {
     }
 
     /**
+     * This action is used as subaction to load all available applications into its template.
+     *
+     * @Route("/application/list/widget")
+     * @Template()
+     */
+    public function listWidgetAction(){
+        $oEntityManager = $this->getDoctrine()->getEntityManager();
+        $apps = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getAll();
+        return array('apps' => $apps);
+    }
+
+    /**
      * Will return a list of all targets for this application
      *
      * @Route("/application/{id}/targets")
      * @Template()
-	 */    
+	 */
     public function targetsAction($id) {
 
         $oEntityManager = $this->getDoctrine()->getEntityManager();
@@ -133,11 +133,6 @@ class ApplicationController extends Controller {
 
         return $allTwigParams;
     }
-
-
-
-
-
 
     /**
      * @Route("/application/{id}/enrich")
@@ -247,9 +242,7 @@ class ApplicationController extends Controller {
             'form' => $form->createView(),
             'application' => $app
         );
-
     }
-
 
     /**
      * @Route("/application/{id}/dashboard")
