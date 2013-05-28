@@ -1,4 +1,4 @@
-{% extends 'NetvliesPublishBundle::base2.html.twig' %}
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
 {% block content %}
@@ -11,7 +11,7 @@
         <hr />
         <div id="text">
             Customer: {{application.customer}}<br>
-            Repository: <a href="https://bitbucket.org/{{application.gitrepoSSH|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.gitrepoSSH}}</a><br>
+            Repository: <a href="https://bitbucket.org/{{application.keyname|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.keyname}}</a><br>
             Applicationtype: {{application.type.label}}<br>
 
             <hr/>
@@ -65,7 +65,7 @@
             beforeSend: function(){
 
                 $('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();
-            },            
+            },
             success: function(msg){
                 if (msg != ''){
                         $('#reference_return').html(msg).show();

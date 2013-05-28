@@ -120,7 +120,7 @@ class ApplicationController extends Controller {
          * @var \Netvlies\Bundle\PublishBundle\Entity\Application $app
          */
         $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getScmKey();
+        $repokey = $app->getKeyName();
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
@@ -255,7 +255,7 @@ class ApplicationController extends Controller {
          * @var \Netvlies\Bundle\PublishBundle\Entity\Application $app
          */
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getScmKey();
+        $repokey = $app->getKeyName();
         if(empty($repokey)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }

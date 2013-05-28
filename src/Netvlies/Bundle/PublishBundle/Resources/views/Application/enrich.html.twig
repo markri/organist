@@ -1,4 +1,4 @@
-{% extends 'NetvliesPublishBundle::base2.html.twig' %}
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
 {% block head %}
@@ -29,7 +29,7 @@
             Project is not initialized. I need some extra data, so you can use this project in this tool.<br>
             After hitting the save button following actions will be executed:<br>
             <ul>
-                <li>A new Git Repository will be created at <strong>{{application.gitrepossh}}</strong> (if not exists)</li>
+                <li>A new Git Repository will be created at <strong>{{application.keyname}}</strong> (if not exists)</li>
                 <li>Base files will be added</li>
                 <li>A git ignore file will be added</li>
                 <li>Default deployment descriptors will be added</li>

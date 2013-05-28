@@ -24,6 +24,7 @@ class Application
     /**
      * keyname is used for db user, db name, environment user, etc
      * @ORM\Column(name="keyName", type="string", length=16)
+     * @Assert\MaxLength(16)
      */
     protected $keyName;
 
@@ -78,7 +79,7 @@ class Application
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -118,7 +119,7 @@ class Application
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {

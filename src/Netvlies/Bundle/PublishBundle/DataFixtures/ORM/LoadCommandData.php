@@ -9,10 +9,11 @@
 namespace Netvlies\Bundle\PublishBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use \Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Netvlies\Bundle\PublishBundle\Entity\Command;
 
-class LoadCommandData implements FixtureInterface
+class LoadCommandData implements OrderedFixtureInterface, FixtureInterface
 {
 
     public function load(ObjectManager $om)

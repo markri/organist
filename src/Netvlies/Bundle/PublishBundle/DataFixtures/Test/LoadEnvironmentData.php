@@ -1,11 +1,12 @@
 <?php
 namespace Netvlies\Bundle\PublishBundle\DataFixtures\Test;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Netvlies\Bundle\PublishBundle\Entity\Environment;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 
-class LoadEnvironmentData implements FixtureInterface
+class LoadEnvironmentData implements OrderedFixtureInterface, FixtureInterface
 {
 
     public function load(ObjectManager $om)

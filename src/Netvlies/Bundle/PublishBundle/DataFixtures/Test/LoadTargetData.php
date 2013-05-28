@@ -2,12 +2,13 @@
 namespace Netvlies\Bundle\PublishBundle\DataFixtures\Test;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Environment;
 
-class LoadTargetData implements FixtureInterface
+class LoadTargetData implements OrderedFixtureInterface, FixtureInterface
 {
 
     public function load(ObjectManager $om)

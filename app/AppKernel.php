@@ -21,7 +21,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Netvlies\Bundle\PublishBundle\NetvliesPublishBundle(),
-            new Netvlies\Bundle\PublishParametersBundle\NetvliesPublishParametersBundle(),
+            //new Netvlies\Bundle\PublishParametersBundle\NetvliesPublishParametersBundle(),
             new Netvlies\Bundle\PublishOMSBundle\NetvliesPublishOMSBundle(),
         );
 
