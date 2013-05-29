@@ -22,9 +22,24 @@ class Git implements ScmInterface
      */
     protected $appHelper;
 
+    /**
+     * @var Repository $repository
+     */
+    protected $repository;
+
     public function __construct($appHelper)
     {
         $this->appHelper = $appHelper;
+    }
+
+    protected function getRepository(Application $app)
+    {
+        if(empty($this->repository)){
+            $repoPath = $this->appHelper->getRepositoryPath($app);
+            $this->repository = new Repository($repoPath);
+        }
+
+        return $this->repository;
     }
 
     /**
@@ -35,20 +50,9 @@ class Git implements ScmInterface
      */
     function updateRepository(Application $app)
     {
-        $repoPath = $this->appHelper->getRepositoryPath($app);
-        $repository = new Repository($repoPath);
+        $repo = $this->getRepository($app);
     }
 
-    /**
-     * Must create the repository (usually remote)
-     *
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return boolean
-     */
-    function createRepository(Application $app)
-    {
-        // TODO: Implement createRepository() method.
-    }
 
     /**
      * Must return last changeset
@@ -69,7 +73,17 @@ class Git implements ScmInterface
      */
     function checkoutRepository(Application $app)
     {
-        // TODO: Implement checkoutRepository() method.
+        $repoPath = $this->getRepositoryPath($app);
+        exec('mkdir -p '.escapeshellarg($repoPath));
+
+        $repo = $this->getRepository($app);
+        try{
+            $repo->cloneFrom($app->getScmUrl(), $repoPath);
+        }
+        catch(\Exception $e){
+            exec('rm -rf '.escapeshellarg($repoPath));
+            throw $e;
+        }
     }
 
     /**
@@ -93,50 +107,32 @@ class Git implements ScmInterface
      */
     function getBranchesAndTags(Application $app)
     {
-        // TODO: Implement getBranchesAndTags() method.
-    }
-
-    /**
-     * Checks if repository already exists for given application keyname
-     *
-     * @param $app
-     * @return boolean
-     */
-    function existRepository(Application $app)
-    {
-        // TODO: Implement existRepository() method.
+        $repo = $this->getRepository($app);
+        $repo->checkoutAllRemoteBranches();
+        return $repo->getBranches(true, true);
     }
 
     /**
      * Must return an URL which shows the latest commitlogs
      *
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return string
+     * @return array()
      */
-    function getViewCommitLogURL(Application $app)
+    function getCommitLog(Application $app)
     {
-        // TODO: Implement getViewCommitLogURL() method.
+        // TODO: Implement getCommitLog() method.
     }
 
     /**
-     * Will return an URL which should show a diff for given commit reference/revision
-     * @param Appliction $app
-     * @return string
-     */
-    function getViewCommitURL(Appliction $app, $reference)
-    {
-        // TODO: Implement getViewCommitURL() method.
-    }
-
-    /**
-     * This returns the (usually remote) URL of the repository, which must be used for checking out
+     * This must return the local checked out repository
      *
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return string
+     * @return mixed
      */
-    function getRepositoryURL(Application $app)
+    function getRepositoryPath(Application $app)
     {
-        // TODO: Implement getRepositoryURL() method.
+        return $this->appHelper->getRepositoryPath($app);
     }
+
 
 }

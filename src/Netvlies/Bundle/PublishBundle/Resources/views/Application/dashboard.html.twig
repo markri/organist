@@ -8,7 +8,7 @@
         <section id="content">
             <header>
                 <h1>{{application.name}}</h1>
-                <a href>[ edit ]</a>
+                <a href="{{ path('netvlies_publish_application_edit', {'id': application.id}) }}">[ edit ]</a>
             </header>
             <hr />
             <div id="text">

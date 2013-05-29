@@ -18,14 +18,6 @@ interface ScmInterface
      */
     function updateRepository(Application $app);
 
-    /**
-     * Must create the repository (usually remote)
-     *
-     * @abstract
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return boolean
-     */
-    function createRepository(Application $app);
 
     /**
      * Must return last changeset
@@ -67,37 +59,20 @@ interface ScmInterface
     function getBranchesAndTags(Application $app);
 
     /**
-     * Checks if repository already exists for given application keyname
-     *
-     * @abstract
-     * @param $app
-     * @return boolean
-     */
-    function existRepository(Application $app);
-
-    /**
      * Must return an URL which shows the latest commitlogs
      *
      * @abstract
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return string
+     * @return array()
      */
-    function getViewCommitLogURL(Application $app);
+    function getCommitLog(Application $app);
+
 
     /**
-     * Will return an URL which should show a diff for given commit reference/revision
-     * @abstract
-     * @param Appliction $app
-     * @return string
-     */
-    function getViewCommitURL(Appliction $app, $reference);
-
-    /**
-     * This returns the (usually remote) URL of the repository, which must be used for checking out
+     * This must return the locally checked out repository
      *
-     * @abstract
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return string
+     * @return mixed
      */
-    function getRepositoryURL(Application $app);
+    function getRepositoryPath(Application $app);
 }

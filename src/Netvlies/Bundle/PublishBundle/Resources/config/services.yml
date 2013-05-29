@@ -1,16 +1,12 @@
 services:
 
     git:
-        class: Netvlies\Bundle\PublishBundle\Services\Git
+        class: Netvlies\Bundle\PublishBundle\Services\Scm\Git
         arguments: [ @netvlies_publish.applicationHelper ]
 
     netvlies_publish.applicationHelper:
         class: Netvlies\Bundle\PublishBundle\Services\ApplicationHelper
         arguments: [ %repository_path% ]
-
-
-
-
 
 
     console_controller:
@@ -35,7 +31,14 @@ services:
         tags:
             - { name: form.type, alias: target_selector }
 
+    netvlies_publish.form.scm_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ScmChoiceList
+        arguments: [%netvlies_publish.scmtypes%]
+        tags:
+            - {name: form.type, alias: scm_choicelist }
 
+
+    # dashboard application selector
     netvlies_publish_twig_applicationselect:
         class: Netvlies\Bundle\PublishBundle\Twig\Extensions\ApplicationSelect
         calls:
@@ -43,9 +46,3 @@ services:
         tags:
             - { name: twig.extension }
 
-
-#    # todo remove this i guess
-#    gitbitbucket:
-#        class:   Netvlies\Bundle\PublishBundle\Services\Scm\GitBitbucket
-#        calls:
-#            - [ setContainer, [ @service_container ] ]

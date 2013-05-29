@@ -35,7 +35,14 @@ class DefaultController extends Controller {
     }
 
 
-
+    /**
+     * @Route("/oops")
+     * @Template();
+     */
+    public function oopsAction()
+    {
+        return array();
+    }
 
 
 

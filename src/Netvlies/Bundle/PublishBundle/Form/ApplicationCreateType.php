@@ -38,8 +38,7 @@ class ApplicationCreateType extends AbstractType
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('scmService', 'choice', array(
-                'choices' => $options['scmtypes'],
+            ->add('scmService', 'scm_choicelist', array(
                 'label'=>'SCM service *',
                 'required'=>true )
             )
@@ -51,10 +50,6 @@ class ApplicationCreateType extends AbstractType
 
     public function getDefaultOptions(array $options)
     {
-        $options = array(
-            'scmtypes' => array()
-        );
-
         return $options;
     }
 

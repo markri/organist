@@ -18,7 +18,7 @@ use Netvlies\Bundle\PublishBundle\Form\FormApplicationEnrichType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployOType;
-use Netvlies\Bundle\PublishBundle\Form\ChoiceList\BranchesType;
+use Netvlies\Bundle\PublishBundle\Form\ChoiceList\BrancheList;
 use GitElephant\Repository;
 
 
@@ -31,23 +31,30 @@ class ApplicationController extends Controller {
      */
     public function createAction()
     {
+        $request = $this->getRequest();
+        $application = new Application();
 
         $form = $this->createForm(
             new ApplicationCreateType(),
-            new Application(),
-            array('scmtypes' => $this->container->getParameter('netvlies_publish.scmtypes'))
+            $application
+
         );
+
+        if($request->getMethod()=='POST'){
+            $form->bind($request);
+
+            if($form->isValid()){
+                $em = $this->container->get('doctrine.orm.entity_manager');
+                $em->persist($application);
+                $em->flush();
+                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
+            }
+        }
 
         return array(
             'form' => $form->createView()
         );
     }
-
-
-
-
-
-
 
 
     /**
@@ -77,16 +84,18 @@ class ApplicationController extends Controller {
      */
     public function editAction($application)
     {
-        $form = $this->createForm(new FormApplicationEditType(), $application, array('branchchoice' => null));
+        $form = $this->createForm(new FormApplicationEditType(), $application);
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
 
-            $form->bindRequest($request);
+            $form->bind($request);
 
             if($form->isValid()){
-                //$this->getRequest()->getSession()->remove('remoteBranches');
-                $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
+                $em = $this->container->get('doctrine.orm.entity_manager');
+                $em->persist($application);
+                $em->flush();
+                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
             }
         }
 
@@ -96,15 +105,17 @@ class ApplicationController extends Controller {
         );
     }
 
+
     /**
      * This action is used as subaction to load all available applications into its template, which is almost always used
      *
      * @Route("/application/list")
      * @Template()
      */
-    public function listAction(){
-        $oEntityManager = $this->getDoctrine()->getEntityManager();
-        $apps = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getAll();
+    public function listAction()
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
         return array('apps' => $apps);
     }
 
@@ -114,198 +125,89 @@ class ApplicationController extends Controller {
      * @Route("/application/list/widget")
      * @Template()
      */
-    public function listWidgetAction(){
-        $oEntityManager = $this->getDoctrine()->getEntityManager();
-        $apps = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->getAll();
+    public function listWidgetAction()
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
         return array('apps' => $apps);
     }
+
 
     /**
      * Will return a list of all targets for this application
      *
      * @Route("/application/{id}/targets")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
 	 */
-    public function targetsAction($id) {
+    public function targetsAction($application) {
 
-        $oEntityManager = $this->getDoctrine()->getEntityManager();
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($application);
 
-        /**
-         * @var \Netvlies\Bundle\PublishBundle\Entity\Application $app
-         */
-        $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getKeyName();
-        if(empty($repokey)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
-        }
-
-        $targets = $oEntityManager->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($app);
-
-        $allTwigParams = array();
-        $allTwigParams['application'] = $app;
-        $allTwigParams['targets'] = $targets;
-
-        return $allTwigParams;
+        return array(
+            'application' => $application,
+            'targets' => $targets
+        );
     }
 
+
     /**
-     * @Route("/application/{id}/enrich")
-     * @Template()
+     * @Route("/application/{id}/updaterepository")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @param Application $application
      */
-    public function enrichAction($id){
-
-
-        $em  = $this->getDoctrine()->getEntityManager();
+    public function updateRepositoryAction($application)
+    {
         /**
-         * @var \Netvlies\Bundle\PublishBundle\Entity\Application $app
+         * @var \Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface $scmService
          */
-        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-
-        // Copied chars array from current password generator
-        $chars = '345678934567893456789abcdefghjkmnpqrtuvwxyzABCDEFGHJKLMNPQRTUVWXY';
-        $passwd = '';
-        for($i = 0; $i < 10; $i++) {
-            $passwd .= substr($chars, rand(0, strlen($chars)), 1);
+        $scmService = $this->get($application->getScmService());
+        if(!file_exists($scmService->getRepositoryPath($application))){
+            $scmService->checkoutRepository($application);
         }
 
-        $app->setMysqlpw($passwd);
-        $app->setScmKey($app->getName());
+        $scmService->updateRepository($application);
 
-        $scmService = $this->get($app->getScmService());
-        $app->setScmURL($scmService->getScmURL($app));
-
-        $form = $this->createForm(new FormApplicationEnrichType(), $app);
-        $request = $this->getRequest();
-
-
-        if($request->getMethod() == 'POST'){
-
-            $form->bindRequest($request);
-
-            if($form->isValid()){
-
-                $em->persist($app);
-                $em->flush();
-
-                if($app->getType()->getName()=='symfony2'){
-                    // Add vendor as shared directory for symfony2
-                    $userFile = new UserFiles();
-                    $userFile->setApplication($app);
-                    $userFile->setPath('vendor');
-                    $userFile->setType('D');
-
-                    $em->persist($userFile);
-                    $em->flush();
-                }
-
-                $repoExists = $scmService->existRepo($app);
-                $pathExists = false;
-
-                $appPath = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
-                if(file_exists($appPath)){
-                    // We're finished. Because directory already exists. Which means that it is already cloned
-                    // We're not going to change existing checkout
-                    $pathExists = true;
-                }
-
-                if($repoExists && $pathExists){
-                    // just exit
-                    return $this->redirect($this->generateUrl('netvlies_publish_application_view', array('id'=>$app->getId())));
-                }
-                elseif($repoExists && !$pathExists){
-                    // just path doesnt exist. So just clone the app and redirect
-                    return $this->forward('NetvliesPublishBundle:Git:clone', array(
-                        'id'  => $app->getId()
-                    ));
-                }
-                elseif(!$repoExists && $pathExists){
-                    // huh? How is this possible?
-                    throw new \Exception('Repo doesnt exist but path does??? That cant be true (hopefully)!');
-                }
-
-                // Repo and local clone doesnt exist
-                $result = $scmService->createRepository();
-				if(!$result){
-					echo 'Couldnt create repository. Connection failed';
-					exit;
-				}
-
-                $scriptPath = $app->getType()->getInitScriptPath();
-                if(!file_exists($scriptPath)){
-                    // Nothing to do, so just clone app into repo path
-                    return $this->forward('NetvliesPublishBundle:Git:clone', array(
-                        'id'  => $app->getId()
-                    ));
-                }
-
-                // Fetch init script and assign to consoleaction
-                $lines = file($scriptPath, FILE_IGNORE_NEW_LINES);
-                $action = new ConsoleAction();
-                $action->setCommand($lines);
-                $action->setApplication($app);
-                $action->setContainer($this->container);
-
-                // Execute currently build consoleAction
-                return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
-                    'consoleAction'  => $action
-                ));
-            }
-        }
-
-        return  array(
-            'form' => $form->createView(),
-            'application' => $app
-        );
+        return $this->redirect($this->generateUrl('netvlies_publish_application_controlPanel', array('id' => $application->getId())));
     }
 
     /**
      * @Route("/application/{id}/dashboard")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
+     * @param Application $application
      */
-    public function controlPanelAction($id){
+    public function controlPanelAction($application)
+    {
 
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em = $this->container->get('doctrine.orm.entity_manager');
+
         /**
-         * @var \Netvlies\Bundle\PublishBundle\Entity\Application $app
+         * @var \Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface $scmService
          */
-        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
-        $repokey = $app->getKeyName();
-        if(empty($repokey)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
-        }
-
-        $repoPath = $this->container->getParameter('repository_path'). DIRECTORY_SEPARATOR . 'keerpunt';
-
+        $scmService = $this->get($application->getScmService());
+        $repoPath = $scmService->getRepositoryPath($application);
 
         if(!file_exists($repoPath)){
-//            mkdir($repoPath);
-//            $repo = new Repository($repoPath, $git);
-//            $repo->cloneFrom($app->getScmUrl());
-            //Repository::createFromRemote($app->getScmUrl());
-           throw new \Exception('Repository path doesnt exist on server. Maybe implement auto checkout here, or ask user what to do');
-        }
-        else{
-            $repo = new Repository($repoPath);
+            return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('id' => $application->getId())));
         }
 
-        //$scmService = $this->get($app->getScmService());
-        $branches = $repo->getBranches(true, true);
+        $branches = $scmService->getBranchesAndTags($application);
 
-        //$branches = $scmService->getBranches($app);
         $consoleAction = new ConsoleAction();
         $consoleAction->setContainer($this->container);
-        $consoleAction->setApplication($app);
+        $consoleAction->setApplication($application);
 
-        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BranchesType($branches), 'app'=>$app));
-        $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$app));
-        $deployOForm = $this->createForm(new FormApplicationDeployOType(), $consoleAction, array('branchchoice' => new BranchesType($branches), 'app'=>$app));
+        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BrancheList($branches), 'app'=>$application));
+        $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$application));
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
 
             if ($request->request->has($deployForm->getName())){
-                $deployForm->bindRequest($request);
-                $consoleAction->setCommand($app->getType()->getDeployCommand());
+                $deployForm->bind($request);
+                $consoleAction->setCommand($application->getType()->getDeployCommand());
 
                 if($deployForm->isValid()){
 
@@ -326,20 +228,9 @@ class ApplicationController extends Controller {
             }
 
             if ($request->request->has($rollbackForm->getName())){
-                $rollbackForm->bindRequest($request);
-                $consoleAction->setCommand($app->getType()->getRollbackCommand());
+                $rollbackForm->bind($request);
+                $consoleAction->setCommand($application->getType()->getRollbackCommand());
                 if($rollbackForm->isValid()){
-                    return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
-                        'consoleAction'  => $consoleAction
-                    ));
-                }
-            }
-
-
-            if ($request->request->has($deployOForm->getName())){
-                $deployOForm->bindRequest($request);
-                $consoleAction->setCommand($app->getType()->getDeployOCommand());
-                if($deployOForm->isValid()){
                     return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
                         'consoleAction'  => $consoleAction
                     ));
@@ -350,8 +241,7 @@ class ApplicationController extends Controller {
         return array(
             'deployForm' => $deployForm->createView(),
             'rollbackForm' => $rollbackForm->createView(),
-            'deployOForm' => $deployOForm->createView(),
-            'application' => $app,
+            'application' => $application,
         );
     }
 

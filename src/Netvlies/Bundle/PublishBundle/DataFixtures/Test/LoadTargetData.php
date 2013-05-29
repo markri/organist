@@ -23,6 +23,7 @@ class LoadTargetData implements OrderedFixtureInterface, FixtureInterface
         $target->setCaproot('/home/publishtest_symfony21/www');
         $target->setApproot('/home/publishtest_symfony21/www/current');
         $target->setWebroot('/home/publishtest_symfony21/www/current/web');
+        $target->setUsername('user');
         $om->persist($target);
 
 
@@ -34,6 +35,7 @@ class LoadTargetData implements OrderedFixtureInterface, FixtureInterface
         $target->setCaproot('');
         $target->setApproot('/home/vagrant/vhosts/symfony21');
         $target->setWebroot('/home/vagrant/vhosts/symfony21/web');
+        $target->setUsername('user');
         $om->persist($target);
 
         $om->flush();
