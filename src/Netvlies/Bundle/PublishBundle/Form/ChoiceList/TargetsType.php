@@ -7,10 +7,11 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\ChoiceList\LazyChoiceList;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 
 
-
-class TargetsType implements ChoiceListInterface
+class TargetsType extends LazyChoiceList
 {
 
     private $em;
@@ -22,23 +23,28 @@ class TargetsType implements ChoiceListInterface
     }
 
     /**
-     * Returns a list of choices
+     * Loads the choice list
      *
-     * @return array
+     * Should be implemented by child classes.
+     *
+     * @return ChoiceListInterface The loaded choice list
      */
-    public function getChoices()
+    protected function loadChoiceList()
     {
-		$targets = $this->em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($this->app);
-		$return = array(''=>'-- Choose a target --');
-		
-		foreach($targets as $target){
+        $targets = $this->em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($this->app);
+        $return = array('0'=>'-- Choose a target --');
+
+        foreach($targets as $target){
             if($target->getEnvironment()->getType()=='O'){
                 // Since this form element is only used on dashboard for
                 continue;
             }
-			$return[$target->getId()] = $target->getLabel();
-		}
-		
-		return $return;
+            $return[$target->getId()] = $target->getLabel();
+        }
+
+        return new ChoiceList(array_keys($return), $return);
+
+
     }
+
 }

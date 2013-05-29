@@ -1,11 +1,12 @@
 services:
-    # services
-    gitbitbucket:
-        class:   Netvlies\Bundle\PublishBundle\Services\Scm\GitBitbucket
-        calls:
-            - [ setContainer, [ @service_container ] ]
-        tags:
-            - { name: netvlies_scmservice, alias: gitbitbucket }
+
+    git:
+        class: Netvlies\Bundle\PublishBundle\Services\Git
+        arguments: [ @netvlies_publish.applicationHelper ]
+
+    netvlies_publish.applicationHelper:
+        class: Netvlies\Bundle\PublishBundle\Services\ApplicationHelper
+        arguments: [ %repository_path% ]
 
 
 
@@ -41,3 +42,10 @@ services:
             - [ setContainer, [ @service_container ] ]
         tags:
             - { name: twig.extension }
+
+
+#    # todo remove this i guess
+#    gitbitbucket:
+#        class:   Netvlies\Bundle\PublishBundle\Services\Scm\GitBitbucket
+#        calls:
+#            - [ setContainer, [ @service_container ] ]

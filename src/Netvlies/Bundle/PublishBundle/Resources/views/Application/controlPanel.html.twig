@@ -12,7 +12,7 @@
         <div id="text">
             Customer: {{application.customer}}<br>
             Repository: <a href="https://bitbucket.org/{{application.keyname|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.keyname}}</a><br>
-            Applicationtype: {{application.type.label}}<br>
+            Applicationtype: {{application.type.displayName}}<br>
 
             <hr/>
             <h2>Deploy</h2>
@@ -35,13 +35,13 @@
             </form>
 
 
-            <hr />
-            <h2>Setup development</h2>
-            <form id="#setupO_form" name="setupO_form" method="POST">
-                {{ form_errors(deployOForm) }}
-                {{ form_widget(deployOForm) }}
-                <input type="submit" value="Setup"/>
-            </form>
+            {#<hr />#}
+            {#<h2>Setup development</h2>#}
+            {#<form id="#setupO_form" name="setupO_form" method="POST">#}
+                {#{{ form_errors(deployOForm) }}#}
+                {#{{ form_widget(deployOForm) }}#}
+                {#<input type="submit" value="Setup"/>#}
+            {#</form>#}
         </div>
 
     </section>

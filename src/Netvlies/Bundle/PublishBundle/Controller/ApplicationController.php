@@ -19,9 +19,35 @@ use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployOType;
 use Netvlies\Bundle\PublishBundle\Form\ChoiceList\BranchesType;
+use GitElephant\Repository;
 
 
 class ApplicationController extends Controller {
+
+
+    /**
+     * @Route("/application/create")
+     * @Template()
+     */
+    public function createAction()
+    {
+
+        $form = $this->createForm(
+            new ApplicationCreateType(),
+            new Application(),
+            array('scmtypes' => $this->container->getParameter('netvlies_publish.scmtypes'))
+        );
+
+        return array(
+            'form' => $form->createView()
+        );
+    }
+
+
+
+
+
+
 
 
     /**
@@ -41,18 +67,6 @@ class ApplicationController extends Controller {
     }
 
 
-    /**
-     * @Route("/application/create")
-     * @Template()
-     */
-    public function createAction()
-    {
-        $form = $this->createForm(new ApplicationCreateType(), new Application(), array('scmtypes' => $this->container->getParameter('netvlies_publish.scmtypes')));
-
-        return array(
-            'form' => $form->createView()
-        );
-    }
 
     /**
      * @Route("/application/edit/{id}")
@@ -260,8 +274,24 @@ class ApplicationController extends Controller {
             return $this->redirect($this->generateUrl('netvlies_publish_application_enrich', array('id'=>$app->getId())));
         }
 
-        $scmService = $this->get($app->getScmService());
-        $branches = $scmService->getBranches($app);
+        $repoPath = $this->container->getParameter('repository_path'). DIRECTORY_SEPARATOR . 'keerpunt';
+
+
+        if(!file_exists($repoPath)){
+//            mkdir($repoPath);
+//            $repo = new Repository($repoPath, $git);
+//            $repo->cloneFrom($app->getScmUrl());
+            //Repository::createFromRemote($app->getScmUrl());
+           throw new \Exception('Repository path doesnt exist on server. Maybe implement auto checkout here, or ask user what to do');
+        }
+        else{
+            $repo = new Repository($repoPath);
+        }
+
+        //$scmService = $this->get($app->getScmService());
+        $branches = $repo->getBranches(true, true);
+
+        //$branches = $scmService->getBranches($app);
         $consoleAction = new ConsoleAction();
         $consoleAction->setContainer($this->container);
         $consoleAction->setApplication($app);

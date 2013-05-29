@@ -53,6 +53,12 @@ class Application
     protected $scmService;
 
     /**
+     * @var string $scmUrl
+     * @ORM\Column(name="scmUrl", type="string", length=255, nullable=true)
+     */
+    protected $scmUrl;
+
+    /**
      * @var object $userFiles
      * @ORM\OneToMany(targetEntity="UserFile", mappedBy="application", cascade={"persist", "remove"})
      */
@@ -201,6 +207,22 @@ class Application
     public function getScmService()
     {
         return $this->scmService;
+    }
+
+    /**
+     * @param string $scmUrl
+     */
+    public function setScmUrl($scmUrl)
+    {
+        $this->scmUrl = $scmUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScmUrl()
+    {
+        return $this->scmUrl;
     }
 
     /**

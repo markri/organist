@@ -59,16 +59,10 @@ swiftmailer:
 
 
 netvlies_publish:
-    repositorypath: /home/vagrant/repos
+    repositorypath: %repository_path%
     anyterm_user: vagrant   # this local user is used for connecting to remote hosts for deployment and git user
     anyterm_exec_port: 7778 # anyterm port
-    scm:
-        bitbucket:
-            key: /home/vagrant/.ssh/id_rsa_git
-            user: netvlies
-        github:
-            user: mdekrijger
-            password: mdekrijger
+    scmservices: [ git ]
 
 #cypress_git_elephant:
 #    binary_path: /usr/bin/git

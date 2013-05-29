@@ -17,19 +17,22 @@ class ApplicationCreateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('name', 'text', array(
+                'label' => 'Name *')
+            )
+            ->add('customer', 'text', array(
+                'label' => 'Customer / Groupname',
+                'required' => false)
+            )
             ->add('keyname', 'text', array(
                 'max_length'=>16,
-                'label'=>'Unique keyname',
+                'label'=>'Unique technical name *',
                 'required' => true)
-            )
-            ->add('name', 'text', array())
-            ->add('customer', 'text', array(
-                'required' => false)
             )
             ->add('type', 'entity', array(
                 'class' => 'Netvlies\Bundle\PublishBundle\Entity\ApplicationType',
                 'property'=> 'displayName',
-                'label' => 'Application type',
+                'label' => 'Application type *',
                 'empty_value'=> '-- choose type --',
                 'expanded' => false,
                 'multiple' => false,
@@ -37,7 +40,11 @@ class ApplicationCreateType extends AbstractType
             )
             ->add('scmService', 'choice', array(
                 'choices' => $options['scmtypes'],
-                'label'=>'SCM service',
+                'label'=>'SCM service *',
+                'required'=>true )
+            )
+            ->add('scmUrl', 'text', array(
+                'label'=>'SCM URL *',
                 'required'=>true )
             );
     }

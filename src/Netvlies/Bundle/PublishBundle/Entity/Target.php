@@ -81,6 +81,33 @@ class Target
      */
     protected $domains;
 
+    /**
+     * @ORM\Column(name="username", type="string", length=255)
+     */
+    protected $username;
+
+
+    /**
+     * @var string $currentRevision
+     *
+     * @ORM\Column(name="mysqldb", type="string", length=255, nullable=true)
+     */
+    protected $mysqldb;
+
+    /**
+     * @var string $currentRevision
+     *
+     * @ORM\Column(name="mysqluser", type="string", length=255, nullable=true)
+     */
+    protected $mysqluser;
+
+    /**
+     * @var string $currentRevision
+     *
+     * @ORM\Column(name="mysqlpw", type="string", length=255, nullable=true)
+     */
+    protected $mysqlpw;
+
 
 
     public function __construct()
@@ -286,6 +313,55 @@ class Target
     {
         $domain->setTarget($this);
         $this->domains[] = $domain;
+    }
+
+
+    /**
+     * @param string $mysqldb
+     */
+    public function setMysqldb($mysqldb)
+    {
+        $this->mysqldb = $mysqldb;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqldb()
+    {
+        return $this->mysqldb;
+    }
+
+    /**
+     * @param string $mysqlpw
+     */
+    public function setMysqlpw($mysqlpw)
+    {
+        $this->mysqlpw = $mysqlpw;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqlpw()
+    {
+        return $this->mysqlpw;
+    }
+
+    /**
+     * @param string $mysqluser
+     */
+    public function setMysqluser($mysqluser)
+    {
+        $this->mysqluser = $mysqluser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMysqluser()
+    {
+        return $this->mysqluser;
     }
 
 }

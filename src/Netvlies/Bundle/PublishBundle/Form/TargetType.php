@@ -45,14 +45,14 @@ class TargetType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $options['csrf_protection'] = false;
-        $options['app'];
+        $options['app'] = null;
 
         return $options;
     }
 
     public function getName()
     {
-        return 'netvlies_publishbundle_targettype';
+        return 'target_selector';
     }
 
 }

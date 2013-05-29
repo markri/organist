@@ -91,7 +91,7 @@ class TargetController extends Controller {
 
         return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
     }
-	
+
 
 
     /**
@@ -148,6 +148,7 @@ class TargetController extends Controller {
          * @var \Netvlies\Bundle\PublishBundle\Entity\Environment $env
          */
         $env = $em->getRepository('NetvliesPublishBundle:Environment')->findOneById($envId);
+
         $target->setApplication($app);
         $target->setEnvironment($env);
         $target->setUsername($user);
@@ -155,40 +156,42 @@ class TargetController extends Controller {
         if($request->getMethod() != 'POST'){
             // Skip this part if not needed
 
+            $homedir = '/home';
+
             // Init default values in target
             switch($env->getType()){
                 case 'O':
-                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName();
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName();
                     $target->setApproot($appRoot);
-                    $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    //$target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
                     break;
                 case 'T':
                     if($target->getUsername()=='tester'){
-                        $target->setPrimaryDomain($app->getName().'.'.$env->getHostname());
+                       // $target->setPrimaryDomain($app->getName().'.'.$env->getHostname());
                     }
                     else{
-                        $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                       // $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
                     }
 
-                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName().'/current';
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName().'/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/vhosts/'.$app->getName());
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName());
                     break;
                 case 'A':
-                    $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
-                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
+                   // $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
+                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
                     $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
                     break;
                 case 'P':
-                    $target->setPrimaryDomain('www.'.$app->getName().'.nl');
-                    $appRoot = $env->getHomedirsBase().'/'.$target->getUsername().'/www/current';
+                  //  $target->setPrimaryDomain('www.'.$app->getName().'.nl');
+                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
                     break;
             }
 
-            switch($app->getType()->getName()){
+            switch($app->getType()->getDisplayName()){
                 case 'symfony2':
                     $target->setWebroot($appRoot.'/web');
                     break;
@@ -199,8 +202,8 @@ class TargetController extends Controller {
 
             $target->setMysqldb($app->getName());
             $target->setMysqluser($app->getName());
-            $target->setMysqlpw($app->getMysqlpw());
-            $target->setLabel('('.$env->getType().') '.$target->getPrimaryDomain());
+            //$target->setMysqlpw($app->getMysqlpw());
+            $target->setLabel('('.$env->getType().') '.$app->getName());
         }
 
         $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
@@ -219,7 +222,7 @@ class TargetController extends Controller {
                     return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
                 }
 
-                $command = $target->getApplication()->getType()->getSetupTAPCommand();
+                $command = 'cap ${otap} deploy:setup ${params}';
                 $consoleAction = new ConsoleAction();
                 $consoleAction->setTarget($target);
                 $consoleAction->setCommand($command);

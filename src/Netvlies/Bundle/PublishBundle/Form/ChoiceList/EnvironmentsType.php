@@ -7,10 +7,11 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\ChoiceList\LazyChoiceList;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 
 
-
-class EnvironmentsType implements ChoiceListInterface
+class EnvironmentsType extends LazyChoiceList
 {
 
     private $em;
@@ -19,22 +20,28 @@ class EnvironmentsType implements ChoiceListInterface
         $this->em = $em;
     }
 
-
-
     /**
-     * Returns a list of choices
+     * Loads the choice list
      *
-     * @return array
+     * Should be implemented by child classes.
+     *
+     * @return ChoiceListInterface The loaded choice list
      */
-    public function getChoices()
+    protected function loadChoiceList()
     {
-		$envs = $this->em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();		
-		$return = array(''=>'-- Choose environment --');
-		
-		foreach($envs as $env){
-			$return[$env->getId()] = $env->getType().' ('.$env->getHostname().')';
-		}
-		
-		return $return;
+        $envs = $this->em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();
+
+        $labels = array('0'=>'-- Choose environment --');
+        $keys = array('0'=>'0');
+
+
+        foreach($envs as $env){
+            $label = $env->getType().' ('.$env->getHostname().')';
+            $keys[] = $env->getId();
+            $labels[] = $label;
+        }
+
+        return new ChoiceList($keys, $labels);
     }
+
 }

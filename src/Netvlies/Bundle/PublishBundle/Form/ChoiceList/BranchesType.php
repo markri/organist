@@ -6,11 +6,11 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\ChoiceList\LazyChoiceList;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 
 
-
-class BranchesType implements ChoiceListInterface
+class BranchesType extends LazyChoiceList
 {
 
     private $branches;
@@ -19,15 +19,17 @@ class BranchesType implements ChoiceListInterface
         $this->branches = $branches;
     }
 
-
     /**
-     * Returns a list of choices
+     * Loads the choice list
      *
-     * @return array
+     * Should be implemented by child classes.
+     *
+     * @return ChoiceListInterface The loaded choice list
      */
-    function getChoices()
+    protected function loadChoiceList()
     {
-        $return = array(''=>'-- Choose a reference --');
-        return array_merge($return, $this->branches);
+        return new ChoiceList(array_keys($this->branches), $this->branches);
     }
+
+
 }
