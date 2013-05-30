@@ -26,19 +26,18 @@ class FormApplicationDeployType extends AbstractType
         $app = $options['app'];
 
         $builder
-            ->add('target', 'target_selector', array(
-                'app' => $app,
-                'required'=>true)
-            )
-            ->add('revision', 'choice', array(
-                'choice_list'=>$options['branchchoice'],
-                'label'=>'Branch/Tag to use'
+            ->add('target', 'target_choicelist', array(
+                'label' => false,
+                'app' => $app
+            ))
+            ->add('revision', 'reference_choicelist', array(
+                'label' => false,
+                'app' => $app
             ));
     }
 
     public function getDefaultOptions(array $options)
     {
-        $options['branchchoice'] = null;
         $options['app'] = null;
         $options['csrf_protection'] = false;
 

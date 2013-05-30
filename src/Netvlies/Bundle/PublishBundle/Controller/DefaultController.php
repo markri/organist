@@ -19,9 +19,6 @@ class DefaultController extends Controller {
      */
     public function indexAction()
     {
-//        $bla = new Repository('/home/vagrant/repos/boerenmedical');
-        // @todo This command should be run in anyterm (make command in symfony, and run it through anyterm)
-       // $bla->updateAllBranches();
         return array();
     }
 

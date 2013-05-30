@@ -228,6 +228,8 @@ class TargetController extends Controller {
                 $consoleAction->setCommand($command);
                 $consoleAction->setContainer($this->container);
 
+                //$this->get()
+
                 return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
                     'consoleAction'  => $consoleAction
                 ));

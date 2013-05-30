@@ -76,7 +76,7 @@
         </div>
 
         {% block content %}
-            {% render "NetvliesPublishBundle:Application:listWidget" %}
+            {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
         {% endblock %}
     {% endblock %}
 

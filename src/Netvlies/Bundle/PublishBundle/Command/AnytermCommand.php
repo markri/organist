@@ -70,7 +70,7 @@ class AnytermCommand extends ContainerAwareCommand
 
 
         $initd = file_get_contents(__DIR__.'/Anyterm/anyterm');
-        $initd = str_replace('#path#', dirname(dirname(dirname(dirname(__DIR__)))).'/app/console', $initd);
+        $initd = str_replace('#path#', dirname(dirname(dirname(__DIR__))).'/app/console', $initd);
         file_put_contents('/etc/init.d/anyterm', $initd);
         chmod('/etc/init.d/anyterm', 777);
 
@@ -80,6 +80,9 @@ class AnytermCommand extends ContainerAwareCommand
     }
 
 
+    /**
+     * Should only be executed through service. Not from command line
+     */
     protected function start()
     {
         $pidFile = '/var/run/anyterm.pid';
@@ -94,7 +97,9 @@ class AnytermCommand extends ContainerAwareCommand
         shell_exec($command);
     }
 
-
+    /**
+     * Should only be executed through service. Not from command line
+     */
     protected function stop()
     {
         $pidFile = '/var/run/anyterm.pid';
@@ -103,7 +108,7 @@ class AnytermCommand extends ContainerAwareCommand
             exit;
         }
         if(!is_writable($pidFile)){
-            echo "Insufficient permissions. Please execute as root or use sudo";
+            echo "Insufficient permissions. Please execute as service like 'sudo service anyterm start'";
             exit;
         }
 
@@ -111,6 +116,9 @@ class AnytermCommand extends ContainerAwareCommand
         unlink($pidFile);
     }
 
+    /**
+     * Should only be executed through service. Not from command line
+     */
     protected function restart()
     {
         $this->stop();

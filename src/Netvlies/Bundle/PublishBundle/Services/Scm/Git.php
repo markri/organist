@@ -12,6 +12,8 @@ namespace Netvlies\Bundle\PublishBundle\Services\Scm;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
+use Netvlies\Bundle\PublishBundle\Services\Scm\Git\FetchCommand;
+use Netvlies\Bundle\PublishBundle\Services\Scm\Git\Reference;
 
 
 class Git implements ScmInterface
@@ -51,6 +53,7 @@ class Git implements ScmInterface
     function updateRepository(Application $app)
     {
         $repo = $this->getRepository($app);
+        $repo->getCaller()->execute(FetchCommand::getInstance()->fetchAllUpdates());
     }
 
 
@@ -107,9 +110,35 @@ class Git implements ScmInterface
      */
     function getBranchesAndTags(Application $app)
     {
+        $this->updateRepository($app);
         $repo = $this->getRepository($app);
         $repo->checkoutAllRemoteBranches();
-        return $repo->getBranches(true, true);
+        $tags = $repo->getTags();
+        $branches =$repo->getBranches();
+        $references = array();
+
+        foreach($branches as $branche){
+            /**
+             * @var \GitElephant\Objects\TreeBranch $branche
+             */
+            $reference = new Reference();
+            $reference->setReference($branche->getSha());
+            $reference->setName($branche->getName());
+            $references[] = $reference;
+        }
+
+
+        foreach($tags as $tag){
+            /**
+             * @var \GitElephant\Objects\TreeTag $tag
+             */
+            $reference = new Reference();
+            $reference->setReference($tag->getSha());
+            $reference->setName($tag->getName());
+            $references[] = $reference;
+        }
+
+        return $references;
     }
 
     /**

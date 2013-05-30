@@ -25,15 +25,22 @@ services:
         tags:
             - { name: form.type, alias: environment_selector }
 
-    netvlies.publish.form.target_selector:
-        class: Netvlies\Bundle\PublishBundle\Form\TargetType
+    netvlies_publish.form.target_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\TargetChoiceList
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
-            - { name: form.type, alias: target_selector }
+            - { name: form.type, alias: target_choicelist }
+
+    netvlies_publish.form.reference_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ReferenceChoiceList
+        arguments: [ @service_container ]
+        tags:
+            - { name: form.type, alias: reference_choicelist }
+
 
     netvlies_publish.form.scm_selector:
         class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ScmChoiceList
-        arguments: [%netvlies_publish.scmtypes%]
+        arguments: [ %netvlies_publish.scmtypes% ]
         tags:
             - {name: form.type, alias: scm_choicelist }
 

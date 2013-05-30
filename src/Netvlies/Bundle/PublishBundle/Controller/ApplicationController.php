@@ -193,13 +193,12 @@ class ApplicationController extends Controller {
             return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('id' => $application->getId())));
         }
 
-        $branches = $scmService->getBranchesAndTags($application);
 
         $consoleAction = new ConsoleAction();
         $consoleAction->setContainer($this->container);
         $consoleAction->setApplication($application);
 
-        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('branchchoice' => new BrancheList($branches), 'app'=>$application));
+        $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('app'=>$application));
         $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$application));
         $request = $this->getRequest();
 
@@ -211,12 +210,8 @@ class ApplicationController extends Controller {
 
                 if($deployForm->isValid()){
 
-                    if(!array_key_exists($consoleAction->getRevision(), $branches)){
-                        throw new \Exception('Whoops somebody just updated the git repository between previous dashboard load and now');
-                    }
-
                     $target = $consoleAction->getTarget();
-                    $target->setCurrentBranch($branches[$consoleAction->getRevision()]);
+                    //$target->setCurrentBranch($branches[$consoleAction->getRevision()]);
                     $target->setCurrentRevision($consoleAction->getRevision());
                     $em->persist($target);
                     $em->flush();
