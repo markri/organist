@@ -26,7 +26,7 @@ class ApplicationCreateType extends AbstractType
             )
             ->add('keyname', 'text', array(
                 'max_length'=>16,
-                'label'=>'Unique technical name *',
+                'label'=>'Unique technical name (max 16 chars) * ',
                 'required' => true)
             )
             ->add('type', 'entity', array(
@@ -43,7 +43,7 @@ class ApplicationCreateType extends AbstractType
                 'required'=>true )
             )
             ->add('scmUrl', 'text', array(
-                'label'=>'SCM URL *',
+                'label'=>'SCM URL (e.g. git@bitbucket.org:netvlies/my_project.git) *',
                 'required'=>true )
             );
     }

@@ -105,6 +105,18 @@ table.sortable .icon { display: inline-block; margin-right: 5px; }
 .dnd-tree .target.bottom > a { border-bottom-color: black; }
 .dnd-tree .target.on > a { border-color: black; border-width: 1px; background-color: #ccc; }
 
+
+.message { border: 1px solid #ebc204; color: #ac760d; background: #fffece; padding: 14px 30px 14px 18px; }
+.message a { color: #ac760d; }
+.message p { margin: 0; }
+.message.error { border-color: #e60004; color: #a50003; background-color: #ffd2d3; }
+.message.error a { color: #a50003; }
+.message.success { border-color: #00838a; color: #014b4f; background-color: #9ff19b; }
+.message.success a { color: #014b4f; }
+.message.information { border-color: #7764a9; color: #443666; background-color: #fac5de; }
+.message.information a { color: #443666; }
+.message ~ .message { margin-top: 10px; }
+
 .lightboxes { position: fixed; width: 50%; top: 5%; left: 25%; height: 90%; display: none; }
 .lightboxes > div { position: absolute; top: 0; left: 0; display: none; border: solid 4px #4c4d4e; padding: 20px; background: #fff; overflow: hidden; z-index: 250; width: 100%; border-radius: 25px; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; max-height: 100%; }
 .lightboxes h1 { margin-top: 0px; }

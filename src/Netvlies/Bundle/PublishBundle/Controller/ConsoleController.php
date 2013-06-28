@@ -60,7 +60,7 @@ class ConsoleController extends Controller {
         // So therefore this method will just render a template where an iframe is loaded with an anyterm console where the command is executed
         // The script (encoded scriptpath) will be selfdestructed at the end, so re-executing is impossible by then
         $twigParams = array();
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
         $twigParams['application'] = $app;

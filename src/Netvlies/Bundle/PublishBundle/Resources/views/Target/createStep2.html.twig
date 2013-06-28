@@ -20,7 +20,8 @@
                 {{ form_errors(form) }}
                 {{ form_widget(form) }}
 
-                <input type="submit" value="Save" />
+                <input type="submit" value="Save" class="button"/>
+                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
 
             </form>
         </div>

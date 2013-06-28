@@ -137,7 +137,7 @@ class Anyterm
         }
 
         // Prepare log entry
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $user = array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody';
         $environment = $consoleAction->getEnvironment();
         $target = $consoleAction->getTarget();

@@ -11,7 +11,7 @@
                 <hr />
                 <div id="text">
                     Customer: {{application.customer}}<br>
-                    Repository: <a href="https://bitbucket.org/{{application.keyname|replace({'.git' : '', 'git@bitbucket.org:': ''})}}">{{application.keyname}}</a><br>
+                    Repository: {{application.scmUrl}}<br>
                     Applicationtype: {{application.type.displayName}}<br>
 
                     {% block target %}{% endblock %}

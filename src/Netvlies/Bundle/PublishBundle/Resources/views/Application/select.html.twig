@@ -2,13 +2,13 @@
     {% if current is not empty %}
         {{current.name}}
     {% else %}
-        Applications
+        Application List
     {% endif %}
 </button>
 
 <div class="drop">
     <ul>
-        <li><a href="{{path('netvlies_publish_application_create')}}">New application</a></li>
+        <li><a href="{{path('netvlies_publish_application_create')}}">Add new application</a></li>
         <li><hr></li>
         {% for app in apps %}
             <li><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></li>

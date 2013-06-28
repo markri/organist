@@ -109,6 +109,12 @@ class Target
     protected $mysqlpw;
 
 
+    /**
+     * @ORM\Column(name="primaryDomain", type="string", length=255, nullable=true)
+     */
+    protected $primaryDomain;
+
+
 
     public function __construct()
     {
@@ -362,6 +368,22 @@ class Target
     public function getMysqluser()
     {
         return $this->mysqluser;
+    }
+
+    /**
+     * @param mixed $primaryDomain
+     */
+    public function setPrimaryDomain($primaryDomain)
+    {
+        $this->primaryDomain = $primaryDomain;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrimaryDomain()
+    {
+        return $this->primaryDomain;
     }
 
 }

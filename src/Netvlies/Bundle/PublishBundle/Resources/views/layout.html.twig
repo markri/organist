@@ -23,28 +23,7 @@
 <body>
     {% block body %}
         <header role="banner">
-    		<h1><a href="{{path('netvlies_publish_default_index')}}">Publishing tool</a></h1>
-    		<nav>
-    			<ul class="cf">
-
-                    {% block oms_modules %}
-
-                    {% endblock %}
-
-                    {% block oms_search %}
-
-                        <!-- TODO: zoeken opzetten na uitwerken zoekfunctie -->
-                        <li class="search">
-                            <form action="" method="get">
-                                <input type="text" placeholder="Zoeken" name="q" />
-                            </form>
-                        </li>
-
-                    {% endblock %}
-
-    			</ul>
-    		</nav>
-
+            <a href="{{path('netvlies_publish_default_index')}}"><h1>Publishing tool</h1></a>
     	</header>
         <div id="subnav">
             <ul>
@@ -62,7 +41,10 @@
                 {% if application is defined %}
                     {% block oms_project_options %}
                         <li>
-                            <a href="{{ path('netvlies_publish_application_controlpanel', {'id': application.id}) }}" >Dashboard</a>
+                            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('netvlies_publish_application_controlpanel', {'id': application.id}) }}" >Deploy/Rollback</a>
                         </li>
                         <li>
                             <a href="{{ path('netvlies_publish_application_targets', {'id': application.id }) }}">Targets</a>
@@ -75,7 +57,21 @@
             </ul>
         </div>
 
+
+        {% for flash in app.session.flashbag.get('error') %}
+            <div class="message error">{{ flash }}</div>
+        {% endfor %}
+
+        {% for flash in app.session.flashbag.get('success') %}
+            <div class="message success">{{ flash }}</div>
+        {% endfor %}
+
+        {% for flash in app.session.flashbag.all %}
+            <div class="message information">{{ flash }}</div>
+        {% endfor %}
+
         {% block content %}
+
             {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
         {% endblock %}
     {% endblock %}

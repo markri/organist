@@ -18,6 +18,10 @@ class FormTargetStep2Type extends AbstractType
                 'label'=>'Label (e.g. "(P) www.myapp.com" *',
                 'required'=>true)
             )
+            ->add('primaryDomain', 'text', array(
+                'label'=>'Domain e.g. "www.myapp.com" ',
+                'required'=>false)
+            )
             ->add('mysqldb', 'text', array(
                 'required'=>false,
                 'label'=>'MySQL database')

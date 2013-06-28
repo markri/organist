@@ -36,6 +36,11 @@ class ApplicationType
      */
     protected $initScript;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Command", mappedBy="applicationType")
+     */
+    protected $commands;
+
 
 
     public function setId($id)
@@ -76,6 +81,20 @@ class ApplicationType
     public function getInitScript()
     {
         return $this->initScript;
+    }
+
+    public function getDeployCommand()
+    {
+        foreach($this->commands as $command){
+            /**
+             * @var $command Command
+             */
+            if($command->getDisplayName()=='Deploy'){
+                return $command->getCommand();
+            }
+        }
+
+        return '';
     }
 
 }

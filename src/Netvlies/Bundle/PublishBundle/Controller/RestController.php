@@ -39,7 +39,7 @@ class RestController extends Controller
         $errors = $this->get('validator')->validate($app);
 
         if ($errors->count() == 0) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $apps = $em->getRepository('NetvliesPublishBundle:Application')->findByName($app->getName());
 
 
@@ -85,7 +85,7 @@ class RestController extends Controller
         if ($errors->count() == 0) {
 
 
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
 
             $envs1 = $em->getRepository('NetvliesPublishBundle:Environment')->getByTypeAndHost($environment->getType(), $environment->getHostname());
             $envs2 = $em->getRepository('NetvliesPublishBundle:Environment')->findByKeyname($environment->getKeyname());
@@ -116,7 +116,7 @@ class RestController extends Controller
     public function createDeployment()
     {
         $deployment = new Deployment();
-        $form = $this->createForm(new RestDeploymentType(), $deployment, array('entitymanager'=>$this->getDoctrine()->getEntityManager()));
+        $form = $this->createForm(new RestDeploymentType(), $deployment, array('entitymanager'=>$this->getDoctrine()->getManager()));
         $request = $this->getRequest();
         $response = new Response();
 
@@ -130,7 +130,7 @@ class RestController extends Controller
 
         if ($errors->count() == 0) {
 
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $deployments = $em->getRepository('NetvliesPublishBundle:Deployment')->getByAppAndEnv($deployment->getApplication(), $deployment->getEnvironment());
 
             if(count($deployments) == 0){

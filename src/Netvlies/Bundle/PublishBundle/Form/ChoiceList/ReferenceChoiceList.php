@@ -39,7 +39,7 @@ class ReferenceChoiceList extends AbstractType
          */
         $scmService = $this->container->get($app->getScmService());
         $references = $scmService->getBranchesAndTags($app);
-        $choices = array();
+        $choices = array('0'=>'-- Choose a reference --');
 
         foreach($references as $reference){
             /**
@@ -58,7 +58,7 @@ class ReferenceChoiceList extends AbstractType
         $choices = $this->getChoices($options['app']);
 
         $builder->add('reference', 'choice', array(
-            'label' => 'Reference',
+            'label' => false,
             'virtual' => true,
             'choices' => $choices
         ));

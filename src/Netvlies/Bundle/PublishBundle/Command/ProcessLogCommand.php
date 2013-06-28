@@ -54,7 +54,7 @@ class ProcessLogCommand extends ContainerAwareCommand
              $uids[] = $uid;
          }
 
-         $em = $this->getContainer()->get('doctrine')->getEntityManager();
+         $em = $this->getContainer()->get('doctrine')->getManager();
 
 
          foreach($uids as $uid){

@@ -13,7 +13,8 @@ class ScmChoiceList extends AbstractType
 
     private $branches;
 
-    public function __construct($branches){
+    public function __construct($branches)
+    {
         $this->branches = $branches;
     }
 

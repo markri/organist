@@ -1,16 +1,20 @@
 {#<div id="content-wrapper">#}
+<div id="content-wrapper">
+
+
     <section id="relevant-repos">
-        <h1>Repositories</h1>
+
+        <h1>Application list</h1>
         <div class="tabbed-filter-widget repo-filter-widget">
 
             <div class="tabbed-filter">
-                <input type="text" placeholder="Filter repositories" class="filter-box">
+                <input type="text" placeholder="Find application" class="filter-box">
                 <div class="aui-tabs horizontal-tabs aui-tabs-disabled filter-tabs">
                     <ul class="tabs-menu">
                         <li class="menu-item active-tab"><a href="#all" class="all">All</a></li>
-                        <li class="menu-item"><a href="#following" class="following">Watching</a></li>
-                        <li class="menu-item"><a href="#mine" class="mine">Mine</a></li>
-                        <li class="menu-item"><a href="#latest" class="latest">Latest</a></li>
+                        {#<li class="menu-item"><a href="#following" class="following">Watching</a></li>#}
+                        {#<li class="menu-item"><a href="#mine" class="mine">Mine</a></li>#}
+                        {#<li class="menu-item"><a href="#latest" class="latest">Latest</a></li>#}
                     </ul>
                 </div>
             </div>
@@ -31,5 +35,7 @@
             </ol>
             <div class="handle"></div>
         </div>
+        <br>
+        <a href="{{path('netvlies_publish_application_create')}}" class="button">Add new application</a>
     </section>
-{#</div>#}
+</div>

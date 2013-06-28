@@ -2,6 +2,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,7 +28,7 @@ class TargetController extends Controller {
      */
     public function createStep1Action($id){
 
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
         return $this->handleFormStep1($app);
@@ -40,7 +41,7 @@ class TargetController extends Controller {
      */
     public function createStep2Action($id){
 
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
         return $this->handleFormStep2($app);
@@ -52,11 +53,13 @@ class TargetController extends Controller {
      * @Template()
      */
     public function editAction($id){
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $request = $this->getRequest();
 
-        $form = $this->createForm(new FormTargetEditType(), $target, array());
+        $envChoice = new EnvironmentsType($em);
+        $form = $this->createForm(new FormTargetEditType(), $target, array('envchoice'=>$envChoice));
+
 
         if($request->getMethod() == 'POST'){
 
@@ -83,7 +86,7 @@ class TargetController extends Controller {
      * @todo add confirmation, javascript would be sufficient
      */
     public function deleteAction($id){
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $app = $target->getApplication();
         $em->remove($target);
@@ -101,7 +104,7 @@ class TargetController extends Controller {
      */
     protected function handleFormStep1($app){
 
-		$em  = $this->getDoctrine()->getEntityManager();
+		$em  = $this->getDoctrine()->getManager();
         $request = $this->getRequest();
 
         $target = new Target();
@@ -139,7 +142,7 @@ class TargetController extends Controller {
 
         $target = new Target();
         $request = $this->getRequest();
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
 
         $envId = $request->getSession()->get('target.env');
         $user = $request->getSession()->get('target.user');
@@ -207,7 +210,7 @@ class TargetController extends Controller {
         }
 
         $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
 
         if($request->getMethod() == 'POST'){
 
@@ -253,7 +256,7 @@ class TargetController extends Controller {
         // and description of current reference
         $id = $this->get('request')->query->get('id');
 
-        $em  = $this->getDoctrine()->getEntityManager();
+        $em  = $this->getDoctrine()->getManager();
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $app = $target->getApplication();
 
@@ -272,28 +275,26 @@ class TargetController extends Controller {
 
     }
 
-    /**
-     * Used within AJAX call
-     *@Route("/target/loadChangeset")
-     */
-    public function loadChangesetAction(){
-        // and description of current reference
-        $id = $this->get('request')->query->get('id');
-
-        $em  = $this->getDoctrine()->getEntityManager();
-        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
-        if(is_null($target)){
-            throw new \Exception('couldnt find target by id '.$id);
-        }
-        $app = $target->getApplication();
-
-        $scmService = $this->get($app->getScmService());
-
-        $oldRef = $target->getCurrentRevision();
-        $newRef = $this->get('request')->query->get('ref');
-
-        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
-    }
+//    /**
+//     * Used within AJAX call
+//     *@Route("/target/loadChangeset")
+//     */
+//    public function loadChangesetAction(){
+//        // and description of current reference
+//        $id = $this->get('request')->query->get('id');
+//
+//        $em  = $this->getDoctrine()->getManager();
+//        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+//
+//        /**
+//         * @var ScmInterface $scmService
+//         */
+//        $scmService = $this->get($app->getScmService());
+//
+//        $newRef = $this->get('request')->query->get('ref');
+//
+//        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
+//    }
 
 
 

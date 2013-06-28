@@ -18,7 +18,14 @@
             {{ form_widget(form) }}
 
             <br/>
-            <input type="submit" value="Opslaan" />
+            <input type="submit" value="Opslaan" class="button"/>
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
+            <br>
+            <br>
+            {% if deleteable %}
+                <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="button">Applicatie verwijderen</a>
+            {% endif %}
+
 
         </form>
         </div>

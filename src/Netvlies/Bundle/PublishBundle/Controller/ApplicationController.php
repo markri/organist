@@ -79,7 +79,7 @@ class ApplicationController extends Controller {
      * @Route("/application/edit/{id}")
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
-     * @param $application
+     * @param $application Application
      * @return array
      */
     public function editAction($application)
@@ -99,10 +99,27 @@ class ApplicationController extends Controller {
             }
         }
 
+        $deletable = $application->getTargets()->count() == 0 && $application->getUserFiles()->count() == 0;
+
         return array(
             'form' => $form->createView(),
             'application' => $application,
+            'deleteable' => $deletable
         );
+    }
+
+    /**
+     * @Route("/application/delete/{id}")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @param $application Application
+     */
+    public function deleteAction($application)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($application);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('netvlies_publish_default_index'));
     }
 
 
@@ -140,7 +157,8 @@ class ApplicationController extends Controller {
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
 	 */
-    public function targetsAction($application) {
+    public function targetsAction($application)
+    {
 
         $em = $this->container->get('doctrine.orm.entity_manager');
         $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($application);
@@ -163,17 +181,25 @@ class ApplicationController extends Controller {
          * @var \Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface $scmService
          */
         $scmService = $this->get($application->getScmService());
+
         if(!file_exists($scmService->getRepositoryPath($application))){
-            $scmService->checkoutRepository($application);
+            try{
+                $scmService->checkoutRepository($application);
+            }
+            catch(\Exception $e){
+                $this->get('session')->getFlashBag()->add('error', sprintf('Couldnt update repo for %s. Please check your application config', $application->getName()));
+                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id' => $application->getId())));
+            }
         }
 
         $scmService->updateRepository($application);
+        $this->get('session')->getFlashBag()->add('success', sprintf('Repository for %s is updated', $application->getName()));
 
-        return $this->redirect($this->generateUrl('netvlies_publish_application_controlPanel', array('id' => $application->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_application_controlpanel', array('id' => $application->getId())));
     }
 
     /**
-     * @Route("/application/{id}/dashboard")
+     * @Route("/application/{id}/controlpanel")
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
      * @param Application $application
@@ -200,19 +226,30 @@ class ApplicationController extends Controller {
 
         $deployForm = $this->createForm(new FormApplicationDeployType(), $consoleAction, array('app'=>$application));
         $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $consoleAction, array('app'=>$application));
+
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
 
+
             if ($request->request->has($deployForm->getName())){
+
                 $deployForm->bind($request);
                 $consoleAction->setCommand($application->getType()->getDeployCommand());
 
+
+                var_dump($consoleAction->getTarget());
+                var_dump($consoleAction->getRevision());
+                var_dump($_POST);
+
+
                 if($deployForm->isValid()){
+                    echo 'valid';
+                    exit;
 
                     $target = $consoleAction->getTarget();
-                    //$target->setCurrentBranch($branches[$consoleAction->getRevision()]);
-                    $target->setCurrentRevision($consoleAction->getRevision());
+                    $target->setLastDeployedBranch($consoleAction->getRevision());
+                    $target->setLastDeployedRevision($consoleAction->getRevision());
                     $em->persist($target);
                     $em->flush();
 
@@ -221,6 +258,7 @@ class ApplicationController extends Controller {
                     ));
                 }
             }
+            exit;
 
             if ($request->request->has($rollbackForm->getName())){
                 $rollbackForm->bind($request);

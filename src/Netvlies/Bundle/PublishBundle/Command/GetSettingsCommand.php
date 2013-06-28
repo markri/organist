@@ -43,7 +43,7 @@ class getSettingsCommand extends ContainerAwareCommand
              return;
          }
 
-         $em = $this->getContainer()->get('doctrine')->getEntityManager();
+         $em = $this->getContainer()->get('doctrine')->getManager();
          /**
           * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
           */

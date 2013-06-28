@@ -27,12 +27,14 @@ class FormApplicationDeployType extends AbstractType
 
         $builder
             ->add('target', 'target_choicelist', array(
-                'label' => false,
-                'app' => $app
+                'label' => 'Target *',
+                'app' => $app,
+                'required' => true
             ))
             ->add('revision', 'reference_choicelist', array(
-                'label' => false,
-                'app' => $app
+                'label' => 'Reference *',
+                'app' => $app,
+                'required' => true
             ));
     }
 

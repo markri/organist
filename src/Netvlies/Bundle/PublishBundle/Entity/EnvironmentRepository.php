@@ -16,7 +16,7 @@ class EnvironmentRepository extends EntityRepository
 
     public function getByTypeAndHost($type, $host){
 
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getManager();
 
         $query = $entityManager->createQuery('
             SELECT e FROM Netvlies\Bundle\PublishBundle\Entity\Environment e

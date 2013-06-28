@@ -17,7 +17,8 @@ class FormTargetEditType extends AbstractType
     {
 
         $builder
-            ->add('environment', 'environment_selector', array(
+            ->add('environment', 'choice', array(
+                'choice_list'=>$options['envchoice'],
                 'label' => 'Environment *',
                 'required' => true,
             ))
@@ -65,6 +66,7 @@ class FormTargetEditType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $options['csrf_protection'] = false;
+        $options['envchoice'] = null;
         return $options;
     }
 

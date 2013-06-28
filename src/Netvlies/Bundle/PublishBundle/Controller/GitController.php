@@ -28,7 +28,7 @@ class GitController extends Controller
      * @param $id
      */
     public function cloneAction($id){
-        $oEntityManager = $this->getDoctrine()->getEntityManager();
+        $oEntityManager = $this->getDoctrine()->getManager();
         $oRepository = $oEntityManager->getRepository('NetvliesPublishBundle:Application');
 
         /**
@@ -62,7 +62,7 @@ class GitController extends Controller
              throw new \Exception('Main repository directory does not exist or is not writable! (' . $sPath . ')');
          }
 
-         $oEntityManager = $this->getDoctrine()->getEntityManager();
+         $oEntityManager = $this->getDoctrine()->getManager();
          $app = $oEntityManager->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
          $sSiteRepository = $app->getAbsolutePath($this->container->getParameter('netvlies_publish.repositorypath'));
 

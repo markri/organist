@@ -54,7 +54,7 @@ class TargetChoiceList extends AbstractType
     {
         $choices = $this->getChoices($options['app']);
         $builder->add('target', 'choice', array(
-            'label' => 'Target',
+            'label' => false,
             'virtual' => true,
             'choices' => $choices
         ));
@@ -71,15 +71,6 @@ class TargetChoiceList extends AbstractType
             'app' => null
         );
     }
-
-//
-//    /**
-//     * @return null|string|\Symfony\Component\Form\FormTypeInterface
-//     */
-//    public function getParent()
-//    {
-//        return 'form';
-//    }
 
     /**
      * Returns the name of this type.
