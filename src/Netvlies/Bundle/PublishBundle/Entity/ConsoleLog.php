@@ -55,12 +55,6 @@ class ConsoleLog
     private $user;
 
     /**
-     * @var string $key
-     * @ORM\Column(name="uid", type="string", length=255)
-     */
-    private $uid;
-
-    /**
      * @var string $command
      * @ORM\Column(name="command", type="text")
      */

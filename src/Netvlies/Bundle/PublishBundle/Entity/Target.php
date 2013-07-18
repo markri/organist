@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Netvlies\Bundle\PublishBundle\Entity\Deployment
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\TargetRepository")

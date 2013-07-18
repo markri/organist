@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <head>
 <title>Anyterm</title>
 
-<script type="text/javascript" src="anyterm.js">
+<script type="text/javascript" src="/console/exec/anyterm.js">
 </script>
 
 <script type="text/javascript">
@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
   //  - An optional character set.
   //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
 
-  window.onload=function() {create_term("term","Console %h",30,100,"{{ script }}","",50);};
+  window.onload=function() {create_term("term","Console %h",30,100,"{{ id }}","",50);};
 
   // When the user closes the terminal, by default they'll see a blank page.
   // Generally you'll want to be more friendly than that.  If you set the
@@ -46,7 +46,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 </script>
 
-<link rel="stylesheet" type="text/css" href="anyterm.css">
+<link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
 
 </head>
 

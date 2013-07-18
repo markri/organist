@@ -1,10 +1,7 @@
 Dependencies
-- anyterm with apachy proxy setting to /console/exec and /console/open
+- anyterm with apachy/nginx proxy setting to /console/exec
 - php53
 - php-ssh2 package
-- pear
-- phing (for deployment of sudo files) (improve this OTAP-52)
-
 
 Setup
 - be sure to set permissions right of the app/cache and app/log directory

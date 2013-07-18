@@ -38,12 +38,12 @@ class ApplicationCreateType extends AbstractType
                 'multiple' => false,
                 'required'=>true)
             )
-            ->add('scmService', 'scm_choicelist', array(
-                'label'=>'SCM service *',
+            ->add('scmService', 'versioning_choicelist', array(
+                'label'=>'Versioning service *',
                 'required'=>true )
             )
             ->add('scmUrl', 'text', array(
-                'label'=>'SCM URL (e.g. git@bitbucket.org:netvlies/my_project.git) *',
+                'label'=>'Versioning URL (e.g. git@bitbucket.org:netvlies/my_project.git) *',
                 'required'=>true )
             );
     }

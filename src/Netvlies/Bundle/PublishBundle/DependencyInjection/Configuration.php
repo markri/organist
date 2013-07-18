@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('repositorypath')->end()
             ->scalarNode('anyterm_user')->end()
             ->scalarNode('anyterm_exec_port')->end()
-            ->arrayNode('scmservices')
+            ->arrayNode('versioningservices')
                 ->prototype('scalar')->end()
             ->end()
             //->useAttributeAsKey('key')

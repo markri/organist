@@ -36,10 +36,10 @@ class ApplicationType
      */
     protected $initScript;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Command", mappedBy="applicationType")
-     */
-    protected $commands;
+//    /**
+//     * @ORM\OneToMany(targetEntity="Command", mappedBy="applicationType")
+//     */
+//    protected $commands;
 
 
 
@@ -83,18 +83,18 @@ class ApplicationType
         return $this->initScript;
     }
 
-    public function getDeployCommand()
-    {
-        foreach($this->commands as $command){
-            /**
-             * @var $command Command
-             */
-            if($command->getDisplayName()=='Deploy'){
-                return $command->getCommand();
-            }
-        }
-
-        return '';
-    }
+//    public function getDeployCommand()
+//    {
+//        foreach($this->commands as $command){
+//            /**
+//             * @var $command Command
+//             */
+//            if($command->getDisplayName()=='Deploy'){
+//                return $command->getCommand();
+//            }
+//        }
+//
+//        return '';
+//    }
 
 }

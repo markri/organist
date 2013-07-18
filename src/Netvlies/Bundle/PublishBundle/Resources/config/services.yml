@@ -1,22 +1,13 @@
 services:
 
     git:
-        class: Netvlies\Bundle\PublishBundle\Services\Scm\Git
-        arguments: [ @netvlies_publish.applicationHelper ]
-
-    netvlies_publish.applicationHelper:
-        class: Netvlies\Bundle\PublishBundle\Services\ApplicationHelper
-        arguments: [ %repository_path% ]
-
+        class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
+        arguments: [ %repository_path%, %versioning_private_key% ]
 
     console_controller:
         class:    Netvlies\Bundle\PublishBundle\Controller\ConsoleController
         calls:
             - [ setContainer, [ @service_container ] ]
-
-    scriptbuilder:
-        class:  Netvlies\Bundle\PublishBundle\Services\ScriptBuilder
-
 
     # form types
     netvlies.publish.form.environment_selector:
@@ -38,11 +29,11 @@ services:
             - { name: form.type, alias: reference_choicelist }
 
 
-    netvlies_publish.form.scm_selector:
-        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ScmChoiceList
-        arguments: [ %netvlies_publish.scmtypes% ]
+    netvlies_publish.form.versioning_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\VersioningChoiceList
+        arguments: [ %netvlies_publish.versioningtypes% ]
         tags:
-            - {name: form.type, alias: scm_choicelist }
+            - {name: form.type, alias: versioning_choicelist }
 
 
     # dashboard application selector

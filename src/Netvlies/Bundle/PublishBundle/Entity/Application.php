@@ -24,7 +24,7 @@ class Application
     /**
      * keyname is used for db user, db name, environment user, etc
      * @ORM\Column(name="keyName", type="string", length=16)
-     * @Assert\MaxLength(16)
+     * @Assert\Length(max=16)
      */
     protected $keyName;
 

@@ -7,9 +7,10 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\Options;
 
 class ReferenceChoiceList extends AbstractType
 {
@@ -35,17 +36,16 @@ class ReferenceChoiceList extends AbstractType
     protected function getChoices(Application $app)
     {
         /**
-         * @var \Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface $scmService
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
          */
-        $scmService = $this->container->get($app->getScmService());
-        $references = $scmService->getBranchesAndTags($app);
-        $choices = array('0'=>'-- Choose a reference --');
+        $versioningService = $this->container->get($app->getScmService());
+        $references = $versioningService->getBranchesAndTags($app);
 
         foreach($references as $reference){
             /**
-             * @var \Netvlies\Bundle\PublishBundle\Services\Scm\Git\Reference $reference
+             * @var \Netvlies\Bundle\PublishBundle\Versioning\ReferenceInterface $reference
              */
-            $choices[$reference->getReference().$reference->getName()] = $reference->getName();
+            $choices[$reference->getReference()] = $reference->getName();
         }
 
         return $choices;
@@ -53,15 +53,9 @@ class ReferenceChoiceList extends AbstractType
 
 
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function getParent()
     {
-        $choices = $this->getChoices($options['app']);
-
-        $builder->add('reference', 'choice', array(
-            'label' => false,
-            'virtual' => true,
-            'choices' => $choices
-        ));
+        return 'choice';
     }
 
 
@@ -69,13 +63,19 @@ class ReferenceChoiceList extends AbstractType
      * @param array $options
      * @return array
      */
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $options)
     {
-        return array(
-            'app' => null
-        );
-    }
 
+        $options->setDefaults(
+            array(
+                'label' => false,
+                'empty_value' => '-- Choose a reference --',
+                'app' => null,
+                'choices' => function (Options $options){
+                    return $this->getChoices($options['app']);
+                }
+            ));
+    }
 
     /**
      * Returns the name of this type.

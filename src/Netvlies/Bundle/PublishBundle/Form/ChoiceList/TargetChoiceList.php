@@ -7,12 +7,8 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormEvents;
 
 class TargetChoiceList extends AbstractType
 {
@@ -35,14 +31,9 @@ class TargetChoiceList extends AbstractType
     protected function getChoices($app)
     {
         $targets = $this->em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($app);
-        $return = array('0'=>'-- Choose a target --');
 
         foreach($targets as $target){
-            if($target->getEnvironment()->getType()=='O'){
-                // Since this form element is only used on dashboard for
-                continue;
-            }
-            $return[$target->getId()] = $target->getLabel();
+            $return[$target->getId()] = $target;
         }
 
         return $return;
@@ -50,14 +41,9 @@ class TargetChoiceList extends AbstractType
 
 
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function getParent()
     {
-        $choices = $this->getChoices($options['app']);
-        $builder->add('target', 'choice', array(
-            'label' => false,
-            'virtual' => true,
-            'choices' => $choices
-        ));
+        return 'entity';
     }
 
 
@@ -65,11 +51,19 @@ class TargetChoiceList extends AbstractType
      * @param array $options
      * @return array
      */
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $options)
     {
-        return array(
-            'app' => null
-        );
+
+        $options->setDefaults(
+            array(
+                'class' => 'NetvliesPublishBundle:Target',
+                'label' => false,
+                'empty_value' => '-- Choose a target --',
+                'app' => null,
+                'choices' => function (Options $options){
+                    return $this->getChoices($options['app']);
+                }
+        ));
     }
 
     /**

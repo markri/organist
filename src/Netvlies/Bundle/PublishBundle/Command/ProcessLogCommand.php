@@ -26,50 +26,48 @@ class ProcessLogCommand extends ContainerAwareCommand
          $this
              ->setName('publish:processlog')
              ->setDescription('Processes log entry of given command.')
-             ->addOption('uid', null, InputOption::VALUE_OPTIONAL, 'Execution UID')
+             ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Execution UID')
              ->addOption('exitcode', null, InputOption::VALUE_OPTIONAL, 'Exit code')
          ;
      }
 
      protected function execute(InputInterface $input, OutputInterface $output)
      {
-         $uid = $input->getOption('uid');
+         $id = $input->getOption('id');
          $exitcode = $input->getOption('exitcode');
-         $logDir = dirname(dirname(dirname(dirname(__DIR__)))).'/app/logs/scripts';
+         $logDir = dirname(dirname(dirname(dirname(dirname(__DIR__))))).'/app/logs/scripts';
 
-         $uids = array();
+         $ids = array();
 
-         // Also include log files older than 2 weeks. They're probably not going to finish anyway. So clear them
+         // Also include log files older than 24 hours. They're probably not going to finish anyway. So clear them
          $iterator = new \DirectoryIterator($logDir);
          foreach ($iterator as $fileinfo) {
              if ($fileinfo->isFile()) {
-                 if(time() - $fileinfo->getMTime() > 60 * 60 * 24 * 14){
-                     $uids[] = $fileinfo->getBasename();
+                 if(time() - $fileinfo->getMTime() > 60 * 60 * 24 * 1){
+                     $ids[] = $fileinfo->getBasename();
                  }
              }
          }
 
-
-         if(!empty($uid)){
-             $uids[] = $uid;
+         if(!empty($id)){
+             $ids[] = $id;
          }
 
          $em = $this->getContainer()->get('doctrine')->getManager();
 
 
-         foreach($uids as $uid){
+         foreach($ids as $id){
              /**
               * @var \Netvlies\Bundle\PublishBundle\Entity\ConsoleLog $logentry
               */
-             $logentry = $em->getRepository('NetvliesPublishBundle:ConsoleLog')->findOneByUid($uid);
+             $logentry = $em->getRepository('NetvliesPublishBundle:ConsoleLog')->find($id);
 
              if(is_null($logentry)){
-                 echo "Warning: No log entry available to update...";
+                 echo "Warning: No log entry available to update, remove log manually...";
                  continue;
              }
 
-
-             $logfile = $logDir.'/'.$uid.'.log';
+             $logfile = $logDir.'/'.$id.'.log';
              $logentry->setDatetimeEnd(new \DateTime());
              $logentry->setLog(file_get_contents($logfile));
              $logentry->setExitCode($exitcode);
@@ -89,9 +87,12 @@ class ProcessLogCommand extends ContainerAwareCommand
               */
              $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($logentry->getTargetId());
 
-             $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION';
+             $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION || true';
              $revision = shell_exec($command);
-             $target->setCurrentRevision($revision);
+             $target->setLastDeployedRevision($revision);
+             //@todo set last deployed branch/tag as well
+
+
              $em->persist($target);
              $em->flush();
          }

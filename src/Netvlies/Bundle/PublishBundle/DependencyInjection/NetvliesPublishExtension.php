@@ -26,7 +26,7 @@ class NetvliesPublishExtension extends Extension
         $container->setParameter('netvlies_publish.anyterm_user', $config['anyterm_user']);
         $container->setParameter('netvlies_publish.anyterm_exec_port', $config['anyterm_exec_port']);
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
-        $container->setParameter('netvlies_publish.scmtypes', $config['scmservices']);
+        $container->setParameter('netvlies_publish.versioningtypes', $config['versioningservices']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

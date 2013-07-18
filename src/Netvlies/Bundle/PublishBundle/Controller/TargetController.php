@@ -2,7 +2,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Services\Scm\ScmInterface;
+use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -10,13 +10,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
-use Netvlies\Bundle\PublishBundle\Entity\ConsoleAction;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetEditType;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep1Type;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep2Type;
 use Netvlies\Bundle\PublishBundle\Form\ChoiceList\EnvironmentsType;
-
-
 
 
 class TargetController extends Controller {
@@ -221,21 +218,7 @@ class TargetController extends Controller {
                 $em->persist($target);
                 $em->flush($target);
 
-                if($target->getEnvironment()->getType()=='O'){
-                    return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
-                }
-
-                $command = 'cap ${otap} deploy:setup ${params}';
-                $consoleAction = new ConsoleAction();
-                $consoleAction->setTarget($target);
-                $consoleAction->setCommand($command);
-                $consoleAction->setContainer($this->container);
-
-                //$this->get()
-
-                return $this->forward('NetvliesPublishBundle:Console:prepareCommand', array(
-                    'consoleAction'  => $consoleAction
-                ));
+                return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
             }
         }
 
@@ -260,8 +243,8 @@ class TargetController extends Controller {
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $app = $target->getApplication();
 
-        $scmService = $this->get($app->getScmService());
-        $remoteBranches = $scmService->getBranches($app);
+        $versioningService = $this->get($app->getScmService());
+        $remoteBranches = $versioningService->getBranches($app);
 
         /**
          * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
@@ -271,7 +254,7 @@ class TargetController extends Controller {
         $oldRef = $target->getCurrentRevision();
         $newRef = array_search($branch, $remoteBranches);
 
-        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
+        return $this->handleChangesetsRendering($versioningService, $app, $oldRef, $newRef);
 
     }
 
@@ -287,7 +270,7 @@ class TargetController extends Controller {
 //        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 //
 //        /**
-//         * @var ScmInterface $scmService
+//         * @var VersioningInterface $scmService
 //         */
 //        $scmService = $this->get($app->getScmService());
 //
@@ -298,8 +281,8 @@ class TargetController extends Controller {
 
 
 
-    protected function handleChangesetsRendering($scmService, $app, $oldRef, $newRef){
-        $changesets = $scmService->getChangesets($app, $oldRef, $newRef);
+    protected function handleChangesetsRendering($versioningService, $app, $oldRef, $newRef){
+        $changesets = $versioningService->getChangesets($app, $oldRef, $newRef);
 
         if(empty($newRef) && count($changesets)>0){
             $newRef = $changesets[0]['raw_node'];
@@ -324,7 +307,7 @@ class TargetController extends Controller {
         $params['messages'] = $messages;
         $params['oldref'] = $oldRef;
         $params['newref'] = $newRef;
-        $params['bburl'] = $scmService->getChangesetURL();
+        $params['bburl'] = $versioningService->getChangesetURL();
 
         return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
     }

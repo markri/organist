@@ -1,11 +1,18 @@
 #!/bin/bash
 
 # This script is used within the anyterm console
+# it runs a generated script which is given as parameter
+#
 
-script=$1
-logbase=$(dirname $0)/../../../../app/logs/scripts/
-console=$(dirname $0)/../../../../app/console
-scriptid=`basename $script`
+logbase=$(dirname $0)/../../../../../../app/logs/scripts/
+console=$(dirname $0)/../../../../../../app/console
+scriptid=$1
+
+script="$logbase$scriptid.sh"
+echo $script
+$console publish:getcommand --id=$scriptid > $script
+chmod 777 $script
+
 
 mkdir -p $logbase
 logfile=$logbase""$scriptid".log"
@@ -16,7 +23,6 @@ start=$(date +%s)
 # init logfile
 echo "" >> $logfile
 echo `date` >> $logfile
-echo `cat -A $script` >> $logfile
 echo "" >> $logfile
 
 # execute script
@@ -29,7 +35,7 @@ diff=$(( $end - $start ))
 
 # process log and remove temp script and log
 echo "Saving log and clearing temporary files"
-$console publish:processlog --uid=$scriptid --exitcode=$exitcode
+$console publish:processlog --id=$scriptid --exitcode=$exitcode
 echo ""
 
 # check if script was succesfull
@@ -48,6 +54,7 @@ fi
 # Self destruct
 rm $script
 
+# Be sure that anyterm displays all output. Sometimes it doestn display last output, probably because its asynchronous
 read -n1 -t1
 
 exit $exitcode

@@ -10,10 +10,6 @@
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
-use Netvlies\Bundle\PublishBundle\Entity\TargetRepository;
-use Netvlies\Bundle\PublishBundle\Entity\Deployment;
 use Netvlies\Bundle\PublishBundle\Form\ChoiceList\EnvironmentsType as EnvironmentChoice;
 use Netvlies\Bundle\PublishBundle\Form\DataTransformer\IdToEnvironment;
 use Symfony\Component\Form\FormBuilderInterface;
