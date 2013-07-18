@@ -55,8 +55,15 @@
                 <h2>Last executed commands</h2>
                 <table border="1" cellspacing="0">
                     <thead>
-                        <th>Commandlog</th>
+                        <th>TypeDate</th>
                     </thead>
+                    {% for log in logs %}
+                        <tr>
+                        <td>
+                            {{ log.id }}
+                        </td>
+                        </tr>
+                    {% endfor %}
                 </table>
 
             </div>

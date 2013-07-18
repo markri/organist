@@ -7,9 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Netvlies\Bundle\PublishBundle\Entity\ConsoleLog
- *
+ * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ConsoleLogRepository")
  * @ORM\Table()
- * @ORM\Entity
   */
 class ConsoleLog
 {

@@ -4,6 +4,8 @@ namespace Netvlies\Bundle\PublishBundle\Controller;
 
 use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
+use Netvlies\Bundle\PublishBundle\Entity\ConsoleLogRepository;
+use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -66,8 +68,17 @@ class ApplicationController extends Controller {
      */
     public function dashboardAction(Application $application)
     {
+        $targets = $application->getTargets();
+        /**
+         * @var ConsoleLogRepository
+         */
+        $logRepo = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:ConsoleLog');
+        $logs = $logRepo->getLogsByTargets($targets);
+
+
         return array(
-            'application' => $application
+            'application' => $application,
+            'logs' => $logs
         );
     }
 
