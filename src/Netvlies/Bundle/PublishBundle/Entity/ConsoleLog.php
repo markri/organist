@@ -81,6 +81,13 @@ class ConsoleLog
      */
     private $targetId;
 
+    /**
+     * @var
+     * @ORM\Column(name="targetlabel", type="string", nullable=true)
+     */
+    private $targetLabel;
+
+
 
     /**
      * @var string $revision
@@ -266,5 +273,21 @@ class ConsoleLog
     public function getRevision()
     {
         return $this->revision;
+    }
+
+    /**
+     * @param mixed $targetLabel
+     */
+    public function setTargetLabel($targetLabel)
+    {
+        $this->targetLabel = $targetLabel;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTargetLabel()
+    {
+        return $this->targetLabel;
     }
 }

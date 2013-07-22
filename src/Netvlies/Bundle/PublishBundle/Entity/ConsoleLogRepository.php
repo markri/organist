@@ -17,7 +17,7 @@ class ConsoleLogRepository extends EntityRepository
      * @param Target $target
      * @return mixed
      */
-    public function getLogsByTargets($targets){
+    public function getLogsByTargets($targets, $limit=null){
 
         $entityManager = $this->getEntityManager();
 
@@ -32,6 +32,10 @@ class ConsoleLogRepository extends EntityRepository
             ORDER BY c.id DESC
         ')->setParameter('ids', $ids);
 
+
+        if(!is_null($limit)){
+            $query->setMaxResults($limit);
+        }
 
         return $query->getResult();
     }

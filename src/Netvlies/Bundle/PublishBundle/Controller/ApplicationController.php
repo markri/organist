@@ -73,7 +73,7 @@ class ApplicationController extends Controller {
          * @var ConsoleLogRepository
          */
         $logRepo = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:ConsoleLog');
-        $logs = $logRepo->getLogsByTargets($targets);
+        $logs = $logRepo->getLogsByTargets($targets, 5);
 
 
         return array(

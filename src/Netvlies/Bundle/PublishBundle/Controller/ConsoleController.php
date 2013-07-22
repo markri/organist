@@ -4,11 +4,13 @@ namespace Netvlies\Bundle\PublishBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Netvlies\Bundle\PublishBundle\Action\CommandInterface;
+use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\ConsoleLog;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationType;
@@ -58,6 +60,7 @@ class ConsoleController extends Controller {
         $logEntry->setCommand($script);
         $logEntry->setDatetimeStart(new \DateTime());
         $logEntry->setHost($command->getTarget()->getEnvironment()->getHostname());
+        $logEntry->setTargetLabel($command->getTarget()->getLabel());
         $logEntry->setTargetId($command->getTarget()->getId());
         $logEntry->setType($command->getTarget()->getEnvironment()->getType());
         $logEntry->setRevision($command->getRevision());
@@ -96,6 +99,36 @@ class ConsoleController extends Controller {
             exit;
         }
         return array('id' => $id);
+    }
+
+
+    /**
+     * @Route("/console/{application}/viewlog/{id}")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @ParamConverter("consoleLog", class="NetvliesPublishBundle:ConsoleLog")
+     * @Template()
+     */
+    public function viewLogAction($consoleLog, $application)
+    {
+        return array(
+            'log' => $consoleLog,
+            'application' => $application
+        );
+    }
+
+
+    /**
+     * @Route("/console/logs/{id}")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Template()
+     * @param Application $application
+     */
+    public function listLogsAction($application)
+    {
+        return array(
+            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:ConsoleLog')->getLogsByTargets($application->getTargets()),
+            'application' => $application
+        );
     }
 
 

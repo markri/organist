@@ -1,0 +1,55 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+
+{% block content %}
+
+    <div id="content-wrapper">
+
+        <section id="content">
+            <header>
+                <h1>All logs for {{ application.name }}</h1>
+            </header>
+
+            <div id="text">
+                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}">Terug naar dashboard</a>
+                <br>
+                <br>
+
+                <table border="1" cellspacing="0">
+                    <thead>
+                        <th>Date</th>
+                        <th>Target</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Log</th>
+                    </thead>
+                    {% for log in logs %}
+                        <tr>
+                            <td>
+                                {{ log.datetimestart.format('d-m-Y H:i') }}
+                            </td>
+                            <td>
+                                {{ log.targetLabel }}
+                            </td>
+                            <td>
+                                {{ log.user }}
+                            </td>
+                            <td>
+                                {% if log.exitcode == 0 %}
+                                    success
+                                {% else %}
+                                    failed
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('netvlies_publish_console_viewlog', {'id': log.id, 'application': application.id}) }}">View log</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+            </div>
+        </section>
+    </div>
+
+
+{% endblock %}

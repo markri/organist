@@ -1,0 +1,74 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+
+{% block content %}
+
+<div id="content-wrapper">
+
+    <section id="content">
+        <header>
+            <h1>{{ log.datetimestart.format('d-m-Y H:i:s') }} - {{ log.targetlabel }}</h1>
+        </header>
+
+        <div id="text">
+
+        <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}">Terug naar dashboard</a>
+        <br>
+        <br>
+
+        <table>
+            <tr>
+                <td>Target label</td>
+                <td>{{ log.targetlabel }}</td>
+            </tr>
+            <tr>
+                <td>Host</td>
+                <td>{{ log.host }}</td>
+            </tr>
+            <tr>
+                <td>DTAP type</td>
+                <td>{{ log.type }}</td>
+            </tr>
+            <tr>
+                <td>Start</td>
+                <td>{{ log.datetimestart.format('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <td>End</td>
+                <td>
+                    {% if log.datetimeend %}
+                        {{ log.datetimeend.format('d-m-Y H:i:s') }}
+                    {% else %}
+                        error / not finished
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Duration</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>User</td>
+                <td>{{ log.user }}</td>
+            </tr>
+            <tr>
+                <td>Exitcode</td>
+                <td>{{ log.exitcode }}</td>
+            </tr>
+            <tr>
+                <td>Revision</td>
+                <td>{{ log.revision }}</td>
+            </tr>
+        </table>
+<br>
+        <div>
+            <h2>Command</h2>
+            {{ log.command }}
+        </div>
+            <h2>Output</h2>
+            {{ log.log|trim|nl2br }}
+        </div>
+    </section>
+</div>
+
+
+{% endblock %}

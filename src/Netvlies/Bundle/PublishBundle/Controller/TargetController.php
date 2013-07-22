@@ -2,11 +2,13 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Action\InitCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
@@ -54,8 +56,7 @@ class TargetController extends Controller {
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $request = $this->getRequest();
 
-        $envChoice = new EnvironmentsType($em);
-        $form = $this->createForm(new FormTargetEditType(), $target, array('envchoice'=>$envChoice));
+        $form = $this->createForm(new FormTargetEditType(), $target, array());
 
 
         if($request->getMethod() == 'POST'){
@@ -107,8 +108,7 @@ class TargetController extends Controller {
         $target = new Target();
         $target->setApplication($app);
 
-		$envChoice = new EnvironmentsType($em);
-        $formStep1 = $this->createForm(new FormTargetStep1Type(), $target, array('envchoice'=>$envChoice));
+        $formStep1 = $this->createForm(new FormTargetStep1Type(), $target, array());
 
         if($request->getMethod() == 'POST'){
 
@@ -229,87 +229,87 @@ class TargetController extends Controller {
     }
 
 
-
     /**
-     * Used within AJAX call
-     *@Route("/target/getReference")
+     * @Route("/target/init/{id}")
+     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @param Target $target
      */
-    public function getReferenceAction(){
-
-        // and description of current reference
-        $id = $this->get('request')->query->get('id');
-
-        $em  = $this->getDoctrine()->getManager();
-        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
-        $app = $target->getApplication();
-
-        $versioningService = $this->get($app->getScmService());
-        $remoteBranches = $versioningService->getBranches($app);
-
+    public function initAction($target)
+    {
         /**
-         * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
          */
-        $branch = $target->getCurrentBranch();
+        $versioningService = $this->get($target->getApplication()->getScmService());
 
-        $oldRef = $target->getCurrentRevision();
-        $newRef = array_search($branch, $remoteBranches);
+        $initCommand = new InitCommand();
+        $initCommand->setApplication($target->getApplication());
+        $initCommand->setTarget($target);
+        $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
 
-        return $this->handleChangesetsRendering($versioningService, $app, $oldRef, $newRef);
-
+        return $this->forward('NetvliesPublishBundle:Console:execCommand', array(
+            'command'  => $initCommand
+        ));
     }
+
 
 //    /**
 //     * Used within AJAX call
-//     *@Route("/target/loadChangeset")
+//     *@Route("/target/getReference")
 //     */
-//    public function loadChangesetAction(){
+//    public function getReferenceAction(){
+//
 //        // and description of current reference
 //        $id = $this->get('request')->query->get('id');
 //
 //        $em  = $this->getDoctrine()->getManager();
-//        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+//        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+//        $app = $target->getApplication();
+//
+//        $versioningService = $this->get($app->getScmService());
+//        $remoteBranches = $versioningService->getBranches($app);
 //
 //        /**
-//         * @var VersioningInterface $scmService
+//         * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
 //         */
-//        $scmService = $this->get($app->getScmService());
+//        $branch = $target->getCurrentBranch();
 //
-//        $newRef = $this->get('request')->query->get('ref');
+//        $oldRef = $target->getCurrentRevision();
+//        $newRef = array_search($branch, $remoteBranches);
 //
-//        return $this->handleChangesetsRendering($scmService, $app, $oldRef, $newRef);
+//        return $this->handleChangesetsRendering($versioningService, $app, $oldRef, $newRef);
+//
 //    }
 
 
-
-    protected function handleChangesetsRendering($versioningService, $app, $oldRef, $newRef){
-        $changesets = $versioningService->getChangesets($app, $oldRef, $newRef);
-
-        if(empty($newRef) && count($changesets)>0){
-            $newRef = $changesets[0]['raw_node'];
-            $oldRef = '.. (first deployment)';
-        }
-
-        $messages = array();
-        $foundAll = false;
-
-        foreach($changesets as $changeset){
-            $messages[] = array(
-                'author' => $changeset['author'],
-                'message' => $changeset['message']
-            );
-            if($changeset['raw_node']==$oldRef){
-                $foundAll = true;
-            }
-        }
-
-        $params = array();
-        $params['foundall'] = $foundAll;
-        $params['messages'] = $messages;
-        $params['oldref'] = $oldRef;
-        $params['newref'] = $newRef;
-        $params['bburl'] = $versioningService->getChangesetURL();
-
-        return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
-    }
+//    protected function handleChangesetsRendering($versioningService, $app, $oldRef, $newRef){
+//        $changesets = $versioningService->getChangesets($app, $oldRef, $newRef);
+//
+//        if(empty($newRef) && count($changesets)>0){
+//            $newRef = $changesets[0]['raw_node'];
+//            $oldRef = '.. (first deployment)';
+//        }
+//
+//        $messages = array();
+//        $foundAll = false;
+//
+//        foreach($changesets as $changeset){
+//            $messages[] = array(
+//                'author' => $changeset['author'],
+//                'message' => $changeset['message']
+//            );
+//            if($changeset['raw_node']==$oldRef){
+//                $foundAll = true;
+//            }
+//        }
+//
+//        $params = array();
+//        $params['foundall'] = $foundAll;
+//        $params['messages'] = $messages;
+//        $params['oldref'] = $oldRef;
+//        $params['newref'] = $newRef;
+//        $params['bburl'] = $versioningService->getChangesetURL();
+//
+//        return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
+//    }
 
 }

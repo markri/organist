@@ -37,13 +37,12 @@
                             {% if not loop.first %}
                             <hr>
                             {%endif%}
-                            <a href>{{target.label}}</a><br>
+                            <a href="{{ path('netvlies_publish_target_edit', { 'id': target.id}) }}">{{target.label}}</a><br>
                             {%if target.lastDeployedBranch is not empty%}
-                                <a href="">{{ target.lastDeployedBranch}}</a><br>
+                                {{ target.lastDeployedBranch}}<br>
                             {%else%}
-                                Not deployed yet<br>
+                                Not yet deployed<br>
                             {%endif%}
-                            <a href="">Last commandlog</a><br>
                         {% endfor %}
                     </td>
                     {%endfor%}
@@ -55,16 +54,41 @@
                 <h2>Last executed commands</h2>
                 <table border="1" cellspacing="0">
                     <thead>
-                        <th>TypeDate</th>
+                        <th>Date</th>
+                        <th>Target</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Log</th>
                     </thead>
                     {% for log in logs %}
                         <tr>
-                        <td>
-                            {{ log.id }}
-                        </td>
+                            <td>
+                                {{ log.datetimestart.format('d-m-Y H:i') }}
+                            </td>
+                            <td>
+                                {{ log.targetLabel }}
+                            </td>
+                            <td>
+                                {{ log.user }}
+                            </td>
+                            <td>
+                                {% if log.exitcode == 0 %}
+                                    success
+                                {% else %}
+                                    failed
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('netvlies_publish_console_viewlog', {'id': log.id, 'application': application.id}) }}">View log</a>
+                            </td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                        <td colspan="4" align="right">&nbsp;</td>
+                        <td><a href="{{ path('netvlies_publish_console_listlogs', {'id': application.id}) }}">View all logs</a></td>
+                    </tr>
                 </table>
+
 
             </div>
         </section>

@@ -42,9 +42,9 @@ class ProcessLogCommand extends ContainerAwareCommand
          // Also include log files older than 24 hours. They're probably not going to finish anyway. So clear them
          $iterator = new \DirectoryIterator($logDir);
          foreach ($iterator as $fileinfo) {
-             if ($fileinfo->isFile()) {
+             if ($fileinfo->isFile() && $fileinfo->getExtension() == 'log') {
                  if(time() - $fileinfo->getMTime() > 60 * 60 * 24 * 1){
-                     $ids[] = $fileinfo->getBasename();
+                     $ids[] = $fileinfo->getBasename('.log');
                  }
              }
          }

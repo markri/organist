@@ -18,7 +18,8 @@
                     <td>{{ target.environment.hostname }}</td>
                     <td>
                         <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}">edit</a> |
-                        <a href="{{path('netvlies_publish_target_delete', {'id': target.id})}}">delete</a>
+                        <a href="{{path('netvlies_publish_target_delete', {'id': target.id})}}">delete</a> |
+                        <a href="{{path('netvlies_publish_target_init', {'id': target.id})}}">remote setup</a>
                     </td>
                 </tr>
             {% endfor %}

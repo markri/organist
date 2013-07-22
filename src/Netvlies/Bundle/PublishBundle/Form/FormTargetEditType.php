@@ -17,8 +17,7 @@ class FormTargetEditType extends AbstractType
     {
 
         $builder
-            ->add('environment', 'choice', array(
-                'choice_list'=>$options['envchoice'],
+            ->add('environment', 'environment_choicelist', array(
                 'label' => 'Environment *',
                 'required' => true,
             ))

@@ -13,9 +13,16 @@
 
 
         <form action="" method="POST">
-
+            {% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
             {{ form_errors(form) }}
-            {{ form_widget(form) }}
+
+            {{ form_row(form.name) }}
+            {{ form_row(form.customer) }}
+            <div id="userfiles">
+                {{ form_row(form.userFiles) }}
+            </div>
+
+
 
             <br/>
             <input type="submit" value="Opslaan" class="button"/>

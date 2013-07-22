@@ -11,10 +11,10 @@ services:
 
     # form types
     netvlies.publish.form.environment_selector:
-        class: Netvlies\Bundle\PublishBundle\Form\EnvironmentType
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\EnvironmentType
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
-            - { name: form.type, alias: environment_selector }
+            - { name: form.type, alias: environment_choicelist }
 
     netvlies_publish.form.target_selector:
         class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\TargetChoiceList

@@ -16,8 +16,7 @@ class FormTargetStep1Type extends AbstractType
     {
 
         $builder
-            ->add('environment', 'choice', array(
-                'choice_list'=>$options['envchoice'],
+            ->add('environment', 'environment_choicelist', array(
                 'label' => 'Environment *',
                 'required' => true,
             ))
@@ -31,8 +30,6 @@ class FormTargetStep1Type extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $options['csrf_protection'] = false;
-		$options['envchoice'] = null;
-
         return $options;
     }
 

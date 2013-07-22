@@ -1,0 +1,24 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{# to prevent numbering collection items #}
+{% block form_label %}
+    {% spaceless %}
+        {% if label is not sameas(false) %}
+            {% if not compound %}
+                {% set label_attr = label_attr|merge({'for': id}) %}
+            {% endif %}
+            {% if required %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+            {% endif %}
+            {% if label is empty and compound %}
+
+            {% else %}
+                {% if label is empty %}
+                    {% set label = name|humanize %}
+                {% endif %}
+                <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>{{ label|trans({}, translation_domain) }}</label>
+            {% endif %}
+
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_label %}

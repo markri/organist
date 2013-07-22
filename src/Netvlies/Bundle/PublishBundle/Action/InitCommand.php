@@ -112,7 +112,7 @@ class InitCommand implements CommandInterface {
 
         return trim(preg_replace('/\s\s+/', ' ', "
             git checkout ".$this->revision." &&
-            cap ".$this->target->getEnvironment()->getType()." deploy:update
+            cap ".$this->target->getEnvironment()->getType()." deploy:setup
             -Sproject='".$this->application->getName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
             -Srepositorypath='".$this->repositoryPath."'
