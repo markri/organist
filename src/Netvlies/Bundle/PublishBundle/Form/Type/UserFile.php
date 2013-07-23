@@ -21,7 +21,9 @@ class UserFile extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('path');
-        $builder->add('type');
+        $builder->add('type', 'choice', array(
+            'choices' => array('D'=> 'Directory', 'F'=>'File'),
+        ));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

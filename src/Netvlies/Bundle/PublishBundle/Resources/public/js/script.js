@@ -279,4 +279,66 @@ $(function () {
     $('.filter-list').liveFilter('.filter-box', 'li', {
       filterChildSelector: 'a'
     });
+
+
+    // Get the ul that holds the collection of tags
+    var collectionHolder = $('ul.userfiles');
+
+    // setup an "add a tag" link
+    var $addUserFileLink = $('<a id="adduserfilebutton" href="#">Add another shared file/directory</a>');
+    var $newLink = $('<li></li>').append($addUserFileLink);
+
+    jQuery(document).ready(function() {
+        // add the "add a tag" anchor and li to the tags ul
+        collectionHolder.append($newLink);
+
+        // count the current form inputs we have (e.g. 2), use that as the new
+        // index when inserting a new item (e.g. 2)
+        collectionHolder.data('index', collectionHolder.find(':input').length);
+
+        collectionHolder.find('li').each(function() {
+            addTagFormDeleteLink($(this));
+        });
+
+
+        $addUserFileLink.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+
+            // Get the data-prototype explained earlier
+            var prototype = collectionHolder.data('prototype');
+
+            // get the new index
+            var index = collectionHolder.data('index');
+
+            // Replace '__name__' in the prototype's HTML to
+            // instead be a number based on how many items we have
+            var newForm = prototype.replace(/__name__/g, index);
+
+            // increase the index with one for the next item
+            collectionHolder.data('index', index + 1);
+
+            // Display the form in the page in an li, before the "Add a tag" link li
+            var $newFormDiv = $('<li></li>').append(newForm);
+
+            // add a delete link to the new form
+            addTagFormDeleteLink($newFormDiv);
+
+            $newLink.before($newFormDiv);
+        });
+
+
+        function addTagFormDeleteLink($formDiv) {
+            var $removeFormA = $('<a href="#">delete</a>');
+            $formDiv.append($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+                // prevent the link from creating a "#" on the URL
+                e.preventDefault();
+
+                // remove the li for the tag form
+                $formDiv.remove();
+            });
+        }
+    });
 });

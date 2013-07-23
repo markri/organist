@@ -19,8 +19,8 @@
                 {% block target %}{% endblock %}
 
                 {%block console%}
-                        <h2>Checking out {{application.name}} to reference {{ reference }}</h2>
-                        <iframe src="{{path('netvlies_publish_console_exec', {'script': scriptpath})}}" width="830" height="505"></iframe>
+                        <h2>Fetching {{application.name}}</h2>
+                        <iframe src="{{path('netvlies_publish_command_exec', {'script': scriptpath})}}" width="830" height="505"></iframe>
                 {%endblock%}
             </div>
         </section>

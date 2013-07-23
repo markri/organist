@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Netvlies\Bundle\PublishBundle\Entity\ConsoleLog;
-use Netvlies\Bundle\PublishBundle\Controller\ConsoleController;
+use Netvlies\Bundle\PublishBundle\Controller\CommandController;
 
 class getSettingsCommand extends ContainerAwareCommand
 {
@@ -54,7 +54,7 @@ class getSettingsCommand extends ContainerAwareCommand
              $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneByPrimaryDomain($pd);
          }
 
-         $console = new ConsoleController();
+         $console = new CommandController();
          $params = $console->getParameters($this->getContainer(), $target, $branch);
 
         foreach($params as $key=>$value){

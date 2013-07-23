@@ -15,8 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Netvlies\Bundle\PublishBundle\Entity\ConsoleLog;
+use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
 
 
 class GetCommandCommand extends ContainerAwareCommand
@@ -41,11 +40,11 @@ class GetCommandCommand extends ContainerAwareCommand
          */
         $em = $this->getContainer()->get('doctrine')->getManager();
         /**
-         * @var ConsoleLog $consoleLog
+         * @var CommandLog $commandLog
          */
-        $consoleLog = $em->getRepository('NetvliesPublishBundle:ConsoleLog')->find($id);
+        $commandLog = $em->getRepository('NetvliesPublishBundle:CommandLog')->find($id);
 
-        $output->write($consoleLog->getCommand());
+        $output->write($commandLog->getCommand());
 
    }
 }

@@ -4,10 +4,6 @@ services:
         class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
         arguments: [ %repository_path%, %versioning_private_key% ]
 
-    console_controller:
-        class:    Netvlies\Bundle\PublishBundle\Controller\ConsoleController
-        calls:
-            - [ setContainer, [ @service_container ] ]
 
     # form types
     netvlies.publish.form.environment_selector:

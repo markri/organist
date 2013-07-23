@@ -17,7 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Netvlies\Bundle\PublishBundle\Entity\ConsoleLog;
 use Netvlies\Bundle\PublishBundle\Entity\ConsoleAction;
-use Netvlies\Bundle\PublishBundle\Controller\ConsoleController;
 
 class DeployCommand extends ContainerAwareCommand
 {

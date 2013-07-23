@@ -24,6 +24,8 @@ class FormApplicationEditType extends AbstractType
                 'label' => 'User files and directories',
                 'type' => new UserFile(),
                 'allow_add'    => true,
+                'by_reference' => false,
+                'allow_delete' => true,
             )
         );
     }

@@ -85,7 +85,7 @@ function validate($domain, $docroot, $logdir)
 
 function createvhost($domain, $docroot, $logdir)
 {
-	include __DIR__.'/settings.php';
+	include __DIR__ . '/settings.php';
 	
 	$vhost=$vhost_base.'/'.$domain.'.conf';
 	$createvhost=true;

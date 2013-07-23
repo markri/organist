@@ -2,6 +2,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -134,27 +135,23 @@ class Application
 
 
     /**
-     * Set userFiles
-     *
-     * @param object $userFiles
-     */
-    public function setUserFiles($userFiles)
-    {
-        $this->userFiles = $userFiles;
-    }
-
-    /**
      * @param UserFile $file
      */
     public function addUserFile(UserFile $file)
     {
-        $this->userFiles[] = $file;
+        $file->setApplication($this);
+        $this->userFiles->add($file);
+    }
+
+    public function removeUserFile($userFile)
+    {
+        $this->userFiles->removeElement($userFile);
     }
 
     /**
      * Get userFiles
      *
-     * @return object
+     * @return ArrayCollection
      */
     public function getUserFiles()
     {

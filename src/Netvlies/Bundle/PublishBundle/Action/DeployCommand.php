@@ -23,23 +23,20 @@ class DeployCommand implements CommandInterface {
      */
     protected $application;
 
-
     /**
      * @var Target $target
      */
     protected $target;
-
 
     /**
      * @var string $revision
      */
     protected $revision;
 
-
     /**
-     * @var string $repositoryPath
+     * @var VersioningInterface $versioningService
      */
-    protected $repositoryPath;
+    protected $versioningService;
 
     /**
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $application
@@ -89,6 +86,13 @@ class DeployCommand implements CommandInterface {
         return $this->target;
     }
 
+    /**
+     * @param VersioningInterface $versioningService
+     */
+    public function setVersioningService(VersioningInterface $versioningService)
+    {
+        $this->versioningService = $versioningService;
+    }
 
 
     public function getCommand()
@@ -96,6 +100,8 @@ class DeployCommand implements CommandInterface {
         $userFiles = $this->application->getUserFiles();
         $files = array();
         $dirs = array();
+        $keyForwardOpen = '';
+        $keyForwardClose = '';
 
         foreach($userFiles as $userFile){
             /**
@@ -110,12 +116,26 @@ class DeployCommand implements CommandInterface {
             }
         }
 
+        if($this->versioningService->getPrivateKey()){
+            // Forward optional keys for versioning
+            $keyForwardOpen ='eval `ssh-agent` && ';
+            $keyForwardOpen.='`ssh-add '.$this->versioningService->getPrivateKey().'` && ';
+
+            // And kill them as well
+            $keyForwardClose =' && ssh-agent -k > /dev/null 2>&1 && ';
+            $keyForwardClose.='unset SSH_AGENT_PID && ';
+            $keyForwardClose.='unset SSH_AUTH_SOCK';
+        }
+
+        //@todo eliminate bridgebin
+        //@todo checkout whats default in capistrano / capifony
         return trim(preg_replace('/\s\s+/', ' ', "
+            $keyForwardOpen
             git checkout ".$this->revision." &&
             cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
-            -Srepositorypath='".$this->repositoryPath."'
+            -Srepositorypath='".$this->getRepositoryPath()."'
             -Ssudouser='deploy'
             -Srevision='".$this->revision."'
             -Susername='".$this->target->getUsername()."'
@@ -131,23 +151,27 @@ class DeployCommand implements CommandInterface {
             -Sotap='".$this->target->getEnvironment()->getType()."'
             -Sbridgebin='/home/hosting-ftp/deploy/deploy_bridge'
             -Suserfiles='".implode(',', $files)."'
-            -Suserdirs='".implode(',', $dirs)."'"));
+            -Suserdirs='".implode(',', $dirs)."'
+            $keyForwardClose
+            "));
     }
+
 
     /**
      * @return string
      */
     public function getRepositoryPath()
     {
-        return $this->repositoryPath;
+        return $this->versioningService->getRepositoryPath($this->getApplication());
     }
 
     /**
-     * @return mixed
+     * Must return descriptive label for command type
+     * @return string
      */
-    public function setRepositoryPath($repositoryPath)
+    public function getLabel()
     {
-        $this->repositoryPath = $repositoryPath;
+        return 'Capistrano deployment';
     }
 
 

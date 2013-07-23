@@ -6,11 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Netvlies\Bundle\PublishBundle\Entity\ConsoleLog
- * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ConsoleLogRepository")
+ * Netvlies\Bundle\PublishBundle\Entity\Command
+ * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\CommandLogRepository")
  * @ORM\Table()
   */
-class ConsoleLog
+class CommandLog
 {
     /**
      * @var integer $id
@@ -74,26 +74,24 @@ class ConsoleLog
 
 
     /**
-     * @todo soft link So targets can still be deleted without constraints to consoleLog, to set null
-     * This variable is used as a temporary backreference to update current status (revision etc)
-     * @var int $targetId
-     * @ORM\Column(name="targetid", type="integer", nullable=true)
+     * This variable is used as a  backreference
+     * @var Target $target
+     * @ORM\ManyToOne(targetEntity="Target")
      */
-    private $targetId;
+    private $target;
 
-    /**
-     * @var
-     * @ORM\Column(name="targetlabel", type="string", nullable=true)
-     */
-    private $targetLabel;
-
+//    /**
+//     * @var
+//     * @ORM\Column(name="targetlabel", type="string", nullable=true)
+//     */
+//    private $targetLabel;
 
 
     /**
-     * @var string $revision
-     * @ORM\Column(name="revision", type="string", length=255, nullable=true)
+     * @var string
+     * @ORM\Column(name="commandLabel", type="string", nullable=true)
      */
-    private $revision;
+    private $commandLabel;
 
 
     /**
@@ -234,19 +232,19 @@ class ConsoleLog
     }
 
     /**
-     * @param int $deploymentId
+     * @param Target $target
      */
-    public function setTargetId($targetId)
+    public function setTarget($target)
     {
-        $this->targetId = $targetId;
+        $this->target = $target;
     }
 
     /**
-     * @return int
+     * @return Target
      */
-    public function getTargetId()
+    public function getTarget()
     {
-        return $this->targetId;
+        return $this->target;
     }
 
     /**
@@ -265,29 +263,37 @@ class ConsoleLog
         return $this->user;
     }
 
-    public function setRevision($revision)
-    {
-        $this->revision = $revision;
-    }
+//    /**
+//     * @param mixed $targetLabel
+//     */
+//    public function setTargetLabel($targetLabel)
+//    {
+//        $this->targetLabel = $targetLabel;
+//    }
+//
+//    /**
+//     * @return mixed
+//     */
+//    public function getTargetLabel()
+//    {
+//        return $this->targetLabel;
+//    }
 
-    public function getRevision()
+    /**
+     * @param string $commandLabel
+     */
+    public function setCommandLabel($commandLabel)
     {
-        return $this->revision;
+        $this->commandLabel = $commandLabel;
     }
 
     /**
-     * @param mixed $targetLabel
+     * @return string
      */
-    public function setTargetLabel($targetLabel)
+    public function getCommandLabel()
     {
-        $this->targetLabel = $targetLabel;
+        return $this->commandLabel;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTargetLabel()
-    {
-        return $this->targetLabel;
-    }
+
 }

@@ -136,5 +136,14 @@ class RollbackCommand implements CommandInterface {
         $this->repositoryPath = $repositoryPath;
     }
 
+    /**
+     * Must return descriptive label for command type
+     * @return string
+     */
+    public function getLabel()
+    {
+        return 'Capistrano rollback';
+    }
+
 
 }

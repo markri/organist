@@ -44,10 +44,10 @@
                             <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
                         </li>
                         <li>
-                            <a href="{{ path('netvlies_publish_application_controlpanel', {'id': application.id}) }}" >Deploy/Rollback</a>
+                            <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
                         </li>
                         <li>
-                            <a href="{{ path('netvlies_publish_application_targets', {'id': application.id }) }}">Targets</a>
+                            <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
                         </li>
                         <li>
                             <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" >Settings</a>
@@ -59,7 +59,7 @@
 
 
         {% for flash in app.session.flashbag.get('error') %}
-            <div class="message error">{{ flash }}</div>
+            <div class="message error">{{ flash|raw }}</div>
         {% endfor %}
 
         {% for flash in app.session.flashbag.get('success') %}

@@ -6,7 +6,7 @@
 
     <section id="content">
         <header>
-            <h1>{{ log.datetimestart.format('d-m-Y H:i:s') }} - {{ log.targetlabel }}</h1>
+            <h1>{{ log.datetimestart.format('d-m-Y H:i:s') }} - {{ log.target.label }}</h1>
         </header>
 
         <div id="text">
@@ -18,7 +18,7 @@
         <table>
             <tr>
                 <td>Target label</td>
-                <td>{{ log.targetlabel }}</td>
+                <td>{{ log.target.label }}</td>
             </tr>
             <tr>
                 <td>Host</td>
@@ -43,10 +43,6 @@
                 </td>
             </tr>
             <tr>
-                <td>Duration</td>
-                <td></td>
-            </tr>
-            <tr>
                 <td>User</td>
                 <td>{{ log.user }}</td>
             </tr>
@@ -54,15 +50,11 @@
                 <td>Exitcode</td>
                 <td>{{ log.exitcode }}</td>
             </tr>
-            <tr>
-                <td>Revision</td>
-                <td>{{ log.revision }}</td>
-            </tr>
         </table>
 <br>
         <div>
             <h2>Command</h2>
-            {{ log.command }}
+            {{ log.command | replace({'&&': '<br>'}) | raw }}
         </div>
             <h2>Output</h2>
             {{ log.log|trim|nl2br }}

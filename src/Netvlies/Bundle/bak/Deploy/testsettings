@@ -1,7 +1,7 @@
 #!/usr/bin/php -q
 <?php
 
-include __DIR__.'/settings.php';
+include __DIR__ . '/settings.php';
 
 $count=0;
 

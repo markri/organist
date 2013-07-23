@@ -15,12 +15,21 @@
         <form action="" method="POST">
             {% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
             {{ form_errors(form) }}
+            {{ form_widget(form._token) }}
 
             {{ form_row(form.name) }}
             {{ form_row(form.customer) }}
-            <div id="userfiles">
-                {{ form_row(form.userFiles) }}
-            </div>
+
+            <ul class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
+                {# iterate over each existing tag and render its only field: name #}
+                {% for userfile in form.userFiles %}
+                    <li>
+                        {{ form_row(userfile.path) }}
+                        {{ form_row(userfile.type) }}
+                    </li>
+                {% endfor %}
+            </ul>
+
 
 
 

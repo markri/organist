@@ -3,7 +3,7 @@
 
         <h2>Targets</h2>
 
-        <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_application_targets', {'id': application.id})}}">
+        <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'id': application.id})}}">
             <table border="1" cellspacing="0">
                 <thead>
                     <th>Environment</th>
@@ -18,7 +18,7 @@
                     <td>{{ target.environment.hostname }}</td>
                     <td>
                         <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}">edit</a> |
-                        <a href="{{path('netvlies_publish_target_delete', {'id': target.id})}}">delete</a> |
+                        <a onclick="confirm('Are you sure you want to delete this target?')? window.location = '{{path('netvlies_publish_target_delete', {'id': target.id})}}': false" href="#">delete</a> |
                         <a href="{{path('netvlies_publish_target_init', {'id': target.id})}}">remote setup</a>
                     </td>
                 </tr>

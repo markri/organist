@@ -14,8 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Netvlies\Bundle\PublishBundle\Entity\ConsoleLog;
+use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
 
 
 class ProcessLogCommand extends ContainerAwareCommand
@@ -58,34 +57,33 @@ class ProcessLogCommand extends ContainerAwareCommand
 
          foreach($ids as $id){
              /**
-              * @var \Netvlies\Bundle\PublishBundle\Entity\ConsoleLog $logentry
+              * @var \Netvlies\Bundle\PublishBundle\Entity\CommandLog $commandLog
               */
-             $logentry = $em->getRepository('NetvliesPublishBundle:ConsoleLog')->find($id);
+             $commandLog = $em->getRepository('NetvliesPublishBundle:CommandLog')->find($id);
 
-             if(is_null($logentry)){
+             if(is_null($commandLog)){
                  echo "Warning: No log entry available to update, remove log manually...";
                  continue;
              }
 
              $logfile = $logDir.'/'.$id.'.log';
-             $logentry->setDatetimeEnd(new \DateTime());
-             $logentry->setLog(file_get_contents($logfile));
-             $logentry->setExitCode($exitcode);
+             $commandLog->setDatetimeEnd(new \DateTime());
+             $commandLog->setLog(file_get_contents($logfile));
+             $commandLog->setExitCode($exitcode);
 
-             $em->persist($logentry);
+             $em->persist($commandLog);
              $em->flush();
              unlink($logfile);
-
-             $targetId = $logentry->getTargetId();
-             if(empty($targetId)){
-                 echo "Notice: No connected target to update ...";
-                 continue;
-             }
 
              /**
               * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
               */
-             $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($logentry->getTargetId());
+             $target = $commandLog->getTarget();
+
+             if(empty($target)){
+                 echo "Notice: No connected target to update ...";
+                 continue;
+             }
 
              $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION || true';
              $revision = shell_exec($command);

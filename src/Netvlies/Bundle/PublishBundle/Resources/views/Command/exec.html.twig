@@ -1,0 +1,55 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+
+{% block content %}
+
+
+<div id="content-wrapper">
+
+    <section id="content">
+        <header>
+            <h1>Executing command</h1>
+        </header>
+
+        <div id="text">
+
+
+        <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}">Terug naar dashboard</a>
+            <br>
+            <br>
+
+        <script type="text/javascript" src="/console/exec/anyterm.js">
+        </script>
+
+        <script type="text/javascript">
+          // To create the terminal, just call create_term.  The paramters are:
+          //  - The id of a <div> element that will become the terminal.
+          //  - The title.  %h and %v expand to the hostname and Anyterm version.
+          //  - The number of rows and columns.
+          //  - An optional parameter which is substituted for %p in the command string.
+          //  - An optional character set.
+          //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
+
+          window.onload=function() {create_term("term","Console %h",30,100,"{{ command.id }}","",50);};
+
+          // When the user closes the terminal, by default they'll see a blank page.
+          // Generally you'll want to be more friendly than that.  If you set the
+          // variable on_close_goto_url to a URL, they'll be sent to that page after
+          // closing.  You could send them back to your home page, or something.
+          var on_close_goto_url = "";
+
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
+
+
+
+
+        <div id="term"></div>
+
+            <div>
+                <h2>Command</h2>
+                {{ command.command | replace({'&&': '<br>'}) | raw }}</div>
+            </div>
+        </section>
+            </div>
+{% endblock %}

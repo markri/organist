@@ -74,11 +74,6 @@ class Target
      */
     protected $caproot;
 
-    /**
-     * @var array
-     * @ORM\OneToMany(targetEntity="Domain", mappedBy="target", cascade={"persist", "remove"})
-     */
-    protected $domains;
 
     /**
      * @ORM\Column(name="username", type="string", length=255)
@@ -114,11 +109,10 @@ class Target
     protected $primaryDomain;
 
 
-
-    public function __construct()
-    {
-        $this->domains = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    /**
+     * @ORM\Column(name="inactive", type="boolean")
+     */
+    protected $inactive;
 
     /**
      * Get id
@@ -295,31 +289,6 @@ class Target
         return $this->label;
     }
 
-    /**
-     * @param $domains
-     */
-    public function setDomains($domains)
-    {
-        $this->domains = $domains;
-    }
-
-    /**
-     * @return array|\Doctrine\Common\Collections\ArrayCollection
-     */
-    public function getDomains()
-    {
-        return $this->domains;
-    }
-
-    /**
-     * @param Domain $domain
-     */
-    public function addDomain(Domain $domain)
-    {
-        $domain->setTarget($this);
-        $this->domains[] = $domain;
-    }
-
 
     /**
      * @param string $mysqldb
@@ -384,5 +353,22 @@ class Target
     {
         return $this->primaryDomain;
     }
+
+    /**
+     * @param mixed $inactive
+     */
+    public function setInactive($inactive)
+    {
+        $this->inactive = $inactive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInactive()
+    {
+        return $this->inactive;
+    }
+
 
 }

@@ -45,7 +45,7 @@ class TargetRepository extends EntityRepository
             SELECT t.id FROM Target t
             INNER JOIN Environment e ON t.environment_id = e.id
             WHERE t.application_id = :id
-            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P')";
+            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P'), t.id DESC";
 
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($query);

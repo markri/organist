@@ -17,6 +17,7 @@
                 <table border="1" cellspacing="0">
                     <thead>
                         <th>Date</th>
+                        <th>Command type</th>
                         <th>Target</th>
                         <th>User</th>
                         <th>Status</th>
@@ -27,8 +28,9 @@
                             <td>
                                 {{ log.datetimestart.format('d-m-Y H:i') }}
                             </td>
+                            <td>{{ log.commandLabel }}</td>
                             <td>
-                                {{ log.targetLabel }}
+                                {{ log.target.label }}
                             </td>
                             <td>
                                 {{ log.user }}
@@ -41,7 +43,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{{ path('netvlies_publish_console_viewlog', {'id': log.id, 'application': application.id}) }}">View log</a>
+                                <a href="{{ path('netvlies_publish_command_viewlog', {'id': log.id, 'application': application.id}) }}">View log</a>
                             </td>
                         </tr>
                     {% endfor %}

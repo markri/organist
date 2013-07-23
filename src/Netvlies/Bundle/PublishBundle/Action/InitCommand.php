@@ -111,7 +111,7 @@ class InitCommand implements CommandInterface {
         }
 
         return trim(preg_replace('/\s\s+/', ' ', "
-            git checkout ".$this->revision." &&
+            git checkout master &&
             cap ".$this->target->getEnvironment()->getType()." deploy:setup
             -Sproject='".$this->application->getName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
@@ -148,6 +148,15 @@ class InitCommand implements CommandInterface {
     public function setRepositoryPath($repositoryPath)
     {
         $this->repositoryPath = $repositoryPath;
+    }
+
+    /**
+     * Must return descriptive label for command type
+     * @return string
+     */
+    public function getLabel()
+    {
+        return 'Capistrano setup';
     }
 
 

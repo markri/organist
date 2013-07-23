@@ -49,10 +49,12 @@ interface CommandInterface {
      */
     public function getRepositoryPath();
 
+
     /**
-     * Setter for repository path.
-     * @return mixed
+     * Must return descriptive label for command type
+     * @return string
      */
-    public function setRepositoryPath($repositoryPath);
+    public function getLabel();
+
 
 }

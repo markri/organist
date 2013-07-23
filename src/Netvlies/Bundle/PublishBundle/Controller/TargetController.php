@@ -2,24 +2,43 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Action\InitCommand;
-use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
+use Netvlies\Bundle\PublishBundle\Action\InitCommand;
+
 use Netvlies\Bundle\PublishBundle\Form\FormTargetEditType;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep1Type;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep2Type;
-use Netvlies\Bundle\PublishBundle\Form\ChoiceList\EnvironmentsType;
 
 
-class TargetController extends Controller {
+class TargetController extends Controller
+{
 
+    /**
+     * Will return a list of all targets for this application
+     *
+     * @Route("/application/{id}/targets")
+     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Template()
+     */
+    public function targetsAction($application)
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($application);
+
+        return array(
+            'application' => $application,
+            'targets' => $targets
+        );
+    }
 
     /**
      * @Route("/application/{id}/target/new/step1")
@@ -58,15 +77,14 @@ class TargetController extends Controller {
 
         $form = $this->createForm(new FormTargetEditType(), $target, array());
 
-
         if($request->getMethod() == 'POST'){
 
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $em->persist($target);
                 $em->flush($target);
 
-                return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$target->getApplication()->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$target->getApplication()->getId())));
             }
         }
 
@@ -81,7 +99,6 @@ class TargetController extends Controller {
     /**
      *
      * @Route("/target/delete/{id}")
-     * @todo add confirmation, javascript would be sufficient
      */
     public function deleteAction($id){
         $em  = $this->getDoctrine()->getManager();
@@ -90,19 +107,16 @@ class TargetController extends Controller {
         $em->remove($target);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
     }
 
 
-
     /**
-     * @todo validation is now done by HTML5 required attributes, which is ok, but may fail when relying on SSP validation, we dont have validation groups2
      * @param $app \Netvlies\Bundle\PublishBundle\Entity\Application
      * @return array
      */
     protected function handleFormStep1($app){
 
-		$em  = $this->getDoctrine()->getManager();
         $request = $this->getRequest();
 
         $target = new Target();
@@ -112,7 +126,7 @@ class TargetController extends Controller {
 
         if($request->getMethod() == 'POST'){
 
-            $formStep1->bindRequest($request);
+            $formStep1->bind($request);
 
             // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
             $envId = $target->getEnvironment();
@@ -134,6 +148,10 @@ class TargetController extends Controller {
     }
 
 
+    /**
+     * @param Application $app
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
     protected function handleFormStep2($app)
     {
 
@@ -159,32 +177,32 @@ class TargetController extends Controller {
             $homedir = '/home';
 
             // Init default values in target
+            // @todo sure about this predefined stuff?
             switch($env->getType()){
                 case 'O':
-                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName();
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName();
                     $target->setApproot($appRoot);
-                    //$target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
                     break;
                 case 'T':
                     if($target->getUsername()=='tester'){
-                       // $target->setPrimaryDomain($app->getName().'.'.$env->getHostname());
+                        $target->setPrimaryDomain($app->getKeyName().'.'.$env->getHostname());
                     }
                     else{
-                       // $target->setPrimaryDomain($app->getName().'.'.$target->getUsername().'.'.$env->getHostname());
+                        $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
                     }
-
-                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName().'/current';
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName().'/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($homedir.'/'.$target->getUsername().'/vhosts/'.$app->getName());
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName());
                     break;
                 case 'A':
-                   // $target->setPrimaryDomain($app->getName().'.netvlies-demo.nl');
+                    $target->setPrimaryDomain($app->getKeyName().'.a.nvsotap.nl');
                     $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
                     $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
                     break;
                 case 'P':
-                  //  $target->setPrimaryDomain('www.'.$app->getName().'.nl');
+                    $target->setPrimaryDomain('www.'.$app->getKeyName().'.nl');
                     $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
                     $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
@@ -200,9 +218,11 @@ class TargetController extends Controller {
                     break;
             }
 
-            $target->setMysqldb($app->getName());
-            $target->setMysqluser($app->getName());
-            //$target->setMysqlpw($app->getMysqlpw());
+            $target->setMysqldb($app->getKeyName());
+            $target->setMysqluser($app->getKeyName());
+
+            // Just some random password
+            $target->setMysqlpw(substr(str_shuffle(strtolower(sha1(rand() . time() . "my salt string"))),0, 10));
             $target->setLabel('('.$env->getType().') '.$app->getName());
         }
 
@@ -212,13 +232,13 @@ class TargetController extends Controller {
         if($request->getMethod() == 'POST'){
 
             // Init form2
-            $formStep2->bindRequest($request);
+            $formStep2->bind($request);
 
             if($formStep2->isValid()){
                 $em->persist($target);
                 $em->flush($target);
 
-                return $this->redirect($this->generateUrl('netvlies_publish_application_targets', array('id'=>$app->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
             }
         }
 
@@ -246,70 +266,9 @@ class TargetController extends Controller {
         $initCommand->setTarget($target);
         $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
 
-        return $this->forward('NetvliesPublishBundle:Console:execCommand', array(
+        return $this->forward('NetvliesPublishBundle:Command:execCommand', array(
             'command'  => $initCommand
         ));
     }
-
-
-//    /**
-//     * Used within AJAX call
-//     *@Route("/target/getReference")
-//     */
-//    public function getReferenceAction(){
-//
-//        // and description of current reference
-//        $id = $this->get('request')->query->get('id');
-//
-//        $em  = $this->getDoctrine()->getManager();
-//        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
-//        $app = $target->getApplication();
-//
-//        $versioningService = $this->get($app->getScmService());
-//        $remoteBranches = $versioningService->getBranches($app);
-//
-//        /**
-//         * @var \Netvlies\Bundle\PublishBundle\Entity\Target $target
-//         */
-//        $branch = $target->getCurrentBranch();
-//
-//        $oldRef = $target->getCurrentRevision();
-//        $newRef = array_search($branch, $remoteBranches);
-//
-//        return $this->handleChangesetsRendering($versioningService, $app, $oldRef, $newRef);
-//
-//    }
-
-
-//    protected function handleChangesetsRendering($versioningService, $app, $oldRef, $newRef){
-//        $changesets = $versioningService->getChangesets($app, $oldRef, $newRef);
-//
-//        if(empty($newRef) && count($changesets)>0){
-//            $newRef = $changesets[0]['raw_node'];
-//            $oldRef = '.. (first deployment)';
-//        }
-//
-//        $messages = array();
-//        $foundAll = false;
-//
-//        foreach($changesets as $changeset){
-//            $messages[] = array(
-//                'author' => $changeset['author'],
-//                'message' => $changeset['message']
-//            );
-//            if($changeset['raw_node']==$oldRef){
-//                $foundAll = true;
-//            }
-//        }
-//
-//        $params = array();
-//        $params['foundall'] = $foundAll;
-//        $params['messages'] = $messages;
-//        $params['oldref'] = $oldRef;
-//        $params['newref'] = $newRef;
-//        $params['bburl'] = $versioningService->getChangesetURL();
-//
-//        return $this->render('NetvliesPublishBundle:Target:changeset.html.twig', $params);
-//    }
 
 }

@@ -9,13 +9,14 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
+use PhpOption\Option;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Event\DataEvent;
 use Netvlies\Bundle\PublishBundle\Entity\TargetRepository;
 use Netvlies\Bundle\PublishBundle\Entity\Rollback;
-
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 
 class FormApplicationRollbackType extends AbstractType
@@ -41,12 +42,13 @@ class FormApplicationRollbackType extends AbstractType
             );
     }
 
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $options)
     {
-        $options['app'] = null;
-        $options['csrf_protection'] = false;
-
-        return $options;
+        $options->setDefaults(
+            array(
+                'app' => null
+            )
+        );
     }
 
     public function getName()

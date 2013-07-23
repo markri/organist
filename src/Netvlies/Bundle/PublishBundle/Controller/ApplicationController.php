@@ -2,24 +2,19 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
-use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
-use Netvlies\Bundle\PublishBundle\Entity\ConsoleLogRepository;
-use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use GitElephant\Repository;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use Netvlies\Bundle\PublishBundle\Entity\CommandLogRepository;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
-use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 
+use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
-use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
-use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
-use Netvlies\Bundle\PublishBundle\Form\ChoiceList\BrancheList;
-use GitElephant\Repository;
 
 
 class ApplicationController extends Controller {
@@ -70,9 +65,9 @@ class ApplicationController extends Controller {
     {
         $targets = $application->getTargets();
         /**
-         * @var ConsoleLogRepository
+         * @var CommandLogRepository
          */
-        $logRepo = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:ConsoleLog');
+        $logRepo = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:CommandLog');
         $logs = $logRepo->getLogsByTargets($targets, 5);
 
 
@@ -85,7 +80,7 @@ class ApplicationController extends Controller {
 
 
     /**
-     * @Route("/application/edit/{id}")
+     * @Route("/application/settings/{id}")
      * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @Template()
      * @param $application Application
@@ -96,16 +91,33 @@ class ApplicationController extends Controller {
         $form = $this->createForm(new FormApplicationEditType(), $application);
         $request = $this->getRequest();
 
+        $originalUserFiles = clone $application->getUserFiles();
+
         if($request->getMethod() == 'POST'){
 
             $form->bind($request);
 
             if($form->isValid()){
                 $em = $this->container->get('doctrine.orm.entity_manager');
+
+                foreach($application->getUserFiles() as $userFile){
+                    foreach($originalUserFiles as $key=>$origUserFile){
+                        if($userFile->getId() == $origUserFile->getId()){
+                            $originalUserFiles->remove($key);
+                        }
+                    }
+                }
+
+                foreach($originalUserFiles as $deleteUserFile){
+                    $em->remove($deleteUserFile);
+                }
+
                 $em->persist($application);
                 $em->flush();
+
+                // Redirect to same edit page
                 $this->get('session')->getFlashBag()->add('success', sprintf('Application %s is updated', $application->getName()));
-                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_application_edit', array('id'=>$application->getId())));
             }
         }
 
@@ -143,27 +155,10 @@ class ApplicationController extends Controller {
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
+
         return array('apps' => $apps);
     }
 
-
-    /**
-     * Will return a list of all targets for this application
-     *
-     * @Route("/application/{id}/targets")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
-     * @Template()
-	 */
-    public function targetsAction($application)
-    {
-        $em = $this->container->get('doctrine.orm.entity_manager');
-        $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($application);
-
-        return array(
-            'application' => $application,
-            'targets' => $targets
-        );
-    }
 
 
     /**
@@ -191,75 +186,9 @@ class ApplicationController extends Controller {
         $versioningService->updateRepository($application);
         $this->get('session')->getFlashBag()->add('success', sprintf('Repository for %s is updated', $application->getName()));
 
-        return $this->redirect($this->generateUrl('netvlies_publish_application_controlpanel', array('id' => $application->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('id' => $application->getId())));
     }
 
-    /**
-     * @Route("/application/{id}/controlpanel")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
-     * @Template()
-     * @param Application $application
-     */
-    public function controlPanelAction($application)
-    {
-        $em = $this->container->get('doctrine.orm.entity_manager');
 
-        /**
-         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-         */
-        $versioningService = $this->get($application->getScmService());
-        $repoPath = $versioningService->getRepositoryPath($application);
-
-        if(!file_exists($repoPath)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('id' => $application->getId())));
-        }
-
-        $deployCommand = new DeployCommand();
-        $deployCommand->setApplication($application);
-        $deployCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
-
-
-        $rollbackCommand = new RollbackCommand();
-        $rollbackCommand->setApplication($application);
-        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
-
-        $deployForm = $this->createForm(new FormApplicationDeployType(), $deployCommand, array('app'=>$application));
-        $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $rollbackCommand, array('app'=>$application));
-
-        $request = $this->getRequest();
-
-        if($request->getMethod() == 'POST'){
-
-            if ($request->request->has($deployForm->getName())){
-
-                $deployForm->bind($request);
-
-                if($deployForm->isValid()){
-
-                    return $this->forward('NetvliesPublishBundle:Console:execCommand', array(
-                        'command'  => $deployCommand
-                    ));
-                }
-            }
-
-            if ($request->request->has($rollbackForm->getName())){
-                $rollbackForm->bind($request);
-
-                if($rollbackForm->isValid()){
-
-                    return $this->forward('NetvliesPublishBundle:Console:execCommand', array(
-                        'command'  => $rollbackCommand
-                    ));
-
-                }
-            }
-        }
-
-        return array(
-            'deployForm' => $deployForm->createView(),
-            'rollbackForm' => $rollbackForm->createView(),
-            'application' => $application,
-        );
-    }
 
 }
