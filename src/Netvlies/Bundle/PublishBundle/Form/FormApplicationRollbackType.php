@@ -27,19 +27,12 @@ class FormApplicationRollbackType extends AbstractType
         $app = $options['app'];
 
         $builder
-            ->add('target', 'entity', array(
-                'class' => 'NetvliesPublishBundle:Target',
-                'query_builder' => function(TargetRepository $tr) use ($app){
-                    return $tr->createQueryBuilder('t')
-                        ->where('t.application = :app')
-                        ->setParameter('app', $app);
-                    //@todo order by OTAP
-                },
-                'empty_value' => '-- Choose a target --',
-                'expanded' => false,
-                'multiple' => false,
-                'required'=>true)
-            );
+            ->add('target', 'target_choicelist', array(
+                'label' => 'Target *',
+                'app' => $app,
+                'required' => true
+            ));
+
     }
 
     public function setDefaultOptions(OptionsResolverInterface $options)

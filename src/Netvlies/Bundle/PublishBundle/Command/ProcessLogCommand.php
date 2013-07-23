@@ -9,6 +9,8 @@
 
 namespace Netvlies\Bundle\PublishBundle\Command;
 
+use Netvlies\Bundle\PublishBundle\Versioning\ReferenceInterface;
+use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,12 +89,32 @@ class ProcessLogCommand extends ContainerAwareCommand
 
              $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION || true';
              $revision = shell_exec($command);
-             $target->setLastDeployedRevision($revision);
-             //@todo set last deployed branch/tag as well
 
+             if(!empty($revision)){
+                 $target->setLastDeployedRevision($revision);
+                 $target->setLastDeployedBranch($revision);
 
-             $em->persist($target);
-             $em->flush();
+                 /**
+                  * @var VersioningInterface $versioningService
+                  */
+                 $versioningService = $this->getContainer()->get($target->getApplication()->getScmService());
+                 $branchesAndTags = $versioningService->getBranchesAndTags($target->getApplication());
+
+                 foreach($branchesAndTags as $reference){
+                     /**
+                      * @var ReferenceInterface $reference
+                      */
+                     if($reference->getReference()!=$revision){
+                         continue;
+                     }
+
+                     $target->setLastDeployedBranch($reference->getName());
+                     break;
+                 }
+
+                 $em->persist($target);
+                 $em->flush();
+             }
          }
      }
 }

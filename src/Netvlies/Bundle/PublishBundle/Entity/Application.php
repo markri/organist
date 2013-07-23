@@ -71,11 +71,6 @@ class Application
      */
     protected $targets;
 
-    /**
-     * @todo implement decent commandlog
-     */
-    protected $commandLog;
-
 
 
     public function __construct()
@@ -236,16 +231,6 @@ class Application
     public function getTargets()
     {
         return $this->targets;
-    }
-
-    public function setCommandLog($commandLog)
-    {
-        $this->commandLog = $commandLog;
-    }
-
-    public function getCommandLog()
-    {
-        return $this->commandLog;
     }
 
 }

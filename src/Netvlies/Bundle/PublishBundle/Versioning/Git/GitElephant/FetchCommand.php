@@ -17,8 +17,6 @@ use GitElephant\Command\BaseCommand;
 /**
  * FetchCommand
  *
- * @todo   : description
- *
  * @author Matteo Giachino <matteog@gmail.com>
  */
 class FetchCommand extends BaseCommand
