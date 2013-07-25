@@ -30,7 +30,11 @@
                             </td>
                             <td>{{ log.commandLabel }}</td>
                             <td>
-                                {{ log.target.label }}
+                                {% if log.target is not null %}
+                                    {{ log.target.label }}
+                                {% else %}
+                                    {{ log.host }}
+                                {% endif %}
                             </td>
                             <td>
                                 {{ log.user }}

@@ -117,7 +117,6 @@ class Git implements VersioningInterface
      */
     function getBranchesAndTags(Application $app)
     {
-        $this->updateRepository($app);
         $repo = $this->getRepository($app);
         $repo->checkout('master'); // Switch to master, because when we're in detached state, output will be useless for git elephant
         $repo->checkoutAllRemoteBranches();

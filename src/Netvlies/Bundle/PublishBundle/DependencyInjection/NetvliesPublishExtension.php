@@ -28,6 +28,8 @@ class NetvliesPublishExtension extends Extension
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
         $container->setParameter('netvlies_publish.versioningtypes', $config['versioningservices']);
 
+        $container->setParameter('netvlies_publish.applicationtypes', $config['applicationtypes']);
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }

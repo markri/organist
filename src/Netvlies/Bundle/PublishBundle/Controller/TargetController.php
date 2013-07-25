@@ -72,6 +72,10 @@ class TargetController extends Controller
      */
     public function editAction($id){
         $em  = $this->getDoctrine()->getManager();
+
+        /**
+         * @var Target $target
+         */
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $request = $this->getRequest();
 
@@ -102,9 +106,13 @@ class TargetController extends Controller
      */
     public function deleteAction($id){
         $em  = $this->getDoctrine()->getManager();
+
+        /**
+         * @var Target $target
+         */
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
         $app = $target->getApplication();
-        $em->remove($target);
+        $target->setInactive(true);
         $em->flush();
 
         return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
@@ -209,7 +217,7 @@ class TargetController extends Controller
                     break;
             }
 
-            switch($app->getType()->getDisplayName()){
+            switch($app->getApplicationType()){
                 case 'symfony2':
                     $target->setWebroot($appRoot.'/web');
                     break;
@@ -222,7 +230,7 @@ class TargetController extends Controller
             $target->setMysqluser($app->getKeyName());
 
             // Just some random password
-            $target->setMysqlpw(substr(str_shuffle(strtolower(sha1(rand() . time() . "my salt string"))),0, 10));
+            $target->setMysqlpw(substr(str_shuffle(strtolower(sha1(rand() . time() . "my salty string"))),0, 10));
             $target->setLabel('('.$env->getType().') '.$app->getName());
         }
 
@@ -266,7 +274,7 @@ class TargetController extends Controller
         $initCommand->setTarget($target);
         $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
 
-        return $this->forward('NetvliesPublishBundle:Command:execCommand', array(
+        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
             'command'  => $initCommand
         ));
     }

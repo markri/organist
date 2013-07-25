@@ -2,6 +2,8 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Action\CommandApplicationInterface;
+use Netvlies\Bundle\PublishBundle\Action\CommandTargetInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
@@ -39,7 +41,7 @@ class CommandController extends Controller {
         $repoPath = $versioningService->getRepositoryPath($application);
 
         if(!file_exists($repoPath)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('id' => $application->getId())));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
         }
 
         $deployCommand = new DeployCommand();
@@ -64,7 +66,7 @@ class CommandController extends Controller {
 
                 if($deployForm->isValid()){
 
-                    return $this->forward('NetvliesPublishBundle:Command:execCommand', array(
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
                         'command'  => $deployCommand
                     ));
                 }
@@ -75,7 +77,7 @@ class CommandController extends Controller {
 
                 if($rollbackForm->isValid()){
 
-                    return $this->forward('NetvliesPublishBundle:Command:execCommand', array(
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
                         'command'  => $rollbackCommand
                     ));
                 }
@@ -94,12 +96,14 @@ class CommandController extends Controller {
      * @param CommandInterface $command
      * @template()
      */
-    public function execCommandAction($command)
+    public function execTargetCommandAction(CommandTargetInterface $command)
     {
         $commandLog = new CommandLog();
         $versioningService = $this->container->get($command->getApplication()->getScmService());
 
-        $script = '';
+        // Anyterm strips all env vars before executing exec.sh under user deploy
+        // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
+        $script = 'export HOME='.$_SERVER['HOME'].' && ';
 
         // Change dir to app repository
         $script .='cd '.$versioningService->getRepositoryPath($command->getApplication())." && ";
@@ -126,6 +130,33 @@ class CommandController extends Controller {
     }
 
 
+    public function execApplicationCommandAction(CommandApplicationInterface $command)
+    {
+        $commandLog = new CommandLog();
+
+        $script = '';
+        $script .=$command->getCommand();
+
+        $commandLog->setApplication($command->getApplication());
+        $commandLog->setCommandLabel($command->getLabel());
+        $commandLog->setCommand($script);
+        $commandLog->setDatetimeStart(new \DateTime());
+        $commandLog->setHost('localhost');
+
+        //@todo replace this with proper security auth token
+        $commandLog->setUser(array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody');
+
+        /**
+         * @var EntityManager $em
+         */
+        $em  = $this->getDoctrine()->getManager();
+        $em->persist($commandLog);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $commandLog->getId())));
+    }
+
+
     /**
      * This route is fixed! Due to apache proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
@@ -137,7 +168,7 @@ class CommandController extends Controller {
      */
     public function execAction($commandLog)
     {
-        $application = $commandLog->getTarget()->getApplication();
+        $application = $commandLog->getApplication();
 
         if($commandLog->getDatetimeEnd()){
             $this->get('session')->getFlashBag()->add('error', sprintf('This command is already executed. <a href="%s">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
@@ -175,7 +206,7 @@ class CommandController extends Controller {
     public function listLogsAction($application)
     {
         return array(
-            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsByTargets($application->getTargets()),
+            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application),
             'application' => $application
         );
     }

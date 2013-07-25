@@ -80,11 +80,14 @@ class CommandLog
      */
     private $target;
 
-//    /**
-//     * @var
-//     * @ORM\Column(name="targetlabel", type="string", nullable=true)
-//     */
-//    private $targetLabel;
+
+    /**
+     * This variable is used as a  backreference. not required, because it is set by calling setTarget method. But  a
+     * command can have an application without a target.
+     * @var Application $target
+     * @ORM\ManyToOne(targetEntity="Application")
+     */
+    private $application;
 
 
     /**
@@ -237,6 +240,9 @@ class CommandLog
     public function setTarget($target)
     {
         $this->target = $target;
+
+        // Be sure that this is correctly set, so overrule any existing value
+        $this->application = $target->getApplication();
     }
 
     /**
@@ -263,21 +269,6 @@ class CommandLog
         return $this->user;
     }
 
-//    /**
-//     * @param mixed $targetLabel
-//     */
-//    public function setTargetLabel($targetLabel)
-//    {
-//        $this->targetLabel = $targetLabel;
-//    }
-//
-//    /**
-//     * @return mixed
-//     */
-//    public function getTargetLabel()
-//    {
-//        return $this->targetLabel;
-//    }
 
     /**
      * @param string $commandLabel
@@ -294,6 +285,28 @@ class CommandLog
     {
         return $this->commandLabel;
     }
+
+    /**
+     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $application
+     */
+    public function setApplication($application)
+    {
+        if($this->target && $this->target->getApplication() != $application){
+            // Be sure that target is matching application if these are different
+            $this->setTarget(null);
+        }
+
+        $this->application = $application;
+    }
+
+    /**
+     * @return \Netvlies\Bundle\PublishBundle\Entity\Application
+     */
+    public function getApplication()
+    {
+        return $this->application;
+    }
+
 
 
 }

@@ -29,14 +29,9 @@ class ApplicationCreateType extends AbstractType
                 'label'=>'Unique technical name (max 16 chars) * ',
                 'required' => true)
             )
-            ->add('type', 'entity', array(
-                'class' => 'Netvlies\Bundle\PublishBundle\Entity\ApplicationType',
-                'property'=> 'displayName',
-                'label' => 'Application type *',
-                'empty_value'=> '-- choose type --',
-                'expanded' => false,
-                'multiple' => false,
-                'required'=>true)
+            ->add('applicationType', 'applicationtype_choicelist', array(
+                    'label'=>'Application type *',
+                    'required'=>true )
             )
             ->add('scmService', 'versioning_choicelist', array(
                 'label'=>'Versioning service *',

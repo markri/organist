@@ -15,7 +15,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class InitCommand implements CommandInterface {
+class InitCommand implements CommandTargetInterface {
 
 
     /**

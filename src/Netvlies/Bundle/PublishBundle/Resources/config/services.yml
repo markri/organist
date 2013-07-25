@@ -31,10 +31,17 @@ services:
         tags:
             - {name: form.type, alias: versioning_choicelist }
 
+    netvlies_publish.form.applicationtype_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ApplicationTypeChoiceList
+        arguments: [ %netvlies_publish.applicationtypes% ]
+        tags:
+            - {name: form.type, alias: applicationtype_choicelist }
+
+
 
     # dashboard application selector
-    netvlies_publish_twig_applicationselect:
-        class: Netvlies\Bundle\PublishBundle\Twig\Extensions\ApplicationSelect
+    netvlies_publish_twig_extensions:
+        class: Netvlies\Bundle\PublishBundle\Twig\Extensions\PublishExtensions
         calls:
             - [ setContainer, [ @service_container ] ]
         tags:

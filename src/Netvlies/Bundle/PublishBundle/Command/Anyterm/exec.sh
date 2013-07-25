@@ -9,10 +9,8 @@ console=$(dirname $0)/../../../../../../app/console
 scriptid=$1
 
 script="$logbase$scriptid.sh"
-echo $script
 $console publish:getcommand --id=$scriptid > $script
 chmod 777 $script
-
 
 mkdir -p $logbase
 logfile=$logbase""$scriptid".log"

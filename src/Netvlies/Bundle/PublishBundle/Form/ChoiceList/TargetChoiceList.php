@@ -31,6 +31,7 @@ class TargetChoiceList extends AbstractType
     protected function getChoices($app)
     {
         $targets = $this->em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($app);
+        $return = array();
 
         foreach($targets as $target){
             $return[$target->getId()] = $target;

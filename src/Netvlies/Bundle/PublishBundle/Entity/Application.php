@@ -41,11 +41,6 @@ class Application
     */
     protected $customer;
 
-    /**
-     * @var ApplicationType $type
-     * @ORM\ManyToOne(targetEntity="ApplicationType")
-     */
-    protected $type;
 
     /**
      * @var string $scmService
@@ -71,6 +66,12 @@ class Application
      */
     protected $targets;
 
+    /**
+     * @var string $applicationType
+     * @ORM\Column(name="applicationType", type="string", length=255)
+     */
+    protected $applicationType;
+
 
 
     public function __construct()
@@ -86,26 +87,6 @@ class Application
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set type
-     *
-     * @param ApplicationType $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Get type
-     *
-     * @return ApplicationType
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 
     /**
@@ -232,5 +213,23 @@ class Application
     {
         return $this->targets;
     }
+
+    /**
+     * @param string $applicationType
+     */
+    public function setApplicationType($applicationType)
+    {
+        $this->applicationType = $applicationType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApplicationType()
+    {
+        return $this->applicationType;
+    }
+
+
 
 }

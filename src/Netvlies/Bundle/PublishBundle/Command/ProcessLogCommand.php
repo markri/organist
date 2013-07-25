@@ -83,7 +83,6 @@ class ProcessLogCommand extends ContainerAwareCommand
              $target = $commandLog->getTarget();
 
              if(empty($target)){
-                 echo "Notice: No connected target to update ...";
                  continue;
              }
 

@@ -15,7 +15,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class DeployCommand implements CommandInterface {
+class DeployCommand implements CommandTargetInterface {
 
 
     /**
@@ -131,7 +131,7 @@ class DeployCommand implements CommandInterface {
         //@todo checkout whats default in capistrano / capifony
         return trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
-            git checkout ".$this->revision." &&
+
             cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'

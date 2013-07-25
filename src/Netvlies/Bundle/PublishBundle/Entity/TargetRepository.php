@@ -24,6 +24,7 @@ class TargetRepository extends EntityRepository
             SELECT t FROM Netvlies\Bundle\PublishBundle\Entity\Target t
             WHERE t.application = :app
             AND t.environment = :env
+            AND t.inactive IS NOT TRUE
         ');
 
         $query->setParameter('app', $application);
@@ -45,6 +46,7 @@ class TargetRepository extends EntityRepository
             SELECT t.id FROM Target t
             INNER JOIN Environment e ON t.environment_id = e.id
             WHERE t.application_id = :id
+            AND t.inactive IS NOT TRUE
             ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P'), t.id DESC";
 
         $conn = $this->getEntityManager()->getConnection();

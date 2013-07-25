@@ -16,7 +16,7 @@
             Customer: {{application.customer}}<br>
             Name: {{application.name}}<br>
             Repository type: {{application.scmService}}<br>
-            Type: {{application.type.displayName}}<br>
+            Applicationtype: {{application.applicationtype|apptypelabel}}<br>
             <br><br>
 
             {% if application.targets | length > 0%}
@@ -33,7 +33,7 @@
                     {% set types = ['O', 'T', 'A', 'P'] %}
                     {% for type in types %}
                     <td>
-                        {% for target in application.targets if target.environment.type == type %}
+                        {% for target in application.targets if target.environment.type == type and target.inactive is empty %}
                             {% if not loop.first %}
                             <hr>
                             {%endif%}
@@ -68,7 +68,11 @@
                             </td>
                             <td>{{ log.commandLabel }}</td>
                             <td>
-                                {{ log.target.label }}
+                                {% if log.target is not null %}
+                                    {{ log.target.label }}
+                                {% else %}
+                                    {{ log.host }}
+                                {% endif %}
                             </td>
                             <td>
                                 {{ log.user }}

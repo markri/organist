@@ -43,12 +43,18 @@
                         <li>
                             <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
                         </li>
-                        <li>
-                            <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
-                        </li>
+                        {% if application.id is checkedout %}
+                            <li>
+                                <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}">Checkout repository</a>
+                            </li>
+                        {% endif %}
                         <li>
                             <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" >Settings</a>
                         </li>

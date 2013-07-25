@@ -13,7 +13,7 @@ namespace Netvlies\Bundle\PublishBundle\Action;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 
-interface CommandInterface {
+interface CommandTargetInterface {
 
     /**
      * Must return the entire command as string

@@ -110,7 +110,7 @@ class Target
 
 
     /**
-     * @ORM\Column(name="inactive", type="boolean")
+     * @ORM\Column(name="inactive", type="boolean", nullable=true)
      */
     protected $inactive;
 
