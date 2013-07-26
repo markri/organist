@@ -13,32 +13,6 @@ use Doctrine\ORM\EntityRepository;
 class CommandLogRepository extends EntityRepository
 {
 
-//    /**
-//     * @param Target $target
-//     * @return mixed
-//     */
-//    public function getLogsByTargets($targets, $limit=null){
-//
-//        $entityManager = $this->getEntityManager();
-//
-//        $ids = array();
-//        foreach($targets as $target){
-//            $ids[] = $target->getId();
-//        }
-//
-//        $query = $entityManager->createQuery('
-//            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
-//            WHERE c.target IN (:ids)
-//            ORDER BY c.id DESC
-//        ')->setParameter('ids', $ids);
-//
-//
-//        if(!is_null($limit)){
-//            $query->setMaxResults($limit);
-//        }
-//
-//        return $query->getResult();
-//    }
 
     /**
      * @param Target $target

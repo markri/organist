@@ -2,8 +2,14 @@
 #_internal:
 #    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
 #    prefix:   /_internal
+hwi_oauth_redirect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+    prefix:   /connect
 
 NetvliesPublishBundle:
     resource: "@NetvliesPublishBundle/Controller/"
     type:     annotation
     prefix:   /
+
+google_login:
+    pattern: /login/check-google

@@ -47,3 +47,6 @@ services:
         tags:
             - { name: twig.extension }
 
+
+    netvlies_publish.userprovider:
+        class: %hwi_oauth.user.provider.class%
