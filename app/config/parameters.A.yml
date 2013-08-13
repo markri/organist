@@ -13,3 +13,8 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    repository_path:  /home/deploy/organist/app/web/repos
+
+    #@todo refactor this in config.yml in versioning services as option
+    versioning_private_key:   /home/deploy/.ssh/id_rsa_bitbucket
