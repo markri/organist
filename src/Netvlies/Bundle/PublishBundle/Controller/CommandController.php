@@ -116,8 +116,14 @@ class CommandController extends Controller {
         $commandLog->setTarget($command->getTarget());
         $commandLog->setType($command->getTarget()->getEnvironment()->getType());
 
-        //@todo replace this with proper security auth token
-        $commandLog->setUser(array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody');
+        try{
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        catch(\Exception $e){
+            $userName = 'nobody';
+        }
+
+        $commandLog->setUser($userName);
 
         /**
          * @var EntityManager $em
@@ -143,8 +149,14 @@ class CommandController extends Controller {
         $commandLog->setDatetimeStart(new \DateTime());
         $commandLog->setHost('localhost');
 
-        //@todo replace this with proper security auth token
-        $commandLog->setUser(array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody');
+        try{
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        catch(\Exception $e){
+            $userName = 'nobody';
+        }
+
+        $commandLog->setUser($userName);
 
         /**
          * @var EntityManager $em
@@ -227,8 +239,14 @@ class CommandController extends Controller {
         $newCommand->setHost($commandLog->getHost());
         $newCommand->setCommandLabel($commandLog->getCommandLabel());
 
-        //@todo replace this with security token
-        $newCommand->setUser(array_key_exists('PHP_AUTH_USER', $_SERVER)? $_SERVER['PHP_AUTH_USER'] : 'nobody');
+        try{
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        catch(\Exception $e){
+            $userName = 'nobody';
+        }
+
+        $newCommand->setUser($userName);
 
         /**
          * @var EntityManager $em
