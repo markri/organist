@@ -70,7 +70,7 @@ class AnytermCommand extends ContainerAwareCommand
 
 
         $initd = file_get_contents(__DIR__.'/Anyterm/anyterm');
-        $initd = str_replace('#path#', dirname(dirname(dirname(__DIR__))).'/app/console', $initd);
+        $initd = str_replace('#path#', dirname(dirname(dirname(dirname(dirname(__DIR__))))).'/app/console', $initd);
         file_put_contents('/etc/init.d/anyterm', $initd);
         chmod('/etc/init.d/anyterm', 777);
 

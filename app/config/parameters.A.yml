@@ -2,9 +2,9 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
     database_port:     ~
-    database_name:     symfony
+    database_name:     organist
     database_user:     root
-    database_password: ~
+    database_password: vagrant
 
     mailer_transport:  smtp
     mailer_host:       localhost
@@ -13,3 +13,8 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    repository_path:  /home/deploy/organist/app/web/repos
+
+    #@todo refactor this in config.yml in versioning services as option
+    versioning_private_key:   /home/deploy/.ssh/id_rsa_bitbucket

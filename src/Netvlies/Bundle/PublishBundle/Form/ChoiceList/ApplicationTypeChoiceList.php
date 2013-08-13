@@ -7,6 +7,7 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ApplicationTypeChoiceList extends AbstractType
 {
@@ -18,7 +19,7 @@ class ApplicationTypeChoiceList extends AbstractType
         $this->appTypes = $appTypes;
     }
 
-    public function getDefaultOptions(array $options)
+    public function getChoices()
     {
         $keys = array();
         $labels = array();
@@ -33,10 +34,16 @@ class ApplicationTypeChoiceList extends AbstractType
             }
         }
 
-        return array(
-            'choices' => array_combine($keys, $labels)
-        );
+        return  array_combine($keys, $labels);
     }
+
+    public function setDefaultOptions(OptionsResolverInterface $options)
+    {
+        $options->setDefaults(array(
+            'choices' => $this->getChoices(),
+        ));
+    }
+
 
     public function getParent()
     {
