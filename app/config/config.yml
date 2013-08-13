@@ -93,14 +93,3 @@ netvlies_publish:
             label: OMS
             userdirs: [ 'media', 'cache', 'lucene', 'tmp' ]
             userfiles: [ 'cms/.htpasswd', 'cms/.htaccess' ]
-
-
-hwi_oauth:
-    # name of the firewall in which this bundle is active, this setting MUST be set
-    firewall_name: secured_area
-    resource_owners:
-         google:
-             type: google
-             client_id: 1064380153853.apps.googleusercontent.com
-             client_secret: tTmk9Rdyo95YmGQ4TrM0k0Bx
-             scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"

@@ -24,3 +24,14 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+
+hwi_oauth:
+    # name of the firewall in which this bundle is active, this setting MUST be set
+    firewall_name: secured_area
+    resource_owners:
+         google:
+             type: google
+             client_id:
+             client_secret:
+             scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"

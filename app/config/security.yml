@@ -22,9 +22,6 @@ security:
         secured_area:
             anonymous: true
             pattern: ^/
-            logout:
-                path: /logout
-                target: /connect-fail
             oauth:
                 resource_owners:
                     google:             "/login/check-google"
@@ -32,26 +29,9 @@ security:
                 failure_path:      /connect-fail
                 oauth_user_provider:
                     service: netvlies_publish.userprovider
-#        login:
-#            pattern:  ^/demo/secured/login$
-#            security: false
-
-#        secured_area:
-#            pattern:    ^/demo/secured/
-#            form_login:
-#                check_path: /demo/secured/login_check
-#                login_path: /demo/secured/login
-#            logout:
-#                path:   /demo/secured/logout
-#                target: /demo/
-            #anonymous: ~
-            #http_basic:
-            #    realm: "Secured Demo Area"
 
     access_control:
         - { path: ^/connect-fail, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/connect/google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login/check-google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }

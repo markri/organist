@@ -49,4 +49,4 @@ services:
 
 
     netvlies_publish.userprovider:
-        class: %hwi_oauth.user.provider.class%
+        class: Netvlies\Bundle\PublishBundle\Security\UserProvider

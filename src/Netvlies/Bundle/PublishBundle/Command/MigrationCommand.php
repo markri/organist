@@ -319,7 +319,7 @@ class MigrationCommand extends ContainerAwareCommand
                     $insertFile = new newFile();
                     $insertFile->setApplication($newApp);
                     $insertFile->setPath($oldFile->getPath());
-                    $insertFile->setType($oldFile->getPath());
+                    $insertFile->setType($oldFile->getType());
 
                     $this->emNew->persist($insertFile);
                     $this->emNew->flush();

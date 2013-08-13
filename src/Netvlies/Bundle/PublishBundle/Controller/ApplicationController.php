@@ -20,8 +20,8 @@ use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
 
 
-class ApplicationController extends Controller {
-
+class ApplicationController extends Controller
+{
 
     /**
      * @Route("/application/create")

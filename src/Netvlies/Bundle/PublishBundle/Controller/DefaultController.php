@@ -8,13 +8,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 
-class DefaultController extends Controller {
+class DefaultController extends Controller
+{
 
     /**
      * @Route("/")
      * @Template()
      */
     public function indexAction()
+    {
+        return array();
+    }
+
+
+    /**
+     * @Route("/connect-fail")
+     * @Template()
+     * @return array
+     */
+    public function notAuthorizedAction()
     {
         return array();
     }
