@@ -7,6 +7,7 @@
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class VersioningChoiceList extends AbstractType
 {
@@ -18,11 +19,11 @@ class VersioningChoiceList extends AbstractType
         $this->branches = $branches;
     }
 
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $options)
     {
-        return array(
+        $options->setDefaults(array(
             'choices' => array_combine($this->branches, $this->branches)
-        );
+        ));
     }
 
     public function getParent()

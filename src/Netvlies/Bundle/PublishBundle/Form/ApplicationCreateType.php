@@ -43,11 +43,6 @@ class ApplicationCreateType extends AbstractType
             );
     }
 
-    public function getDefaultOptions(array $options)
-    {
-        return $options;
-    }
-
     /**
      * Returns the name of this type.
      *
