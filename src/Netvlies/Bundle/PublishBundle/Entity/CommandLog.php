@@ -171,22 +171,6 @@ class CommandLog
     }
 
     /**
-     * @param string $key
-     */
-    public function setUid($key)
-    {
-        $this->uid = $key;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUid()
-    {
-        return $this->uid;
-    }
-
-    /**
      * @param string $log
      */
     public function setLog($log)

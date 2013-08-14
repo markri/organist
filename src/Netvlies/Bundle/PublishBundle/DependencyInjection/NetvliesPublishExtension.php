@@ -26,7 +26,13 @@ class NetvliesPublishExtension extends Extension
         $container->setParameter('netvlies_publish.anyterm_user', $config['anyterm_user']);
         $container->setParameter('netvlies_publish.anyterm_exec_port', $config['anyterm_exec_port']);
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
-        $container->setParameter('netvlies_publish.versioningtypes', $config['versioningservices']);
+
+        $versioningTypes = array_keys($config['versioningservices']);
+        $container->setParameter('netvlies_publish.versioningtypes', $versioningTypes);
+
+        foreach($config['versioningservices'] as $name=>$versioningConfig){
+            $container->setParameter('netvlies_publish.versioning.'.$name.'.config', $versioningConfig);
+        }
 
         $container->setParameter('netvlies_publish.applicationtypes', $config['applicationtypes']);
 

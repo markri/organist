@@ -35,8 +35,9 @@ class Git implements VersioningInterface
      */
     protected $repository;
 
-    public function __construct($baseRepositoryPath, $privateKey)
+    public function __construct($baseRepositoryPath, $config)
     {
+        $privateKey = array_key_exists('forward_key', $config) ? $config['forward_key'] : '';
         $this->baseRepositoryPath = $baseRepositoryPath;
         $this->privateKey = $privateKey;
     }
@@ -117,10 +118,21 @@ class Git implements VersioningInterface
      */
     function getBranchesAndTags(Application $app)
     {
+        return array_merge($this->getBranches($app), $this->getTags($app));
+    }
+
+
+    /**
+     * Returns array with all branches
+     *
+     * @param Application $app
+     * @return array
+     */
+    function getBranches(Application $app)
+    {
         $repo = $this->getRepository($app);
         $repo->checkout('master'); // Switch to master, because when we're in detached state, output will be useless for git elephant
-        $repo->checkoutAllRemoteBranches();
-        $tags = $repo->getTags();
+
         $branches =$repo->getBranches();
         $references = array();
 
@@ -134,6 +146,23 @@ class Git implements VersioningInterface
             $references[] = $reference;
         }
 
+        return $references;
+    }
+
+
+    /**
+     * Returns array with all tags
+     *
+     * @param Application $app
+     * @return array
+     */
+    function getTags(Application $app)
+    {
+        $repo = $this->getRepository($app);
+        $repo->checkout('master'); // Switch to master, because when we're in detached state, output will be useless for git elephant
+
+        $tags = $repo->getTags();
+        $references = array();
 
         foreach($tags as $tag){
             /**
@@ -147,6 +176,7 @@ class Git implements VersioningInterface
 
         return $references;
     }
+
 
     /**
      * Must return an URL which shows the latest commitlogs

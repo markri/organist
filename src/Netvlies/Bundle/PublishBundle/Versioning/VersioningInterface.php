@@ -50,13 +50,30 @@ interface VersioningInterface
     function getChangesets(Application $app, $fromRef, $toRef);
 
     /**
-     * Return an array with strings of all deployable branches and tags for given application
+     * Return an array with ReferenceInterface of all deployable branches and tags for given application
      *
      * @abstract
      * @param $app
      * @return array
      */
     function getBranchesAndTags(Application $app);
+
+    /**
+     * Returns array with all tags
+     *
+     * @param Application $app
+     * @return mixed
+     */
+    function getTags(Application $app);
+
+
+    /**
+     * Returns array with all branches
+     *
+     * @param Application $app
+     * @return mixed
+     */
+    function getBranches(Application $app);
 
     /**
      * Must return an URL which shows the latest commitlogs

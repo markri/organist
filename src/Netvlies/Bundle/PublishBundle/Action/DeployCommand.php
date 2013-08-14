@@ -127,8 +127,7 @@ class DeployCommand implements CommandTargetInterface {
             $keyForwardClose.='unset SSH_AUTH_SOCK';
         }
 
-        //@todo eliminate bridgebin
-        //@todo checkout whats default in capistrano / capifony
+        //@todo eliminate bridgebin by using parameter bundle
         return trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
 

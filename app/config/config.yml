@@ -83,7 +83,9 @@ netvlies_publish:
     repositorypath: %repository_path%
     anyterm_user: deploy   # this local user is used for connecting to remote hosts for deployment and git user
     anyterm_exec_port: 7778 # anyterm port
-    versioningservices: [ git ]
+    versioningservices:
+        git:
+            forward_key: /home/deploy/.ssh/id_rsa_bitbucket
     applicationtypes:
         symfony20:
             label: Symfony 2.0

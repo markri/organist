@@ -52,28 +52,27 @@ class Target
     protected $lastDeployedRevision;
 
     /**
+     * @ORM\Column(name="currentTag", type="string", length=255, nullable=true)
+     */
+    protected $lastDeployedTag;
+
+    /**
      * @var string $approot where application is installed/runnend from
-     * @todo assert this is subdir of caproot if set
-     * @todo move this to parameters
      * @ORM\Column(name="approot", type="string", length=255, nullable=true)
      */
     protected $approot;
 
     /**
      * @var string $webroot where application webroot is served from, should be subdir of approot
-     * @todo assert this is subir of approot
-     * @todo move this to parameters
      * @ORM\Column(name="webroot", type="string", length=255, nullable=true)
      */
     protected $webroot;
 
     /**
      * @var string $caproot base path where capistrano structure is stored
-     * @todo move this to parameters
      * @ORM\Column(name="caproot", type="string", length=255, nullable=true)
      */
     protected $caproot;
-
 
     /**
      * @ORM\Column(name="username", type="string", length=255)
@@ -181,8 +180,26 @@ class Target
      */
     public function getLastDeployedRevision()
     {
-        return $this->getLastDeployedRevision;
+        return $this->lastDeployedRevision;
     }
+
+    /**
+     * @param mixed $lastDeployedTag
+     */
+    public function setLastDeployedTag($lastDeployedTag)
+    {
+        $this->lastDeployedTag = $lastDeployedTag;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastDeployedTag()
+    {
+        return $this->lastDeployedTag;
+    }
+
+
 
     /**
      * @param string $username

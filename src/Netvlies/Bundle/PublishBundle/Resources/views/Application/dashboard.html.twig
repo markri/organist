@@ -38,9 +38,12 @@
                             <hr>
                             {%endif%}
                             <a href="{{ path('netvlies_publish_target_edit', { 'id': target.id}) }}">{{target.label}}</a><br>
-                            {%if target.lastDeployedBranch is not empty%}
-                                {{ target.lastDeployedBranch}}<br>
-                            {%else%}
+                            {%if target.lastDeployedTag is not empty%}
+                                {{ target.lastDeployedTag }}<br>
+                            {%elseif target.lastDeployedBranch is not empty%}
+                                {{ target.lastDeployedBranch }}<br>
+                                ({{ target.lastDeployedRevision }})<br>
+                            {% else %}
                                 Not yet deployed<br>
                             {%endif%}
                         {% endfor %}

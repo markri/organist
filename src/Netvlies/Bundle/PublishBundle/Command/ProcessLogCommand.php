@@ -87,19 +87,34 @@ class ProcessLogCommand extends ContainerAwareCommand
              }
 
              $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION || true';
-             $revision = shell_exec($command);
+             $revision = trim(shell_exec($command));
 
              if(!empty($revision)){
                  $target->setLastDeployedRevision($revision);
-                 $target->setLastDeployedBranch($revision);
 
                  /**
                   * @var VersioningInterface $versioningService
                   */
                  $versioningService = $this->getContainer()->get($target->getApplication()->getScmService());
-                 $branchesAndTags = $versioningService->getBranchesAndTags($target->getApplication());
 
-                 foreach($branchesAndTags as $reference){
+                 // Find tag
+                 $tags = $versioningService->getTags($target->getApplication());
+
+                 foreach($tags as $reference){
+                     /**
+                      * @var ReferenceInterface $reference
+                      */
+                     if($reference->getReference()!=$revision){
+                         continue;
+                     }
+
+                     $target->setLastDeployedTag($reference->getName());
+                     break;
+                 }
+
+                 // Find branch
+                 $branches = $versioningService->getBranches($target->getApplication());
+                 foreach($branches as $reference){
                      /**
                       * @var ReferenceInterface $reference
                       */

@@ -2,8 +2,7 @@ services:
 
     git:
         class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
-        arguments: [ %repository_path%, %versioning_private_key% ]
-
+        arguments: [ %repository_path%, %netvlies_publish.versioning.git.config% ]
 
     # form types
     netvlies.publish.form.environment_selector:
