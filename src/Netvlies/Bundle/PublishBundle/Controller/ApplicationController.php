@@ -223,6 +223,8 @@ class ApplicationController extends Controller
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
         }
 
+        $versioningService->updateRepository($application);
+
         $this->get('session')->getFlashBag()->add('success', sprintf('Repository for %s is updated', $application->getName()));
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('id' => $application->getId())));
