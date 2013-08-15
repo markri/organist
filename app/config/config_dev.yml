@@ -32,6 +32,6 @@ hwi_oauth:
     resource_owners:
          google:
              type: google
-             client_id:
-             client_secret:
+             client_id: %dev_oauth_id%
+             client_secret: %dev_oauth_secret%
              scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"

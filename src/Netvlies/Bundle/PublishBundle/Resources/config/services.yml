@@ -49,3 +49,4 @@ services:
 
     netvlies_publish.userprovider:
         class: Netvlies\Bundle\PublishBundle\Security\UserProvider
+        arguments: [ %oauth_mail_regex% ]

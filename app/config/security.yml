@@ -34,4 +34,4 @@ security:
         - { path: ^/connect-fail, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/connect/google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login/check-google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/, roles: %minimum_security_role% }

@@ -14,4 +14,16 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    repository_path:  /home/deploy/organist/app/web/repos
+    repository_path:  /home/deploy/organist/web/repos
+
+    dev_oauth_id: id
+    dev_oauth_secret: secret
+
+    prod_oauth_id: id
+    prod_oauth_secret: secret
+
+    # Change this to IS_AUTHENTICATED_FULLY when you want to use the oauth provider. Or to IS_AUTHENTICATED_ANONYMOUSLY for disabling login
+    minimum_security_role: IS_AUTHENTICATED_FULLY
+
+    # Optional check when using oauth to restrict e-mail adresses from certain domain
+    oauth_mail_regex: /@netvlies.net$/i

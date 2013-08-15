@@ -16,13 +16,20 @@ use Symfony\Component\Security\Core\Exception\LockedException;
 class UserProvider extends OAuthUserProvider
 {
 
+    protected $mailRegex;
+
+    public function __construct($mailRegex)
+    {
+        $this->mailRegex = $mailRegex;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {
         // Check if we are netvlies
-        if(!preg_match('#@netvlies.net$#i', $response->getEmail())){
+        if(!empty($this->mailRegex) && !preg_match($this->mailRegex, $response->getEmail())){
             // If not we bail
             throw new LockedException();
         }
