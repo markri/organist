@@ -1,17 +1,21 @@
-<button class="dropdown">
-    {% if current is not empty %}
-        {{current.name}}
-    {% else %}
-        Application List
-    {% endif %}
-</button>
-
-<div class="drop">
-    <ul>
-        <li><a href="{{path('netvlies_publish_application_create')}}">Add new application</a></li>
-        <li><hr></li>
+   {#<a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">#}
+        {#{% if current is not empty %}#}
+            {#{{current.name}}#}
+        {#{% else %}#}
+            {#Application List#}
+        {#{% endif %}#}
+        {#<b class="caret"></b>#}
+    {#</a>#}
+    {#<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">#}
+        {#{% for app in apps %}#}
+            {#<li><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></li>#}
+        {#{% endfor %}#}
+    {#</ul>#}
         {% for app in apps %}
-            <li><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></li>
+            {% if current is not empty and current.name == app.name %}
+
+                <option selected=selected><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+            {% else %}
+                <option><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+            {% endif %}
         {% endfor %}
-    </ul>
-</div>

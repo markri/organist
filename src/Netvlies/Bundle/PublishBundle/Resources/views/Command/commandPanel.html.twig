@@ -1,3 +1,4 @@
+{% set commandtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
@@ -44,62 +45,4 @@
     </section>
 </div>
 {% endblock %}
-{% block oms_javascripts %}
-
-    {{ parent() }}
-    <script>
-
-    {#$('#netvlies_publishbundle_applicationdeploy_target_target').change( function() {#}
-
-        {#if($(this).val()==''){#}
-            {#return;#}
-        {#}#}
-
-        {#$.ajax({#}
-            {#type: "GET",#}
-            {#data: "id=" + $(this).val(),#}
-            {#url:"{{ path('netvlies_publish_target_getreference') }}",#}
-            {#beforeSend: function(){#}
-
-                {#$('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();#}
-            {#},#}
-            {#success: function(msg){#}
-                {#if (msg != ''){#}
-                        {#$('#reference_return').html(msg).show();#}
-                   {#}#}
-                   {#else#}
-                   {#{#}
-                       {#$('#reference_return').html('<em>Oops! Something went wrong</em>');#}
-                   {#}#}
-               {#}#}
-           {#});#}
-      {#});#}
-
-
-    {#$('#netvlies_publishbundle_applicationdeploy_revision_reference').change( function (){#}
-        {#if($(this).val()==''){#}
-            {#return;#}
-        {#}#}
-
-        {#$.ajax({#}
-            {#type: "GET",#}
-            {#data: "id=" + {{ application.id }}  + "&ref="+$(this).val(),#}
-            {#url:"{{ path('netvlies_publish_target_loadchangeset') }}",#}
-            {#beforeSend: function(){#}
-                {#$('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();#}
-            {#},#}
-            {#success: function(msg){#}
-                {#if (msg != ''){#}
-                        {#$('#reference_return').html(msg).show();#}
-                   {#}#}
-                   {#else#}
-                   {#{#}
-                       {#$('#reference_return').html('<em>Oops! Something went wrong</em>');#}
-                   {#}#}
-               {#}#}
-           {#});#}
-      {#});#}
-
-    </script>
-{%endblock%}
 
