@@ -40,14 +40,14 @@ class TargetRepository extends EntityRepository
      * @param $app
      * @return array
      */
-    public function getOrderedByOTAP($app){
+    public function getOrderedByDTAP($app){
 
         $query = "
             SELECT t.id FROM Target t
             INNER JOIN Environment e ON t.environment_id = e.id
             WHERE t.application_id = :id
             AND t.inactive IS NOT TRUE
-            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P'), t.id DESC";
+            ORDER BY FIELD(e.type, 'D', 'T', 'A', 'P'), t.id DESC";
 
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($query);

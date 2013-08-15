@@ -24,13 +24,13 @@
                 <h2>Currently deployed versions</h2>
                 <table border="1" cellspacing="0">
                 <thead>
-                    <th>O</th>
+                    <th>D</th>
                     <th>T</th>
                     <th>A</th>
                     <th>P</th>
                 </thead>
                 <tr>
-                    {% set types = ['O', 'T', 'A', 'P'] %}
+                    {% set types = ['D', 'T', 'A', 'P'] %}
                     {% for type in types %}
                     <td>
                         {% for target in application.targets if target.environment.type == type and target.inactive is empty %}

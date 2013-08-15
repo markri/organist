@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Netvlies\Bundle\PublishBundle\Entity\Environment
  *
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\EnvironmentRepository")
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="OTAPhost", columns={"type", "hostname"}), @ORM\UniqueConstraint(name="keyname", columns={"keyname"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="DTAPhost", columns={"type", "hostname"}), @ORM\UniqueConstraint(name="keyname", columns={"keyname"})})
  */
 class Environment
 {

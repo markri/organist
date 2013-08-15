@@ -32,7 +32,7 @@ class TargetController extends Controller
     public function targetsAction($application)
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
-        $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByOTAP($application);
+        $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByDTAP($application);
 
         return array(
             'application' => $application,
@@ -187,7 +187,7 @@ class TargetController extends Controller
             // Init default values in target
             // @todo sure about this predefined stuff?
             switch($env->getType()){
-                case 'O':
+                case 'D':
                     $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName();
                     $target->setApproot($appRoot);
                     $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());

@@ -45,5 +45,8 @@ netvlies_publish:
 Todo
 ----
 
- - OTAP to DTAP
- - show reference as well
+ - add unit tests
+ - improve layout
+ - add parameter bundle
+ - remove migration bundle
+ - rename publishbundle to organistbundle

@@ -32,7 +32,7 @@ class EnvironmentRepository extends EntityRepository
 
 
     /**
-     * Gets an array of all environment objects ordered by O, T, A, P
+     * Gets an array of all environment objects ordered by D, T, A, P
      * @return array
      */
     public function getOrderedByTypeAndHost(){
@@ -45,7 +45,7 @@ class EnvironmentRepository extends EntityRepository
 
         $query = $this->getEntityManager()->createNativeQuery("
             SELECT e.* FROM Environment e
-            ORDER BY FIELD(e.type, 'O', 'T', 'A', 'P')
+            ORDER BY FIELD(e.type, 'D', 'T', 'A', 'P')
         ", $rsm);
 
         $result = $query->getResult();
