@@ -12,7 +12,7 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\FetchCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\PullCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
@@ -61,7 +61,7 @@ class Git implements VersioningInterface
     function updateRepository(Application $app)
     {
         $repo = $this->getRepository($app);
-        $repo->getCaller()->execute(FetchCommand::getInstance()->fetchAllUpdates());
+        $repo->getCaller()->execute(PullCommand::getInstance()->pullAllUpdates());
     }
 
 
