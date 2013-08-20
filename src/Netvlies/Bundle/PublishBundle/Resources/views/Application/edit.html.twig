@@ -3,22 +3,18 @@
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
 {% block content %}
-<div id="content-wrapper">
-
-    <section id="content">
-        <header>
-            <h1>{{application.name}}</h1>
-        </header>
+        <h3>{{application.name}}</h3>
         <hr />
-        <div id="text">
-
 
         <form action="" method="POST">
+
             {% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
             {{ form_errors(form) }}
             {{ form_widget(form._token) }}
 
-            {{ form_row(form.name) }}
+            <div class="form-group">
+                {{ form_row(form.name) }}
+            </div>
             {{ form_row(form.customer) }}
 
             <ul class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
@@ -35,18 +31,16 @@
 
 
             <br/>
-            <input type="submit" value="Opslaan" class="button"/>
-            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+
             <br>
             <br>
             {% if deleteable %}
-                <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="button">Applicatie verwijderen</a>
+                <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="btn btn-danger">Delete application</a>
             {% endif %}
 
 
         </form>
-        </div>
-        </section>
-    </div>
 
 {% endblock %}

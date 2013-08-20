@@ -3,18 +3,25 @@
 <head>
     {% block head %}
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-        <title>{% block oms_title %}Organist deployment tool{% endblock %}</title>
         <meta name="description" content="Organist">
         <meta name="author" content="markri">
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="{{ asset('bundles/netvliespublish/css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
-        <link href="{{ asset('bundles/netvliespublish/assets/css/bootstrap-responsive.css') }}" rel="stylesheet">
+
+        <title>{% block oms_title %}Organist deployment tool{% endblock %}</title>
+
         <link href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.css') }}" rel="stylesheet"/>
 
+
+        <!-- Bootstrap -->
+        <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
+
+        <!-- @todo -->
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <!--<script src="../../assets/js/html5shiv.js"></script>-->
+        <!--<script src="../../assets/js/respond.min.js"></script>-->
+        <![endif]-->
 
     {% endblock %}
 
@@ -24,15 +31,43 @@
     {% block body %}
 
         <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <ul class="nav">
-                        <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ path('netvlies_publish_default_index') }}">Organist</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
                         <li class="active">
-                            <select id="appselect" style="width:250px; margin-top: 6px">
-                                {{applicationselect()|raw}}
-                            </select>
+                            <form class="navbar-form navbar-left" role="search">
+                                <div class="form-group">
+                                    <select id="appselect" data-placeholder="Type application name" >
+                                        {{applicationselect()|raw}}
+                                    </select>
+                                </div>
+                            </form>
                         </li>
+                        {% if application is defined %}
+
+                            <li {% if dashboardtab is defined %}class="active" {% endif %}>
+                                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
+                            </li>
+                            {% if application.id is checkedout %}
+                                <li {% if commandtab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
+                                </li>
+                                <li {% if targettab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
+                                </li>
+                            {% else %}
+                                <li {% if commandtab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}">Checkout repository</a>
+                                </li>
+                            {% endif %}
+                            <li {% if settingstab is defined %}class="active" {% endif %}>
+                                <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" >Settings</a>
+                            </li>
+
+                        {% endif %}
 
                     </ul>
                 </div>
@@ -41,60 +76,37 @@
 
         <div class="container">
 
-            {% if application is defined %}
-                <div class="row">
-                    <ul class="nav nav-tabs">
-                        <li {% if dashboardtab is defined %}class="active" {% endif %}>
-                            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
-                        </li>
-                        {% if application.id is checkedout %}
-                            <li {% if commandtab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
-                            </li>
-                            <li {% if targettab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
-                            </li>
-                        {% else %}
-                            <li {% if commandtab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}">Checkout repository</a>
-                            </li>
-                        {% endif %}
-                        <li {% if settingstab is defined %}class="active" {% endif %}>
-                            <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" >Settings</a>
-                        </li>
-                    </ul>
+            {% for flash in app.session.flashbag.get('error') %}
+                <div class="alert alert-error">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Oops!</strong> {{ flash|raw }}
                 </div>
-            {% endif %}
+            {% endfor %}
 
+            {% for flash in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Yay!</strong> {{ flash|raw }}
+                </div>
+            {% endfor %}
 
-            <div class="row">
-                {% for flash in app.session.flashbag.get('error') %}
-                    <div class="alert alert-error">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Oops!</strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
+            {% for flash in app.session.flashbag.all %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>FYI: </strong> {{ flash|raw }}
+                </div>
+            {% endfor %}
 
-                {% for flash in app.session.flashbag.get('success') %}
-                    <div class="alert alert-success">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Yay!</strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
-
-                {% for flash in app.session.flashbag.all %}
-                    <div class="alert alert-info">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>FYI: </strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="row">
-                {% block content %}
-                    {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
-                {% endblock %}
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% block content %}
+                        {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
+                    {% endblock %}
+                </div>
             </div>
         </div>
+
+
     {% endblock %}
 
     <script src="http://code.jquery.com/jquery.js"></script>
