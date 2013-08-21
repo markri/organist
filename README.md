@@ -1,18 +1,25 @@
-Organist
-========================
+# Organist #
 
-Setup
------
+## Setup ##
 
-Best way to setup Organist is by using the packer repository and generate a virtual image for it, so you may want to skip this section.
+This is the bare Organist application including the Symfony 2.2. framework. Unless you want to change/add customizations
+to Organist, you may want to [start here to read instructions howto build up the box](https://github.com/organist/packer).
+Which will include installing the Organist application.
+
+## Manual Setup ##
+
 If you want to use it without packer and puppet than these are the instructions for setting up:
 
  - Clone this repository
  - Use composer to install vendors
+ - Install the Anyterm service
+
+You still need to install [anyterm](http://anyterm.org/). And have your packages right. You can review this in the
+[puppetscripts](https://github.com/organist/puppet). An exact guide can't be given due to the many dependant configuration
+parameters and system dependencies used in Organist.
 
 
-Configure
-----------
+## Configure ##
 
 Configure the path where repositories are stored for your deployment descriptors.
 
@@ -42,8 +49,10 @@ netvlies_publish:
 
 ```
 
-Todo
-----
+## License ##
+The packers scripts to build the Organist box is licensed under the MIT licence. View the LICENSE file
+
+## Todo ##
 
  - add unit tests
  - improve layout
