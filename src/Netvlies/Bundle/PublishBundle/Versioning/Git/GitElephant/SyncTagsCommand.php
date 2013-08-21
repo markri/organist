@@ -19,9 +19,12 @@ use GitElephant\Command\BaseCommand;
  *
  * @author Matteo Giachino <matteog@gmail.com>
  */
-class FetchCommand extends BaseCommand
+class SyncTagsCommand extends BaseCommand
 {
-    const GIT_FETCH_COMMAND = 'fetch';
+
+    // git fetch --tags --prune wont work with current git version 1.7.1, we need later version, at least version 1.7.9.5 is known to work
+    // for know we hack it by removing every tag and fetching them again
+    const GIT_SYNCTAGS_COMMAND = 'tag | xargs -n1 git tag -d && git fetch --tags';
 
     /**
      * @return FetchCommand
@@ -39,11 +42,10 @@ class FetchCommand extends BaseCommand
      *
      * @return string command
      */
-    public function fetchAllUpdates()
+    public function syncAllTags()
     {
         $this->clearAll();
-        $this->addCommandName(static::GIT_FETCH_COMMAND);
-        $this->addCommandArgument('-a');
+        $this->addCommandName(static::GIT_SYNCTAGS_COMMAND);
 
         return $this->getCommand();
     }

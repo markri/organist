@@ -45,7 +45,7 @@ class ReferenceChoiceList extends AbstractType
             /**
              * @var \Netvlies\Bundle\PublishBundle\Versioning\ReferenceInterface $reference
              */
-            $choices[$reference->getReference()] = $reference->getName();
+            $choices[$reference->getName()] = $reference->getName();
         }
 
         return $choices;
