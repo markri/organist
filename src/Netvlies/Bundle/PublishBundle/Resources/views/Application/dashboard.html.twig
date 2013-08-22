@@ -21,10 +21,12 @@
         <h3>Currently deployed versions</h3>
         <table class="table table-bordered">
         <thead>
+        <tr>
             <th>D</th>
             <th>T</th>
             <th>A</th>
             <th>P</th>
+        </tr>
         </thead>
         <tr>
             {% set types = ['D', 'T', 'A', 'P'] %}
@@ -61,19 +63,21 @@
         <h4>Last executed commands</h4>
         <table class="table table-bordered table-hover">
             <thead>
+            <tr>
                 <th>Date</th>
                 <th>Command type</th>
                 <th>Target</th>
                 <th>User</th>
                 <th>Status</th>
                 <th>Log</th>
+            </tr>
             </thead>
             {% for log in logs %}
                 <tr
                     {% if log.exitcode == 0 %}
                         class="success"
                     {% else %}
-                        class="error"
+                        class="danger"
                     {% endif %}
                     >
                     <td>
