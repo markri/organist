@@ -50,7 +50,7 @@ netvlies_publish:
 ```
 
 ## License ##
-The packers scripts to build the Organist box is licensed under the MIT licence. View the LICENSE file
+Organist is licensed under the MIT licence. View the LICENSE file
 
 ## Todo ##
 
