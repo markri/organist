@@ -57,6 +57,7 @@ class Application
     /**
      * @var object $userFiles
      * @ORM\OneToMany(targetEntity="UserFile", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"type" = "ASC", "path" = "ASC"})
      */
     protected $userFiles;
 

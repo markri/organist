@@ -1,46 +1,50 @@
 {% set settingstab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-        <h3>{{application.name}}</h3>
-        <hr />
+    <h3>{{application.name}}</h3>
+    <hr />
 
-        <form action="" method="POST">
+    <form action="" method="POST" class="form-horizontal">
 
-            {% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
-            {{ form_errors(form) }}
-            {{ form_widget(form._token) }}
+        {% set form = form.setAttribute('data-horizontal', true) %}
+        {{ form_errors(form) }}
+        {{ form_widget(form._token) }}
 
-            <div class="form-group">
-                {{ form_row(form.name) }}
-            </div>
-            {{ form_row(form.customer) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.customer) }}
 
-            <ul class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
-                {# iterate over each existing tag and render its only field: name #}
-                {% for userfile in form.userFiles %}
-                    <li>
-                        {{ form_row(userfile.path) }}
-                        {{ form_row(userfile.type) }}
-                    </li>
-                {% endfor %}
-            </ul>
+        <label >Shared files and directories</label>
+        <div class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
+            {# iterate over each existing tag and render its only field: name #}
+            {% for userfile in form.userFiles %}
+                <div class="form-group">
+                    {#{{ form_label(userfile.path, false, {'label_attr': {'class': 'control-label col-lg-2'} }) }}#}
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-2">
+                        {{ form_widget(userfile.type) }}
+                    </div>
+                    <div class="col-lg-8">
+                        {{ form_widget(userfile.path, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
 
-
-
-
-            <br/>
+        <br/>
+        <div class="pull-right">
             <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
             <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
 
-            <br>
-            <br>
-            {% if deleteable %}
-                <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="btn btn-danger">Delete application</a>
-            {% endif %}
+        <br>
+        <br>
+        {% if deleteable %}
+            <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="btn btn-danger">Delete application</a>
+        {% endif %}
 
 
-        </form>
+    </form>
 
 {% endblock %}

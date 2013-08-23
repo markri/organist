@@ -78,12 +78,23 @@ class PublishExtensions extends Twig_Extension
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->findAll();
         $current = '';
+        $url = '';
 
         if(!empty($id)){
             $current = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
         }
 
-        return $this->container->get('templating')->render('NetvliesPublishBundle:Application:select.html.twig', array('apps'=>$apps, 'current'=>$current));
+        // Generate default route for first app (if present) and replace id with %s, to generate a route template for dashboard
+        if(count($apps)){
+            $url = $this->container->get('router')->generate('netvlies_publish_application_dashboard', array('id'=> $apps[0]->getId()), null);
+            $url = str_replace($apps[0]->getId(), '%s', $url);
+        }
+
+        return $this->container->get('templating')->render('NetvliesPublishBundle:Application:select.html.twig', array(
+            'dashboardurl'=> $url,
+            'apps'=>$apps,
+            'current'=>$current)
+        );
     }
 
 

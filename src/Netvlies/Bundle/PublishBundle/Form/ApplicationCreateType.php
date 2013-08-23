@@ -38,7 +38,8 @@ class ApplicationCreateType extends AbstractType
                 'required'=>true )
             )
             ->add('scmUrl', 'text', array(
-                'label'=>'Versioning URL (e.g. git@bitbucket.org:netvlies/my_project.git) *',
+                'label'=>'Versioning URL *',
+                'attr' => array('data-help' => 'e.g. git@bitbucket.org:netvlies/my_project.git'),
                 'required'=>true )
             );
     }

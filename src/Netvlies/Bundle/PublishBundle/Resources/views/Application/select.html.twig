@@ -1,21 +1,18 @@
-   {#<a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">#}
-        {#{% if current is not empty %}#}
-            {#{{current.name}}#}
-        {#{% else %}#}
-            {#Application List#}
-        {#{% endif %}#}
-        {#<b class="caret"></b>#}
-    {#</a>#}
-    {#<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">#}
-        {#{% for app in apps %}#}
-            {#<li><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></li>#}
-        {#{% endfor %}#}
-    {#</ul>#}
-        {% for app in apps %}
-            {% if current is not empty and current.name == app.name %}
+        <option></option>
+        <option value="{{ path('netvlies_publish_application_create') }}">Create new application</option>
 
-                <option selected=selected><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+        {% for app in apps %}
+            {% if loop.first %}
+                <optgroup label="Applications">
+            {% endif %}
+            {% set url = dashboardurl|format(app.id) %}
+
+            {% if current is not empty and current.name == app.name %}
+                <option value="{{ url }}" selected=selected><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
             {% else %}
-                <option><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+                <option value="{{ url }}"><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+            {% endif %}
+            {% if loop.last %}
+                </optgroup>
             {% endif %}
         {% endfor %}

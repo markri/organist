@@ -1,20 +1,24 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
 
     <h3>Add application</h3>
         <hr />
 
-            <form action="" method="POST">
+            <form action="" method="POST" class="form-horizontal">
 
                 {{ form_errors(form) }}
+                {% set form = form.setAttribute('data-horizontal', true) %}
                 {{ form_widget(form) }}
 
                 <br/>
                 <p>Choosing the application type will have effect on some default settings (e.g. shared files and folders)</p>
 
+                <div class="pull-right">
                 <a href="{{ path('netvlies_publish_default_index') }}" class="btn btn-warning">Cancel</a>
                 <input type="submit" value="Save" class="btn btn-default"/>
+                </div>
 
             </form>
 

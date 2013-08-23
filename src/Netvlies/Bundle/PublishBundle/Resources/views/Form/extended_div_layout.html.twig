@@ -10,6 +10,7 @@
             {% if required %}
                 {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
             {% endif %}
+
             {% if label is empty and compound %}
 
             {% else %}
@@ -22,3 +23,53 @@
         {% endif %}
     {% endspaceless %}
 {% endblock form_label %}
+
+{# implements twitter bootstrap horizontal forms #}
+{% block form_row %}
+    {% spaceless %}
+        <div class="form-group">
+            {% if form.parent.vars.attr['data-horizontal'] is defined %}
+                {% set horizontal = form.parent.vars.attr['data-horizontal'] %}
+            {% else %}
+                {% set horizontal = false %}
+            {% endif %}
+
+            {% if horizontal %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label col-lg-2')|trim}) %}
+            {% endif %}
+            {{ form_label(form, label, {'label_attr': label_attr}) }}
+            {{ form_errors(form) }}
+
+            {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
+            {% if horizontal %}
+                <div class="col-lg-10">
+                    {{ form_widget(form, {'attr': attr}) }}
+                    {% if attr['data-help'] is defined %}
+                        <span class="help-block">{{ attr['data-help'] }}</span>
+                    {% endif %}
+                </div>
+            {% else %}
+                {{ form_widget(form, {'attr': attr}) }}
+                {% if attr['data-help'] is defined %}
+                    <span class="help-block">{{ attr['data-help'] }}</span>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}
+
+
+{# implements inline radio/checkboxes with twitterbootstrap#}
+{% block choice_widget_expanded %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            {% for child in form %}
+                <label class="{% if multiple %}checkbox-inline{% else %}radio-inline{% endif %}">
+                    {{ form_widget(child) }}
+                    {{ child.vars.label }}
+                </label>
+            {% endfor %}
+        </div>
+    {% endspaceless %}
+{% endblock choice_widget_expanded %}
