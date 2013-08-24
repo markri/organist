@@ -81,7 +81,7 @@
         <div class="container">
 
             {% for flash in app.session.flashbag.get('error') %}
-                <div class="alert alert-error">
+                <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                     <strong>Oops!</strong> {{ flash|raw }}
                 </div>

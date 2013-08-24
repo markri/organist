@@ -16,7 +16,22 @@
         {{ form_row(form.customer) }}
 
         <label >Shared files and directories</label>
-        <div class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
+        <div class="userfiles" data-prototype="{{
+            '<div class="col-lg-2"></div>
+            <div class="col-lg-2" id="application_edit_userFiles___name___type">
+                <label class="radio-inline">
+                    <input type="radio" id="application_edit_userFiles___name___type_0" name="application_edit[userFiles][__name__][type]" required="required" value="D" checked="checked">
+                    Directory
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" id="application_edit_userFiles___name___type_1" name="application_edit[userFiles][__name__][type]" required="required" value="F">
+                    File
+                </label>
+            </div>
+            <div class="col-lg-6">
+                <input type="text" id="application_edit_userFiles___name___path" name="application_edit[userFiles][__name__][path]" required="required" maxlength="255" class="form-control">
+            </div>'|escape('html') }}">
+
             {# iterate over each existing tag and render its only field: name #}
             {% for userfile in form.userFiles %}
                 <div class="form-group">
@@ -25,7 +40,7 @@
                     <div class="col-lg-2">
                         {{ form_widget(userfile.type) }}
                     </div>
-                    <div class="col-lg-8">
+                    <div class="col-lg-6">
                         {{ form_widget(userfile.path, {'attr': {'class': 'form-control'}}) }}
                     </div>
                 </div>

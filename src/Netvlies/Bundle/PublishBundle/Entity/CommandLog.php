@@ -226,7 +226,10 @@ class CommandLog
         $this->target = $target;
 
         // Be sure that this is correctly set, so overrule any existing value
-        $this->application = $target->getApplication();
+        // only on commands that have a target
+        if(!empty($target)){
+            $this->application = $target->getApplication();
+        }
     }
 
     /**

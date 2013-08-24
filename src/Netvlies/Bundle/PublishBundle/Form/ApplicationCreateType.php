@@ -31,6 +31,7 @@ class ApplicationCreateType extends AbstractType
             )
             ->add('applicationType', 'applicationtype_choicelist', array(
                     'label'=>'Application type *',
+                    'attr' => array('data-help' => 'This has effect on the default shared files and folders'),
                     'required'=>true )
             )
             ->add('scmService', 'versioning_choicelist', array(

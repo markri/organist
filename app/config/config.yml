@@ -91,7 +91,11 @@ netvlies_publish:
             label: Symfony 2.0
         symfony21:
             label: Symfony 2.1
+        symfony22:
+            label: Symfony 2.2
+        symfony23:
+            label: Symfony 2.3
         oms:
-            label: OMS
+            label: My Fancy CMS
             userdirs: [ 'media', 'cache', 'lucene', 'tmp' ]
             userfiles: [ 'cms/.htpasswd', 'cms/.htaccess' ]

@@ -116,11 +116,11 @@ class CommandController extends Controller {
         $commandLog->setTarget($command->getTarget());
         $commandLog->setType($command->getTarget()->getEnvironment()->getType());
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $commandLog->setUser($userName);
@@ -149,11 +149,11 @@ class CommandController extends Controller {
         $commandLog->setDatetimeStart(new \DateTime());
         $commandLog->setHost('localhost');
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $commandLog->setUser($userName);
@@ -183,7 +183,7 @@ class CommandController extends Controller {
         $application = $commandLog->getApplication();
 
         if($commandLog->getDatetimeEnd()){
-            $this->get('session')->getFlashBag()->add('error', sprintf('This command is already executed. <a href="%s">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
+            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
             return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
         }
 
@@ -232,6 +232,7 @@ class CommandController extends Controller {
     public function reExecuteAction($commandLog)
     {
         $newCommand = new CommandLog();
+        $newCommand->setApplication($commandLog->getApplication());
         $newCommand->setTarget($commandLog->getTarget());
         $newCommand->setType($commandLog->getType());
         $newCommand->setCommand($commandLog->getCommand());
@@ -239,11 +240,11 @@ class CommandController extends Controller {
         $newCommand->setHost($commandLog->getHost());
         $newCommand->setCommandLabel($commandLog->getCommandLabel());
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $newCommand->setUser($userName);

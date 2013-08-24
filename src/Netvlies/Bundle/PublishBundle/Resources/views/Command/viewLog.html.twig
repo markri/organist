@@ -5,62 +5,62 @@
 
 <div id="content-wrapper">
 
+    <h3>
+        {% if log.target is not null %}
+            {{ log.target.label }}
+        {% else %}
+            {{ log.host }}
+        {% endif %}</h3>
 
-            <h3>{{ log.datetimestart.format('d-m-Y H:i:s') }} -
-                {% if log.target is not null %}
-                    {{ log.target.label }}
-                {% else %}
-                    {{ log.host }}
-                {% endif %}</h3>
+    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
+    <br>
 
+    <h4>Summary</h4>
+    <dl class="dl-horizontal">
+        <dt>Date time</dt>
+        <dd>{{ log.datetimestart.format('d-m-Y H:i:s') }}</dd>
+        <dt>Target label</dt>
+        <dd>
+            {% if log.target is not null %}
+                {{ log.target.label }}
+            {% else %}
+                No target involved
+            {% endif %}
+        </dd>
 
-        <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
-        <br>
-        <br>
+        <dt>Host<dt>
+        <dd>{{ log.host }}</dd>
 
-        <dl class="dl-horizontal">
-            <dt>Target label</dt>
-            <dd>
-                {% if log.target is not null %}
-                    {{ log.target.label }}
-                {% else %}
-                    No target involved
-                {% endif %}
-            </dd>
+        <dt>DTAP type</dt>
+        <dd>{{ log.type }}</dd>
 
-            <dt>Host<dt>
-            <dd>{{ log.host }}</dd>
+        <dt>Start</dt>
+        <dd>{{ log.datetimestart.format('d-m-Y H:i:s') }}</dd>
 
-            <dt>DTAP type</dt>
-            <dd>{{ log.type }}</dd>
+        <dt>End</dt>
+        <dd>
+            {% if log.datetimeend %}
+                {{ log.datetimeend.format('d-m-Y H:i:s') }}
+            {% else %}
+                error / not finished
+            {% endif %}
+        </dd>
 
-            <dt>Start</dt>
-            <dd>{{ log.datetimestart.format('d-m-Y H:i:s') }}</dd>
+        <dt>User</dt>
+        <dd>{{ log.user }}</dd>
 
-            <dt>End</dt>
-            <dd>
-                {% if log.datetimeend %}
-                    {{ log.datetimeend.format('d-m-Y H:i:s') }}
-                {% else %}
-                    error / not finished
-                {% endif %}
-            </dd>
+        <dt>Exitcode</dt>
+        <dd>{{ log.exitcode }}</dd>
+    </dl>
+    <br>
 
-            <dt>User</dt>
-            <dd>{{ log.user }}</dd>
+    <h4>Command</h4>
+    <pre>{{ log.command | replace({'&&': '<br>'}) | raw | trim }}</pre>
+    <br>
 
-            <dt>Exitcode</dt>
-            <dd>{{ log.exitcode }}</dd>
-        </dl>
+    <h4>Output</h4>
+    <pre>{{ log.log|trim }}</pre>
 
-<br>
-        <div>
-            <h3>Command</h3>
-            <pre> {{ log.command | replace({'&&': '<br>'}) | raw }}</pre>
-        </div>
-            <h3>Output</h3>
-            <pre>{{ log.log|trim }}</pre>
-        </div>
     <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
 
 {% endblock %}
