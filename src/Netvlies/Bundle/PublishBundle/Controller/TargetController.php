@@ -207,7 +207,7 @@ class TargetController extends Controller
                     $target->setPrimaryDomain($app->getKeyName().'.a.nvsotap.nl');
                     $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
                     break;
                 case 'P':
                     $target->setPrimaryDomain('www.'.$app->getKeyName().'.nl');

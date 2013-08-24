@@ -15,11 +15,13 @@ class FormTargetStep2Type extends AbstractType
     {
         $builder
             ->add('label', 'text', array(
-                'label'=>'Label (e.g. "(P) www.myapp.com" *',
+                'label'=>'Label *',
+                'attr' => array('data-help' => 'e.g. "(P) www.myapp.com"'),
                 'required'=>true)
             )
             ->add('primaryDomain', 'text', array(
-                'label'=>'Domain e.g. "www.myapp.com" ',
+                'label'=>'Domain',
+                'attr' => array('data-help' => 'e.g. "www.myapp.com"'),
                 'required'=>false)
             )
             ->add('mysqldb', 'text', array(

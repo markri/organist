@@ -1,33 +1,26 @@
 {% set targettab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
 
-    <section id="content">
-        <header>
-            <h1>Adding target for {{application.name}} - Step 2</h1>
-        </header>
-        <hr />
-        <div id="text">
-            Usually all of these values are correct. Only change them if you really know what you are doing.
-            <ul>
-                <li>On T, A and P targets a capistrano setup will be prepared. See deploy.rb for details</li>
-                <li>On O targets nothing will be done</li>
-            </ul>
-            <form action="" method="POST">
+    <h3>Adding target for {{application.name}} - Step 2</h3>
+    <hr />
 
-                {{ form_errors(form) }}
-                {{ form_widget(form) }}
+    <div class="alert alert-info">
+        Usually all of these values are correct. Only change them if you know what you are doing.
+    </div>
 
-                <input type="submit" value="Save" class="button"/>
-                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
+    <form action="" method="POST" class="form-horizontal">
 
-            </form>
+        {{ form_errors(form) }}
+        {% set form = form.setAttribute('data-horizontal', true) %}
+        {{ form_widget(form) }}
+
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
         </div>
-    </section>
-</div>
-
+    </form>
 
 {% endblock %}

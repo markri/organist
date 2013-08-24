@@ -183,7 +183,7 @@ class CommandController extends Controller {
         $application = $commandLog->getApplication();
 
         if($commandLog->getDatetimeEnd()){
-            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
+            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
             return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
         }
 

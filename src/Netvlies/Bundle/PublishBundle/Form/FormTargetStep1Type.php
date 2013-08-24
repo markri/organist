@@ -21,7 +21,8 @@ class FormTargetStep1Type extends AbstractType
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username) *',
+                'label'=>'Username *',
+                'attr' => array('data-help'=> 'in which homedir it will be deployed, just username. User will be used on SSH connection'),
                 'required'=>true,
             ));
     }

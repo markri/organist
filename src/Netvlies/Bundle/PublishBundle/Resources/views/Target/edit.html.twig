@@ -1,30 +1,26 @@
 {% set targettab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
 
-    <div id="content-wrapper">
+    <h3>Edit target for {{application.name}}</h3>
+    <hr />
 
-        <section id="content">
-            <header>
-                <h1>Edit target for {{application.name}}</h1>
-            </header>
-            <hr />
-            <div id="text">
-                Note: Nothing will be changed on target server! E.g. if a path is changed, you need to fix this manually on remote server
-                <form action="" method="POST">
-
-                    {{ form_errors(form) }}
-                    {{ form_widget(form) }}
-
-
-                    <input type="submit" value="Opslaan" class="button"/>
-                    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
-
-                </form>
-            </div>
-        </section>
+    <div class="alert alert-info">
+        Note: Nothing will be changed on target server! E.g. if a path is changed, you need to fix this manually on remote serverp
     </div>
+
+    <form action="" method="POST" class="form-horizontal">
+
+        {{ form_errors(form) }}
+        {% set form = form.setAttribute('data-horizontal', true) %}
+        {{ form_widget(form) }}
+
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Annuleren</a>
+            <input type="submit" value="Opslaan" class="btn btn-default"/>
+        </div>
+    </form>
 
 {% endblock %}

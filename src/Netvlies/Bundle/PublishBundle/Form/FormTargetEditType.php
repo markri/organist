@@ -22,15 +22,18 @@ class FormTargetEditType extends AbstractType
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username) *',
+                'label'=>'Username *',
+                'attr' => array('data-help'=> 'in which homedir it will be deployed, just username. This will be used on SSH connection'),
                 'required'=>true,
             ))
             ->add('label', 'text', array(
-                'label'=>'Label (e.g. "Settings for myapp.dev1.netvlies.net") *',
+                'label'=>'Label *',
+                'attr' => array('data-help' => 'e.g. "(P) www.mywonderfullsite.com"'),
                 'required'=>true)
             )
             ->add('primarydomain', 'text', array(
-                'label'=>'Primary domain (e.g. myapp.dev1.netvlies.net) *',
+                'label'=>'Primary domain *',
+                'attr' => array('data-help' => 'e.g. www.mywonderfullsite.com'),
                 'required'=>true)
             )
             ->add('mysqldb', 'text', array(
