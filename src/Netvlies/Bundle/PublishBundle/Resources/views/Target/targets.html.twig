@@ -2,34 +2,34 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% block content %}
 
-        <h3>Targets</h3>
-        <hr>
+    <h3>Targets</h3>
+    <hr>
 
-        <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'id': application.id})}}">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <th>Environment</th>
-                    <th>Label</th>
-                    <th>Host</th>
-                    <th>Actions</th>
-                </thead>
-            {% for target in targets %}
-                <tr>
-                    <td>{{ target.environment.type }}</td>
-                    <td>{{ target.label }}</td>
-                    <td>{{ target.environment.hostname }}</td>
-                    <td>
-                        <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}">edit</a> |
-                        <a onclick="confirm('Are you sure you want to delete this target?')? window.location = '{{path('netvlies_publish_target_delete', {'id': target.id})}}': false" href="#">delete</a> |
-                        <a href="{{path('netvlies_publish_target_init', {'id': target.id})}}">remote setup</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </form>
+    <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'id': application.id})}}">
+        <table class="table table-striped table-hover">
+            <thead>
+                <th>Environment</th>
+                <th>Label</th>
+                <th>Host</th>
+                <th>Actions</th>
+            </thead>
+        {% for target in targets %}
+            <tr>
+                <td>{{ target.environment.type }}</td>
+                <td>{{ target.label }}</td>
+                <td>{{ target.environment.hostname }}</td>
+                <td>
+                    <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a> |
+                    <a onclick="confirm('Are you sure you want to delete this target?')? window.location = '{{path('netvlies_publish_target_delete', {'id': target.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a> |
+                    <a href="{{path('netvlies_publish_target_init', {'id': target.id})}}"><span class="glyphicon glyphicon-transfer"></span> remote setup</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    </form>
 
 
-        <a href="{{path('netvlies_publish_target_createstep1', {'id': application.id})}}" class="btn btn-default pull-right">Add target</a>
+    <a href="{{path('netvlies_publish_target_createstep1', {'id': application.id})}}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add target</a>
 {% endblock %}
 
 
