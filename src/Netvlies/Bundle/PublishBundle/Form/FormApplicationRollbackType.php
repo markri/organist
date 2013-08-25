@@ -30,6 +30,7 @@ class FormApplicationRollbackType extends AbstractType
             ->add('target', 'target_choicelist', array(
                 'label' => 'Target *',
                 'app' => $app,
+                'attr' => array('data-help'=>'This works just like ctrl-z. (It will undo last succesfull deployment).'),
                 'required' => true
             ));
 

@@ -1,43 +1,55 @@
 {% set commandtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme deployForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+{% form_theme rollbackForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
 
-    <section id="content">
-        <header>
-            <h1>{{application.name}}</h1>
-        </header>
-        <hr />
-        <div id="text">
-            Customer: {{application.customer}}<br>
-            Repository: {{application.scmUrl}}<br>
-            Applicationtype: {{application.applicationType}}<br>
+    <h3>{{application.name}}</h3>
+    <hr />
 
-            <hr/>
-            <h2>Update repository</h2>
-            <a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="button">Update branches/tags</a>
-
+    <dl class="dl-horizontal">
+        <dt>Customer</dt>
+        <dd>{{application.customer}}</dd>
+        <dt>Repository</dt>
+        <dd>{{application.scmUrl}}</dd>
+        <dt>Applicationtype</dt>
+        <dd>{{application.applicationType}}</dd>
+    </dl>
 
             <hr/>
-            <h2>Deploy</h2>
-            <form id="#deploy_form" name="deploy_form" method="POST">
+            <h4>Deploy</h4>
+            <form id="#deploy_form" name="deploy_form" method="POST" class="form-horizontal">
                 {{ form_errors(deployForm) }}
-                {{ form_widget(deployForm) }}
+                {% set form = deployForm.setAttribute('data-horizontal', true) %}
+                <div class="form-group">
+                    {{ form_label(form.target, 'Target *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+                    <div class="col-lg-8">
+                        {{ form_widget(form.target, { 'attr': {'class': 'form-control'}} ) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+                    <div class="col-lg-7">
+                        {{ form_widget(form.revision, { 'attr': {'class': 'form-control'}} ) }}
+                    </div>
+                    <div class="col-lg-1">
+                        <a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="btn btn-default">Refresh</a>
+                    </div>
+                </div>
 
                 <br>
-                <input value="Deploy" type="submit" class="button"/>
+                <input value="Deploy" type="submit" class="btn btn-default pull-right"/>
             </form>
 
             <hr />
-            <h2>Rollback</h2>
-            This works just like ctrl-z. (It will undo last succesfull deployment).
-            <form id="#rollback_form" name="rollback_form" method="POST">
+            <h4>Rollback</h4>
+            <form id="#rollback_form" name="rollback_form" method="POST" class="form-horizontal">
                 {{ form_errors(rollbackForm) }}
-                {{ form_widget(rollbackForm) }}
+                {% set form = rollbackForm.setAttribute('data-horizontal', true) %}
+                {{ form_widget(form) }}
                 <br>
-                <input type="submit" value="Rollback" class="button"/>
+                <input type="submit" value="Rollback" class="btn btn-default pull-right"/>
             </form>
 
         </div>
