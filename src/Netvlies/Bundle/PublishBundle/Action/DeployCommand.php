@@ -131,7 +131,7 @@ class DeployCommand implements CommandTargetInterface {
         //@todo there is dtap and otap, otap is still there for BC
         return trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
-
+            git checkout '".$this->revision."' &&
             cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
