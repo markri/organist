@@ -64,11 +64,6 @@ doctrine:
                     NetvliesPublishBundle: ~
                 #auto_generate_proxy_classes: %kernel.debug%
                 #auto_mapping: true
-            db2:
-                connection: db2
-                mappings:
-                    NetvliesMigrationBundle: ~
-                #auto_mapping: true
 
 # Swiftmailer Configuration
 swiftmailer:

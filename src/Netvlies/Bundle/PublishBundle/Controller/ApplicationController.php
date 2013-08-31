@@ -71,8 +71,11 @@ class ApplicationController extends Controller
             }
         }
 
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
-            'form' => $form->createView()
+            'form' => $formView
         );
     }
 
