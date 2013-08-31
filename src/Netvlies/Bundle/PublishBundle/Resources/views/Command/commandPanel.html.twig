@@ -11,33 +11,32 @@
     <h4>Deploy</h4>
     <form id="#deploy_form" name="deploy_form" method="POST" class="form-horizontal">
         {{ form_errors(deployForm) }}
-        {% set form = deployForm.setAttribute('data-horizontal', true) %}
         <div class="form-group">
-            {{ form_label(form.target, 'Target *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            {{ form_label(deployForm.target, 'Target *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
             <div class="col-lg-10">
-                {{ form_widget(form.target, { 'attr': {'class': 'form-control'}} ) }}
+                {{ form_widget(deployForm.target, { 'attr': {'class': 'form-control'}} ) }}
             </div>
         </div>
         <div class="form-group">
-            {{ form_label(form.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            {{ form_label(deployForm.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
             <div class="col-lg-8">
-                {{ form_widget(form.revision, { 'attr': {'class': 'form-control'}} ) }}
+                {{ form_widget(deployForm.revision, { 'attr': {'class': 'form-control'}} ) }}
             </div>
             <div class="col-lg-1">
                 <a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a>
             </div>
         </div>
+        {{ form_rest(deployForm) }}
 
-        <br>
         <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Deploy</button>
+        <br>
     </form>
-
     <hr />
+
     <h4>Rollback</h4>
     <form id="#rollback_form" name="rollback_form" method="POST" class="form-horizontal">
         {{ form_errors(rollbackForm) }}
-        {% set form = rollbackForm.setAttribute('data-horizontal', true) %}
-        {{ form_widget(form) }}
+        {{ form_widget(rollbackForm) }}
         <br>
         <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Rollback</button>
     </form>

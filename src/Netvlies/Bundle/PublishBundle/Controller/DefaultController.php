@@ -13,7 +13,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/")
-     * @Template()
+     * @Template
      */
     public function indexAction()
     {

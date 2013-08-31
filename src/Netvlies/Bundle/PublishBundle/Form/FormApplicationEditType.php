@@ -11,7 +11,6 @@ class FormApplicationEditType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
         $builder
             ->add('name', 'text', array(
                 'label' => 'Name *')
@@ -27,10 +26,6 @@ class FormApplicationEditType extends AbstractType
                 'by_reference' => false,
                 'allow_delete' => true,
                 'prototype' => false,
-
-
-
-
             )
         );
     }

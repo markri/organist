@@ -22,7 +22,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
 
-
 class CommandController extends Controller {
 
 
@@ -84,9 +83,13 @@ class CommandController extends Controller {
             }
         }
 
+        // This is to let layout know some extra attribute on which layout logic will be based for form building
+        $rollbackView = $rollbackForm->createView();
+        $rollbackView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'deployForm' => $deployForm->createView(),
-            'rollbackForm' => $rollbackForm->createView(),
+            'rollbackForm' => $rollbackView,
             'application' => $application,
         );
     }

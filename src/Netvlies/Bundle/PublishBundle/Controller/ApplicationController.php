@@ -146,8 +146,13 @@ class ApplicationController extends Controller
 
         $deletable = $application->getTargets()->count() == 0 && $application->getUserFiles()->count() == 0;
 
+
+        // This is to let layout know some extra attribute on which layout logic will be based for form building
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
-            'form' => $form->createView(),
+            'form' => $formView,
             'application' => $application,
             'deleteable' => $deletable
         );

@@ -88,6 +88,7 @@ class TargetController extends Controller
                 $em->persist($target);
                 $em->flush($target);
 
+                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is updated', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$target->getApplication()->getId())));
             }
         }
@@ -111,10 +112,12 @@ class TargetController extends Controller
          * @var Target $target
          */
         $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+        $label = $target->getLabel();
         $app = $target->getApplication();
         $target->setInactive(true);
         $em->flush();
 
+        $this->get('session')->getFlashBag()->add('warning', sprintf('Target %s is deleted', $label));
         return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
     }
 
@@ -246,6 +249,7 @@ class TargetController extends Controller
                 $em->persist($target);
                 $em->flush($target);
 
+                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
             }
         }
