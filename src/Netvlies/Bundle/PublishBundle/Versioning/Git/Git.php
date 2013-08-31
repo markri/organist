@@ -10,9 +10,12 @@
 
 namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 
+use GitElephant\Objects\TreeBranch;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\FetchCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncBranchesCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncTagsCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetBranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
@@ -61,7 +64,24 @@ class Git implements VersioningInterface
     function updateRepository(Application $app)
     {
         $repo = $this->getRepository($app);
-        $repo->getCaller()->execute(FetchCommand::getInstance()->fetchAllUpdates());
+        // sync tags with origin
+        $repo->getCaller()->execute(SyncTagsCommand::getInstance()->syncAllTags());
+
+        //sync branches with origin (fetch --all --prune)
+        $repo->getCaller()->execute(SyncBranchesCommand::getInstance()->syncAllBranches());
+
+        // Ensure that every remote branch is locally available, so its deployment descriptors can be used
+        $repo->checkoutAllRemoteBranches();
+
+        // Get all branches and reset them to origin/HEAD
+        $branches = $repo->getBranches();
+        foreach($branches as $branch){
+            /**
+             * @var TreeBranch $branch
+             */
+            $repo->checkout($branch->getName());
+            $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch());
+        }
     }
 
 
