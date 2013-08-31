@@ -1,11 +1,17 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
-use Netvlies\Bundle\PublishBundle\Form\Type\UserFile;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-
 
 class FormApplicationEditType extends AbstractType
 {
@@ -21,7 +27,7 @@ class FormApplicationEditType extends AbstractType
             )
             ->add('userFiles', 'collection', array(
                 'label' => 'User files and directories',
-                'type' => new UserFile(),
+                'type' => new UserFileType(),
                 'allow_add'    => true,
                 'by_reference' => false,
                 'allow_delete' => true,
@@ -30,10 +36,6 @@ class FormApplicationEditType extends AbstractType
         );
     }
 
-    public function getDefaultOptions(array $options)
-    {
-        return $options;
-    }
 
     public function getName()
     {

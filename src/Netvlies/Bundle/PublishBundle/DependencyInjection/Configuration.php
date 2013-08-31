@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\DependencyInjection;
 
@@ -47,15 +55,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
-            //->useAttributeAsKey('key')
-//                ->prototype('array')
-//                ->children()
-////                    ->scalarNode('key')->end()
-//                    ->scalarNode('user')->end()
-//                    ->scalarNode('password')->end()
-              //  ->end()
-                //->end()
-//            ->end()
         ->end();
 
         return $treeBuilder;

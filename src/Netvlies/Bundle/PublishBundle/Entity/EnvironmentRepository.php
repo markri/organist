@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -14,8 +22,8 @@ use Doctrine\ORM\Query\ResultSetMapping;
 class EnvironmentRepository extends EntityRepository
 {
 
-    public function getByTypeAndHost($type, $host){
-
+    public function getByTypeAndHost($type, $host)
+    {
         $entityManager = $this->getManager();
 
         $query = $entityManager->createQuery('
@@ -35,8 +43,8 @@ class EnvironmentRepository extends EntityRepository
      * Gets an array of all environment objects ordered by D, T, A, P
      * @return array
      */
-    public function getOrderedByTypeAndHost(){
-
+    public function getOrderedByTypeAndHost()
+    {
         $rsm = new ResultSetMapping;
         $rsm->addEntityResult('NetvliesPublishBundle:Environment', 'e');
         $rsm->addFieldResult('e', 'id', 'id');
@@ -52,6 +60,4 @@ class EnvironmentRepository extends EntityRepository
 
         return $result;
     }
-
-
 }

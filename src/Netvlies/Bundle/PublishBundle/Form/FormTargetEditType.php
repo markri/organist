@@ -1,17 +1,21 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
-use Doctrine\ORM\EntityRepository;
-use Netvlies\Bundle\PublishBundle\Form\DataTransformer\IdToEnvironment;
 
 class FormTargetEditType extends AbstractType
 {
-
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -61,17 +65,7 @@ class FormTargetEditType extends AbstractType
                 'label'=>'Capistrano root')
             );
 
-
     }
-
-
-    public function getDefaultOptions(array $options)
-    {
-        $options['csrf_protection'] = false;
-        $options['envchoice'] = null;
-        return $options;
-    }
-
 
     public function getName()
     {
@@ -79,4 +73,3 @@ class FormTargetEditType extends AbstractType
     }
 
 }
-

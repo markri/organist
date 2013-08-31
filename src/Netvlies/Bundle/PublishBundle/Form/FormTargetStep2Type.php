@@ -1,11 +1,18 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
 use Doctrine\ORM\EntityRepository;
 
 class FormTargetStep2Type extends AbstractType
@@ -51,17 +58,9 @@ class FormTargetStep2Type extends AbstractType
     }
 
 
-    public function getDefaultOptions(array $options)
-    {
-        $options['csrf_protection'] = false;
-        return $options;
-    }
-
-
     public function getName()
     {
         return 'netvlies_publishbundle_targettype2';
     }
 
 }
-

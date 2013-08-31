@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
@@ -18,7 +26,6 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 
 use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
-
 
 class ApplicationController extends Controller
 {
@@ -237,7 +244,4 @@ class ApplicationController extends Controller
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('id' => $application->getId())));
     }
-
-
-
 }

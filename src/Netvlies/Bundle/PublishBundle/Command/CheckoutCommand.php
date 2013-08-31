@@ -1,10 +1,11 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: markri
- * Date: 7/25/13
- * Time: 9:42 AM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Command;
@@ -19,6 +20,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 
 class CheckoutCommand extends ContainerAwareCommand
 {
+
     protected function configure()
     {
         $this

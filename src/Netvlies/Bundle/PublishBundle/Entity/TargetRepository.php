@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -16,8 +24,8 @@ use PDO;
 class TargetRepository extends EntityRepository
 {
 
-    public function getByAppAndEnv($application, $environment){
-
+    public function getByAppAndEnv($application, $environment)
+    {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery('
@@ -40,8 +48,8 @@ class TargetRepository extends EntityRepository
      * @param $app
      * @return array
      */
-    public function getOrderedByDTAP($app){
-
+    public function getOrderedByDTAP($app)
+    {
         $query = "
             SELECT t.id FROM Target t
             INNER JOIN Environment e ON t.environment_id = e.id
@@ -65,6 +73,4 @@ class TargetRepository extends EntityRepository
 
         return $results;
     }
-
-
 }

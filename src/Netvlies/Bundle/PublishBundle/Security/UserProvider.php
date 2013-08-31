@@ -1,10 +1,11 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: markri
- * Date: 7/26/13
- * Time: 1:54 PM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Security;
@@ -36,7 +37,4 @@ class UserProvider extends OAuthUserProvider
 
         return parent::loadUserByOAuthUserResponse($response);
     }
-
-
-
 }

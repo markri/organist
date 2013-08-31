@@ -1,22 +1,21 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: mdekrijger
- * Date: 8/9/12
- * Time: 12:43 AM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
+
 namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Twig_Extension;
 
-
 class PublishExtensions extends Twig_Extension
 {
-
-
     protected $container;
 
     public function setContainer($container)
@@ -45,8 +44,6 @@ class PublishExtensions extends Twig_Extension
             new \Twig_SimpleTest('checkedout', array($this, 'isApplicationCheckedOut', array('id')))
         );
     }
-
-
 
     /**
      * Returns the name of the extension.
@@ -113,5 +110,4 @@ class PublishExtensions extends Twig_Extension
 
         return file_exists($versioning->getRepositoryPath($application));
     }
-
 }
