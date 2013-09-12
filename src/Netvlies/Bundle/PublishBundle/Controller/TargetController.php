@@ -137,7 +137,7 @@ class TargetController extends Controller
             $formStep1->bind($request);
 
             // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
-            $envId = $target->getEnvironment();
+            $envId = $target->getEnvironment()->getId();
 
             if($formStep1->isValid()){
 
@@ -207,7 +207,7 @@ class TargetController extends Controller
                     $target->setPrimaryDomain($app->getKeyName().'.a.nvsotap.nl');
                     $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
                     $target->setApproot($appRoot);
-                    $target->setCaproot($env->getHomedirsBase().'/'.$target->getUsername().'/www');
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
                     break;
                 case 'P':
                     $target->setPrimaryDomain('www.'.$app->getKeyName().'.nl');
