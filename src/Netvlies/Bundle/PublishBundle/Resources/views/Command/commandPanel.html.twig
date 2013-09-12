@@ -12,7 +12,7 @@
         <div id="text">
             Customer: {{application.customer}}<br>
             Repository: {{application.scmUrl}}<br>
-            Applicationtype: {{application.applicationType}}<br>
+            Application type: {{application.applicationType}}<br>
 
             <hr/>
             <h2>Update repository</h2>
@@ -31,7 +31,7 @@
 
             <hr />
             <h2>Rollback</h2>
-            This works just like ctrl-z. (It will undo last succesfull deployment).
+            This works just like ctrl-z. (It will undo last successful deployment).
             <form id="#rollback_form" name="rollback_form" method="POST">
                 {{ form_errors(rollbackForm) }}
                 {{ form_widget(rollbackForm) }}
