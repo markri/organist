@@ -87,6 +87,7 @@ class TargetController extends Controller
 
             $form->bind($request);
             if($form->isValid()){
+                $em  = $this->getDoctrine()->getManager();
                 $em->persist($target);
                 $em->flush($target);
 
