@@ -37,12 +37,12 @@ class ResetBranchCommand extends BaseCommand
      *
      * @return string command
      */
-    public function resetCurrentBranch()
+    public function resetCurrentBranch($originBranch)
     {
         $this->clearAll();
         $this->addCommandName(static::GIT_RESET_COMMAND);
         $this->addCommandArgument('--hard');
-        $this->addCommandArgument('origin');
+        $this->addCommandArgument($originBranch);
 
         return $this->getCommand();
     }

@@ -66,20 +66,34 @@ class Git implements VersioningInterface
         // sync tags with origin
         $repo->getCaller()->execute(SyncTagsCommand::getInstance()->syncAllTags());
 
-        //sync branches with origin (fetch --all --prune)
+        //sync branches with origin (fetch --all --prune) this will sync remotes/origin/* but no local branches that tracks one of the branches in here
         $repo->getCaller()->execute(SyncBranchesCommand::getInstance()->syncAllBranches());
 
         // Ensure that every remote branch is locally available, so its deployment descriptors can be used
-        $repo->checkoutAllRemoteBranches();
+        $repo->checkoutAllRemoteBranches(); // remotes/origin/mybranch will be mybranch
 
-        // Get all branches and reset them to origin/HEAD
+
+
+
+        $allBranches = $repo->getBranches(true, true);
+        $remoteBranches = array_filter($allBranches, function($branch) {
+            return preg_match('/^remotes(.+)$/', $branch)
+            && !preg_match('/^(.+)(HEAD)(.*?)$/', $branch);
+        });
+
+
+
+        // Get all tracked branches and reset them to origin/{branchname}
         $branches = $repo->getBranches();
         foreach($branches as $branch){
             /**
              * @var TreeBranch $branch
              */
             $repo->checkout($branch->getName());
-            $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch());
+            $originBranch = 'origin/'.$branch->getName();
+            if(in_array('remotes/'.$originBranch, $remoteBranches)){
+                $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch($originBranch));
+            }
         }
     }
 
