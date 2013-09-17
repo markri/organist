@@ -85,9 +85,17 @@ interface VersioningInterface
      *
      * @abstract
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
+     * @param $branch
      * @return array()
      */
-    function getCommitLog(Application $app);
+    function getCommitLog(Application $app, $branch);
+
+
+    /**
+     * @param Application $app
+     * @return CommitInterface
+     */
+    function getHeadRevision(Application $app);
 
 
     /**

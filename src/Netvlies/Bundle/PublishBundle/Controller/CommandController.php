@@ -44,6 +44,7 @@ class CommandController extends Controller
          */
         $versioningService = $this->get($application->getScmService());
         $repoPath = $versioningService->getRepositoryPath($application);
+        $headRevision = $versioningService->getHeadRevision($application);
 
         if(!file_exists($repoPath)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
@@ -97,6 +98,7 @@ class CommandController extends Controller
             'deployForm' => $deployForm->createView(),
             'rollbackForm' => $rollbackView,
             'application' => $application,
+            'headRevision' => $headRevision
         );
     }
 

@@ -10,8 +10,14 @@
 
 namespace Netvlies\Bundle\PublishBundle\Versioning;
 
-interface ReferenceInterface
+
+interface CommitInterface
 {
+
+    /**
+     * @return string
+     */
+    function getMessage();
 
     /**
      * @return string
@@ -21,6 +27,10 @@ interface ReferenceInterface
     /**
      * @return string
      */
-    function getName();
+    function getAuthor();
 
+    /**
+     * @return \DateTime
+     */
+    function getDateTime();
 }

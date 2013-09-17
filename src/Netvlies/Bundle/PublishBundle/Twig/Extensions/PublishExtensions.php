@@ -34,7 +34,8 @@ class PublishExtensions extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('apptypelabel', array($this, 'getApplicationTypeLabel'), array('keyname'))
+            new \Twig_SimpleFilter('apptypelabel', array($this, 'getApplicationTypeLabel'), array('keyname')),
+            new \Twig_SimpleFilter('timediff', array($this, 'getTimeDiff'), array('datetime'))
         );
     }
 
@@ -65,6 +66,33 @@ class PublishExtensions extends Twig_Extension
         }
 
         return $keyname;
+    }
+
+    /**
+     */
+    public function getTimeDiff(\DateTime $dateTime)
+    {
+        $now = new \DateTime();
+        $diff = $now->getTimestamp() - $dateTime->getTimestamp();
+
+        switch(true){
+
+            case $diff < 0 || $diff < 10 * 60:
+                return 'a moment ago';
+            case $diff > 10 * 60 && $diff < 60 * 60:
+                return floor($diff/60).' minutes ago';
+            case $diff > 60 * 60 && $diff < 60 * 60 * 24:
+                $hours = floor($diff/60/60);
+                return $hours == 1 ? 'an hour ago' : $hours.' hours ago';
+            case $diff > 60 * 60 * 24 && $diff < 30 * 60 * 60 * 24:
+                $days = floor($diff/60/60/24);
+                return $days == 1 ? 'a day ago' : $days.' days ago';
+            default:
+                $months = floor($diff/60/60/24/(365/12));
+                return $months == 1 ? 'a month ago' : $months.' months ago';
+
+        }
+
     }
 
     /**
