@@ -49,8 +49,13 @@
         <dt>User</dt>
         <dd>{{ log.user }}</dd>
 
-        <dt>Exitcode</dt>
-        <dd>{{ log.exitcode }}</dd>
+        {% if log.exitcode is null %}
+            <dt>Exitcode</dt>
+            <dd><img src="{{ asset('bundles/netvliespublish/img/ajax-loader.gif') }}"> still running ... </dd>
+        {% else %}
+            <dt>Exitcode</dt>
+            <dd>{{ log.exitcode }}</dd>
+        {% endif %}
     </dl>
     <br>
 

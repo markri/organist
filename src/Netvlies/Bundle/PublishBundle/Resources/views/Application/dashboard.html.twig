@@ -74,7 +74,10 @@
             </thead>
             {% for log in logs %}
                 <tr
-                    {% if log.exitcode == 0 %}
+
+                    {% if log.exitcode is null %}
+                        class="warning"
+                    {% elseif log.exitcode == 0 %}
                         class="success"
                     {% else %}
                         class="danger"
@@ -95,7 +98,9 @@
                         {{ log.user }}
                     </td>
                     <td>
-                        {% if log.exitcode == 0 %}
+                        {% if log.exitcode is null %}
+                            <img src="{{ asset('bundles/netvliespublish/img/ajax-loader.gif') }}">
+                        {% elseif log.exitcode == 0 %}
                             success
                         {% else %}
                             failed

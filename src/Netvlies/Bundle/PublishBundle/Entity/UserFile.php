@@ -32,7 +32,7 @@ class UserFile
 
 
     /**
-     * @ORM\ManyToOne(targetEntity="Application")
+     * @ORM\ManyToOne(targetEntity="Application", inversedBy="userFiles")
      */
     private $application;
 

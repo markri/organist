@@ -96,9 +96,12 @@ class TargetController extends Controller
             }
         }
 
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $target->getApplication(),
-            'form' => $form->createView(),
+            'form' => $formView,
         );
     }
 
@@ -149,9 +152,12 @@ class TargetController extends Controller
             }
         }
 
+        $formView = $formStep1->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $app,
-            'form' => $formStep1->createView(),
+            'form' => $formView,
         );
 
     }
@@ -251,9 +257,12 @@ class TargetController extends Controller
             }
         }
 
+        $formView = $formStep2->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $app,
-            'form' => $formStep2->createView(),
+            'form' => $formView,
         );
     }
 

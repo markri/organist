@@ -8,7 +8,6 @@
     <form action="" method="POST" class="form-horizontal">
 
         {{ form_errors(form) }}
-        {% set form = form.setAttribute('data-horizontal', true) %}
         {{ form_widget(form) }}
 
         <div class="pull-right">

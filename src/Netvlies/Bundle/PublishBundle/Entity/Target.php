@@ -44,7 +44,7 @@ class Target
     /**
      * @var Application $application
      * @Assert\NotBlank(message="application is required/key could not be found")
-     * @ORM\ManyToOne(targetEntity="Application")
+     * @ORM\ManyToOne(targetEntity="Application", inversedBy="targets")
      */
     protected $application;
 
