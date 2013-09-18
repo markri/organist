@@ -17,8 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Netvlies\Bundle\PublishBundle\Entity\Application
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"name"})})
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyName", columns={"keyName"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="nameUnique", columns={"name"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyNameUnique", columns={"keyName"})})
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ApplicationRepository")
  */
 class Application

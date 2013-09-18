@@ -40,13 +40,11 @@
                         <li class="active">
                             <form class="navbar-form navbar-left" role="search">
                                 <div class="form-group">
-                                    <select id="appselect" style="width: 180px;">
-                                        {% if application is defined %}
-                                            {{applicationselect(application.id)|raw}}
-                                        {% else %}
-                                            {{applicationselect()|raw}}
-                                        {% endif %}
-                                    </select>
+                                    {% if application is defined %}
+                                        {{applicationselect(application.id)|raw}}
+                                    {% else %}
+                                        {{applicationselect()|raw}}
+                                    {% endif %}
                                 </div>
                             </form>
                         </li>
