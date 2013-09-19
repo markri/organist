@@ -114,4 +114,15 @@ class ApplicationControllerTest extends WebTestCase
         $this->markTestIncomplete('Must be dependant of testCheckoutRepository');
     }
 
+
+    public function tearDown()
+    {
+        parent::tearDown();
+
+        $path = $this->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
+
+        $ps = new Process('rm -rf '.escapeshellarg($path));
+        $ps->run();
+    }
+
 }
