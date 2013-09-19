@@ -116,8 +116,8 @@ class DeployCommand implements CommandTargetInterface
         }
 
         if($this->versioningService->getPrivateKey()){
-            // Forward optional keys for versioning
-            $keyForwardOpen ='eval `ssh-agent` && ';
+            // Forward optional keys for versioning. Set SSH-agent timeout for 2 hours to keep process list clear
+            $keyForwardOpen ='eval `ssh-agent -t 7200` && ';
             $keyForwardOpen.='`ssh-add '.$this->versioningService->getPrivateKey().'` && ';
 
             // And kill them as well

@@ -3,6 +3,8 @@
 namespace Netvlies\Bundle\PublishBundle\Tests\Controller;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
+use Symfony\Component\Process\Process;
 
 class ApplicationControllerTest extends WebTestCase
 {
@@ -73,7 +75,38 @@ class ApplicationControllerTest extends WebTestCase
 
     public function testCheckoutRepository()
     {
-        $this->markTestIncomplete('Must be implemented by using command instead of controller');
+        $this->loadFixtures(array(
+            'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication'
+        ));
+
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/application/1/checkoutrepository');
+
+        $this->assertTrue($crawler->filter('html:contains("Redirecting to /console/exec/1")')->count() > 0 );
+
+        /**
+         * @var CommandLog $commandLog
+         */
+        $commandLog = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('NetvliesPublishBundle:CommandLog')->findOneById(1);
+
+        $this->assertTrue(!empty($commandLog));
+
+        $proces = new Process($commandLog->getCommand());
+        $proces->run();
+
+// Debug output
+//        $proces->run(function ($type, $buffer) {
+//            if (Process::ERR === $type) {
+//                echo 'ERR > '.$buffer;
+//            } else {
+//                echo 'OUT > '.$buffer;
+//            }
+//        });
+
+        $this->assertTrue($proces->isSuccessful());
+
+        $path = $this->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
+        $this->assertTrue(file_exists($path));
     }
 
     public function testUpdateRepository()

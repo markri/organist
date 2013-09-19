@@ -216,6 +216,7 @@ class ApplicationController extends Controller
 
         $command = new CheckoutCommand();
         $command->setApplication($application);
+        $command->setEnvironment($this->get('kernel')->getEnvironment());
 
         return $this->forward('NetvliesPublishBundle:Command:execApplicationCommand', array(
             'command'  => $command
