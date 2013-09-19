@@ -109,9 +109,12 @@ class ApplicationControllerTest extends WebTestCase
         $this->assertTrue(file_exists($path));
     }
 
+    /**
+     * @depends Netvlies\Bundle\PublishBundle\Tests\Controller\ApplicationControllerTest::testCheckoutRepository
+     */
     public function testUpdateRepository()
     {
-        $this->markTestIncomplete('Must be dependant of testCheckoutRepository');
+        $this->assertTrue(true);
     }
 
 
