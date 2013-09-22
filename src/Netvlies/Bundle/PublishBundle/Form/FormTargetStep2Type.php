@@ -60,7 +60,7 @@ class FormTargetStep2Type extends AbstractType
 
     public function getName()
     {
-        return 'netvlies_publishbundle_targettype2';
+        return 'netvlies_publishbundle_target_step2';
     }
 
 }

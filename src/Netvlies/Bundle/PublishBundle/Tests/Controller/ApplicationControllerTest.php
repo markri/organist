@@ -114,15 +114,25 @@ class ApplicationControllerTest extends WebTestCase
      */
     public function testUpdateRepository()
     {
-        $this->assertTrue(true);
+        $this->loadFixtures(array(
+            'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication'
+        ));
+
+        $client = static::createClient();
+        $client->request('GET', '/application/1/updaterepository');
+        $crawler = $client->followRedirect();
+
+        $this->assertTrue($crawler->filter('html:contains("Repository for testname is updated")')->count() > 0);
     }
 
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
-        parent::tearDown();
+        $kernelClass = self::getKernelClass();
+        $kernel = new $kernelClass('test', true);
+        $kernel->boot();
 
-        $path = $this->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
+        $path = $kernel->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
 
         $ps = new Process('rm -rf '.escapeshellarg($path));
         $ps->run();

@@ -6,9 +6,10 @@ namespace Netvlies\Bundle\PublishBundle\Tests\Fixtures;
 use Doctrine\Common\DataFixtures\Doctrine;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Netvlies\Bundle\PublishBundle\Entity\Application;
+use Netvlies\Bundle\PublishBundle\Entity\Environment;
 
-class LoadApplication implements FixtureInterface
+
+class LoadEnvironment implements FixtureInterface
 {
     /**
      * Load data fixtures with the passed EntityManager
@@ -17,15 +18,12 @@ class LoadApplication implements FixtureInterface
      */
     function load(ObjectManager $manager)
     {
-        $app = new Application();
-        $app->setApplicationType('symfony23');
-        $app->setCustomer('testcustomer');
-        $app->setKeyName('testkey');
-        $app->setName('testname');
-        $app->setScmService('git');
-        $app->setScmUrl('https://github.com/organist/puppet.git');
+        $env = new Environment();
+        $env->setHostname('localhost');
+        $env->setType('P');
+        $env->setKeyName('P_localhost');
 
-        $manager->persist($app);
+        $manager->persist($env);
         $manager->flush();
     }
 
