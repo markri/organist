@@ -117,9 +117,9 @@ class Target
 
 
     /**
-     * @ORM\Column(name="inactive", type="boolean", nullable=true)
+     * @ORM\Column(name="inactive", type="boolean", nullable=false)
      */
-    protected $inactive;
+    protected $inactive = 0;
 
     /**
      * Get id
