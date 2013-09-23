@@ -19,6 +19,7 @@
     {% if application.targets | length > 0%}
 
         <h4>Currently deployed versions</h4>
+        <div class="table-responsive">
         <table class="table table-bordered">
         <thead>
         <tr>
@@ -51,6 +52,7 @@
             </td>
             {%endfor%}
         </table>
+        </div>
 
         <br><br>
     {%endif%}
@@ -61,6 +63,7 @@
         </div>
     {% else %}
         <h4>Last executed commands</h4>
+        <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
@@ -116,6 +119,7 @@
                 <td><a href="{{ path('netvlies_publish_command_listlogs', {'id': application.id}) }}">View all logs</a></td>
             </tr>
         </table>
+        </div>
     {% endif %}
 
 {% endblock %}

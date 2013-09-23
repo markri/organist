@@ -16,29 +16,22 @@
         <!-- Bootstrap -->
         <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
 
-        <!-- @todo -->
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-        <!--<script src="../../assets/js/html5shiv.js"></script>-->
-        <!--<script src="../../assets/js/respond.min.js"></script>-->
-        <![endif]-->
-
     {% endblock %}
 
 </head>
 
-<body style="padding-top: 60px">
+<body>
     {% block body %}
 
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ path('netvlies_publish_default_index') }}">Organist</a>
                 </div>
-                <div class="navbar-collapse collapse">
+                <div class="navbar-collapse navbar-ex1-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active">
-                            <form class="navbar-form navbar-left" role="search">
+                        <li>
+                            <form class="navbar-form" role="search">
                                 <div class="form-group">
                                     {% if application is defined %}
                                         {{applicationselect(application.id)|raw}}
@@ -74,7 +67,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </nav>
 
         <div class="container">
 
