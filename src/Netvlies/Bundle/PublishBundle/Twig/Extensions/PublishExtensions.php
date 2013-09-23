@@ -80,15 +80,15 @@ class PublishExtensions extends Twig_Extension
             case $diff < 0 || $diff < 10 * 60:
                 return 'a moment ago';
             case $diff > 10 * 60 && $diff < 60 * 60:
-                return floor($diff/60).' minutes ago';
+                return ceil($diff/60).' minutes ago';
             case $diff > 60 * 60 && $diff < 60 * 60 * 24:
-                $hours = floor($diff/60/60);
+                $hours = ceil($diff/60/60);
                 return $hours == 1 ? 'an hour ago' : $hours.' hours ago';
             case $diff > 60 * 60 * 24 && $diff < 30 * 60 * 60 * 24:
-                $days = floor($diff/60/60/24);
+                $days = ceil($diff/60/60/24);
                 return $days == 1 ? 'a day ago' : $days.' days ago';
             default:
-                $months = floor($diff/60/60/24/(365/12));
+                $months = ceil($diff/60/60/24/(365/12));
                 return $months == 1 ? 'a month ago' : $months.' months ago';
 
         }
