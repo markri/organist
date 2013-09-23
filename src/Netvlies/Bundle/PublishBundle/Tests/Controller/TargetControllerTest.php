@@ -31,7 +31,7 @@ class TargetControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/application/1/targets');
 
-        $this->assertTrue($crawler->filter('html:contains("Add target")')->count() > 0);
+        $this->assertTrue($crawler->filter('html:contains("remote setup")')->count() > 0);
     }
 
     public function testTargetCreate()

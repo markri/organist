@@ -28,8 +28,6 @@ class LoadTarget implements FixtureInterface
         $target->setWebroot('/home/vagrant/test');
         $target->setCaproot('/home/vagrant/test');
         $target->setLabel('testtarget');
-        $target->setInactive(false);
-
         $manager->persist($target);
         $manager->flush();
     }
