@@ -1,23 +1,22 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: markri
- * Date: 7/17/13
- * Time: 4:14 PM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Action;
-
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class InitCommand implements CommandTargetInterface {
-
-
+class InitCommand implements CommandTargetInterface
+{
     /**
      * @var Application $application
      */

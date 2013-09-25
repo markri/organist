@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
@@ -17,7 +25,6 @@ use Netvlies\Bundle\PublishBundle\Action\InitCommand;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetEditType;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep1Type;
 use Netvlies\Bundle\PublishBundle\Form\FormTargetStep2Type;
-
 
 class TargetController extends Controller
 {
@@ -44,8 +51,8 @@ class TargetController extends Controller
      * @Route("/application/{id}/target/new/step1")
      * @Template()
      */
-    public function createStep1Action($id){
-
+    public function createStep1Action($id)
+    {
         $em  = $this->getDoctrine()->getManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
@@ -57,8 +64,8 @@ class TargetController extends Controller
      * @Route("/application/{id}/target/new/step2")
      * @Template()
      */
-    public function createStep2Action($id){
-
+    public function createStep2Action($id)
+    {
         $em  = $this->getDoctrine()->getManager();
         $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
@@ -68,53 +75,50 @@ class TargetController extends Controller
 
     /**
      * @Route("/target/edit/{id}")
+     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
      * @Template()
      */
-    public function editAction($id){
-        $em  = $this->getDoctrine()->getManager();
-
-        /**
-         * @var Target $target
-         */
-        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+    public function editAction($target)
+    {
         $request = $this->getRequest();
-
         $form = $this->createForm(new FormTargetEditType(), $target, array());
 
         if($request->getMethod() == 'POST'){
 
             $form->bind($request);
             if($form->isValid()){
+                $em  = $this->getDoctrine()->getManager();
                 $em->persist($target);
                 $em->flush($target);
 
+                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is updated', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$target->getApplication()->getId())));
             }
         }
 
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $target->getApplication(),
-            'form' => $form->createView(),
+            'form' => $formView,
         );
-
     }
 
 
     /**
-     *
      * @Route("/target/delete/{id}")
+     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
      */
-    public function deleteAction($id){
+    public function deleteAction($target)
+    {
         $em  = $this->getDoctrine()->getManager();
-
-        /**
-         * @var Target $target
-         */
-        $target = $em->getRepository('NetvliesPublishBundle:Target')->findOneById($id);
+        $label = $target->getLabel();
         $app = $target->getApplication();
         $target->setInactive(true);
         $em->flush();
 
+        $this->get('session')->getFlashBag()->add('warning', sprintf('Target %s is deleted', $label));
         return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
     }
 
@@ -123,8 +127,8 @@ class TargetController extends Controller
      * @param $app \Netvlies\Bundle\PublishBundle\Entity\Application
      * @return array
      */
-    protected function handleFormStep1($app){
-
+    protected function handleFormStep1($app)
+    {
         $request = $this->getRequest();
 
         $target = new Target();
@@ -148,9 +152,12 @@ class TargetController extends Controller
             }
         }
 
+        $formView = $formStep1->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $app,
-            'form' => $formStep1->createView(),
+            'form' => $formView,
         );
 
     }
@@ -162,7 +169,6 @@ class TargetController extends Controller
      */
     protected function handleFormStep2($app)
     {
-
         $target = new Target();
         $request = $this->getRequest();
         $em  = $this->getDoctrine()->getManager();
@@ -246,13 +252,17 @@ class TargetController extends Controller
                 $em->persist($target);
                 $em->flush($target);
 
+                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
             }
         }
 
+        $formView = $formStep2->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'application' => $app,
-            'form' => $formStep2->createView(),
+            'form' => $formView,
         );
     }
 

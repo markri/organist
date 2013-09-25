@@ -1,55 +1,45 @@
+{% set commandtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 
 {% block content %}
 
+    <h3>Executing command</h3>
+    <hr>
 
-<div id="content-wrapper">
+    <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" class="btn btn-default pull-right">Go to command overview</a>
+    <br>
+    <br>
 
-    <section id="content">
-        <header>
-            <h1>Executing command</h1>
-        </header>
+    <script type="text/javascript" src="/console/exec/anyterm.js">
+    </script>
 
-        <div id="text">
+    <script type="text/javascript">
+      // To create the terminal, just call create_term.  The paramters are:
+      //  - The id of a <div> element that will become the terminal.
+      //  - The title.  %h and %v expand to the hostname and Anyterm version.
+      //  - The number of rows and columns.
+      //  - An optional parameter which is substituted for %p in the command string.
+      //  - An optional character set.
+      //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
 
+      window.onload=function() {create_term("term","Console %h",22,150,"{{ command.id }}","",0);};
 
-        <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}">Terug naar dashboard</a>
-            <br>
-            <br>
+      // When the user closes the terminal, by default they'll see a blank page.
+      // Generally you'll want to be more friendly than that.  If you set the
+      // variable on_close_goto_url to a URL, they'll be sent to that page after
+      // closing.  You could send them back to your home page, or something.
+      var on_close_goto_url = "";
 
-        <script type="text/javascript" src="/console/exec/anyterm.js">
-        </script>
+    </script>
 
-        <script type="text/javascript">
-          // To create the terminal, just call create_term.  The paramters are:
-          //  - The id of a <div> element that will become the terminal.
-          //  - The title.  %h and %v expand to the hostname and Anyterm version.
-          //  - The number of rows and columns.
-          //  - An optional parameter which is substituted for %p in the command string.
-          //  - An optional character set.
-          //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
-
-          window.onload=function() {create_term("term","Console %h",30,150,"{{ command.id }}","",50);};
-
-          // When the user closes the terminal, by default they'll see a blank page.
-          // Generally you'll want to be more friendly than that.  If you set the
-          // variable on_close_goto_url to a URL, they'll be sent to that page after
-          // closing.  You could send them back to your home page, or something.
-          var on_close_goto_url = "";
-
-        </script>
-
-        <link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
+    <link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
 
 
+    <div id="term"></div>
 
+    <div>
+        <h4>Command</h4>
+        <pre>{{ command.command | replace({' && ': '<br>', ' &&': '<br>', '&& ': '<br>', '&&': '<br>'}) | raw }}</pre>
+    </div>
 
-        <div id="term"></div>
-
-            <div>
-                <h2>Command</h2>
-                {{ command.command | replace({'&&': '<br>'}) | raw }}</div>
-            </div>
-        </section>
-            </div>
 {% endblock %}

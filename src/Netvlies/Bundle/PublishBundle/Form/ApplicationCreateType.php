@@ -1,11 +1,13 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: mdekrijger
- * Date: 8/28/12
- * Time: 10:12 PM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
+
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,6 +33,7 @@ class ApplicationCreateType extends AbstractType
             )
             ->add('applicationType', 'applicationtype_choicelist', array(
                     'label'=>'Application type *',
+                    'attr' => array('data-help' => 'This has effect on the default shared files and folders'),
                     'required'=>true )
             )
             ->add('scmService', 'versioning_choicelist', array(
@@ -38,7 +41,8 @@ class ApplicationCreateType extends AbstractType
                 'required'=>true )
             )
             ->add('scmUrl', 'text', array(
-                'label'=>'Versioning URL (e.g. git@bitbucket.org:netvlies/my_project.git) *',
+                'label'=>'Versioning URL *',
+                'attr' => array('data-help' => 'e.g. git@bitbucket.org:netvlies/my_project.git'),
                 'required'=>true )
             );
     }

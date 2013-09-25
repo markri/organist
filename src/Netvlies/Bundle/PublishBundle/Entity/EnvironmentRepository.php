@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -14,44 +22,41 @@ use Doctrine\ORM\Query\ResultSetMapping;
 class EnvironmentRepository extends EntityRepository
 {
 
-    public function getByTypeAndHost($type, $host){
-
-        $entityManager = $this->getManager();
-
-        $query = $entityManager->createQuery('
-            SELECT e FROM Netvlies\Bundle\PublishBundle\Entity\Environment e
-            WHERE e.type = :type
-            AND e.hostname = :host
-        ');
-
-        $query->setParameter('type', $type);
-        $query->setParameter('host', $host);
-
-        return $query->getResult();
-    }
-
-
     /**
      * Gets an array of all environment objects ordered by D, T, A, P
      * @return array
      */
-    public function getOrderedByTypeAndHost(){
-
-        $rsm = new ResultSetMapping;
-        $rsm->addEntityResult('NetvliesPublishBundle:Environment', 'e');
-        $rsm->addFieldResult('e', 'id', 'id');
-        $rsm->addFieldResult('e', 'type', 'type');
-        $rsm->addFieldResult('e', 'hostname', 'hostname');
-
-        $query = $this->getEntityManager()->createNativeQuery("
-            SELECT e.* FROM Environment e
-            ORDER BY FIELD(e.type, 'D', 'T', 'A', 'P')
-        ", $rsm);
+    public function getOrderedByTypeAndHost()
+    {
+        $query = $this->getEntityManager()->createQuery('
+            SELECT e FROM Netvlies\Bundle\PublishBundle\Entity\Environment e
+        ');
 
         $result = $query->getResult();
 
+        usort($result, function($envA, $envB){
+
+            $order = array('D'=>0, 'T'=>1, 'A'=>2, 'P'=>3);
+
+            if(!array_key_exists($envA->getType(), $order)
+                || !array_key_exists($envB->getType(), $order)){
+                return -1;
+            }
+
+            $orderA = $order[$envA->getType()];
+            $orderB = $order[$envB->getType()];
+
+            if($orderA > $orderB){
+                return 1;
+            }
+
+            if($orderA < $orderB){
+                return -1;
+            }
+
+            return 0;
+        });
+
         return $result;
     }
-
-
 }

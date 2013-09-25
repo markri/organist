@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -13,13 +21,12 @@ use Doctrine\ORM\EntityRepository;
 class CommandLogRepository extends EntityRepository
 {
 
-
     /**
      * @param Target $target
      * @return mixed
      */
-    public function getLogsForApplication($application, $limit=null){
-
+    public function getLogsForApplication($application, $limit=null)
+    {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery('
@@ -35,5 +42,4 @@ class CommandLogRepository extends EntityRepository
 
         return $query->getResult();
     }
-
 }

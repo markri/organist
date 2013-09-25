@@ -1,105 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     {% block head %}
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Organist">
+        <meta name="author" content="markri">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{% block oms_title %}Netvlies publishing{% endblock %}</title>
-        <meta name="description" content="">
-        <meta name="author" content="">
+        <title>{% block oms_title %}Organist deployment tool{% endblock %}</title>
 
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-        {% block oms_stylesheets %}
-            <link rel="stylesheet" href="{{ asset('bundles/netvliespublish/css/style.css') }}">
-            <link rel="stylesheet" href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}">
-        {% endblock %}
-
-        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
-    {% endblock %}
-
-</head>
-
-<body>
-    {% block body %}
-        <header role="banner">
-            <a href="{{path('netvlies_publish_default_index')}}"><h1>Publishing tool</h1></a>
-    	</header>
-        <div id="subnav">
-            <ul>
-                {% block oms_projects %}
-                    <li>
-                        {% if application is defined %}
-                            {{applicationselect(application.id)|raw}}
-                        {% else %}
-                            {{applicationselect()|raw}}
-                        {% endif %}
-                    </li>
-
-                {% endblock %}
-
-                {% if application is defined %}
-                    {% block oms_project_options %}
-                        <li>
-                            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" >Dashboard</a>
-                        </li>
-                        {% if application.id is checkedout %}
-                            <li>
-                                <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" >Commands</a>
-                            </li>
-                            <li>
-                                <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}">Targets</a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}">Checkout repository</a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" >Settings</a>
-                        </li>
-                    {% endblock %}
-                {% endif %}
-            </ul>
-        </div>
+        <link href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.css') }}" rel="stylesheet"/>
 
 
-        {% for flash in app.session.flashbag.get('error') %}
-            <div class="message error">{{ flash|raw }}</div>
-        {% endfor %}
+        <!-- Bootstrap -->
+        <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
 
-        {% for flash in app.session.flashbag.get('success') %}
-            <div class="message success">{{ flash }}</div>
-        {% endfor %}
-
-        {% for flash in app.session.flashbag.all %}
-            <div class="message information">{{ flash }}</div>
-        {% endfor %}
-
-        {% block content %}
-
-            {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
-        {% endblock %}
-    {% endblock %}
-
-    {% block oms_javascripts %}
-
-        <script src="{{ asset('bundles/netvliespublish/js/libs/modernizr-2.0.6.min.js') }}"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{{ asset('bundles/netvliesoms/js/libs/jquery-1.7.min.js') }}"><\/script>')</script>
-        <script src="{{ asset('bundles/netvliespublish/js/tiny_mce/jquery.tinymce.js') }}"></script>
-        <script src="{{ asset('bundles/netvliespublish/js/libs/jquery-ui-1.8.16.custom.min.js') }}"></script>
-        <script src="{{ asset('bundles/netvliespublish/js/libs/jquery.liveFilter.js') }}"></script>
-
-        <script defer src="{{ asset('bundles/netvliespublish/js/oms/objects.js') }}"></script>
-        <script defer src="{{ asset('bundles/netvliespublish/js/script.js') }}"></script>
-
-        <!--[if lte IE 7 ]>
-        <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
-        <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+        <!-- @todo -->
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <!--<script src="../../assets/js/html5shiv.js"></script>-->
+        <!--<script src="../../assets/js/respond.min.js"></script>-->
         <![endif]-->
 
     {% endblock %}
 
-    </body>
+</head>
+
+<body style="padding-top: 60px">
+    {% block body %}
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ path('netvlies_publish_default_index') }}">Organist</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active">
+                            <form class="navbar-form navbar-left" role="search">
+                                <div class="form-group">
+                                    {% if application is defined %}
+                                        {{applicationselect(application.id)|raw}}
+                                    {% else %}
+                                        {{applicationselect()|raw}}
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </li>
+                        {% if application is defined %}
+
+                            <li {% if dashboardtab is defined %}class="active" {% endif %}>
+                                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" ><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+                            </li>
+                            {% if application.id is checkedout %}
+                                <li {% if commandtab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Commands</a>
+                                </li>
+                                <li {% if targettab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
+                                </li>
+                            {% else %}
+                                <li {% if commandtab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}"><span class="glyphicon glyphicon-transfer"></span> Checkout repository</a>
+                                </li>
+                            {% endif %}
+                            <li {% if settingstab is defined %}class="active" {% endif %}>
+                                <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+
+            {% for flash in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Oops!</strong> {{ flash|raw }}
+                </div>
+            {% endfor %}
+
+            {% for flash in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Yay!</strong> {{ flash|raw }}
+                </div>
+            {% endfor %}
+
+            {% for flash in app.session.flashbag.get('warning') %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Focus! </strong> {{ flash|raw }}
+                </div>
+            {% endfor %}
+
+            {% for flash in app.session.flashbag.all %}
+                <div class="alert alert-info">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {% for message in flash %}
+                        <strong>FYI</strong> {{ message |raw }}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% block content %}
+                        {{ render(controller('NetvliesPublishBundle:Application:listWidget')) }}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+
+
+    {% endblock %}
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.js') }}"></script>
+    <script src="{{ asset('bundles/netvliespublish/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/netvliespublish/js/jquery.liveFilter.js') }}"></script>
+    <script src="{{ asset('bundles/netvliespublish/js/organist.js') }}"></script>
+</body>
 </html>

@@ -1,11 +1,18 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
 use Doctrine\ORM\EntityRepository;
 
 class FormTargetStep2Type extends AbstractType
@@ -15,11 +22,13 @@ class FormTargetStep2Type extends AbstractType
     {
         $builder
             ->add('label', 'text', array(
-                'label'=>'Label (e.g. "(P) www.myapp.com" *',
+                'label'=>'Label *',
+                'attr' => array('data-help' => 'e.g. "(P) www.myapp.com"'),
                 'required'=>true)
             )
             ->add('primaryDomain', 'text', array(
-                'label'=>'Domain e.g. "www.myapp.com" ',
+                'label'=>'Domain',
+                'attr' => array('data-help' => 'e.g. "www.myapp.com"'),
                 'required'=>false)
             )
             ->add('mysqldb', 'text', array(
@@ -49,17 +58,9 @@ class FormTargetStep2Type extends AbstractType
     }
 
 
-    public function getDefaultOptions(array $options)
-    {
-        $options['csrf_protection'] = false;
-        return $options;
-    }
-
-
     public function getName()
     {
-        return 'netvlies_publishbundle_targettype2';
+        return 'netvlies_publishbundle_target_step2';
     }
 
 }
-

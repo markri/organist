@@ -1,17 +1,17 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: mdekrijger
- * Date: 1/29/12
- * Time: 1:22 PM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-
 
 class ApplicationsSelectType extends AbstractType
 {
@@ -28,13 +28,6 @@ class ApplicationsSelectType extends AbstractType
 
     }
 
-
-
-
-    public function getDefaultOptions(array $options)
-    {
-        return $options;
-    }
 
     public function getName()
     {

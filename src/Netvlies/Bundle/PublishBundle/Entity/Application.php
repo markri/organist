@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -9,8 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Netvlies\Bundle\PublishBundle\Entity\Application
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="name", columns={"name"})})
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyName", columns={"keyName"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="nameUnique", columns={"name"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyNameUnique", columns={"keyName"})})
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ApplicationRepository")
  */
 class Application
@@ -57,6 +65,7 @@ class Application
     /**
      * @var object $userFiles
      * @ORM\OneToMany(targetEntity="UserFile", mappedBy="application", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"type" = "ASC", "path" = "ASC"})
      */
     protected $userFiles;
 
@@ -229,7 +238,4 @@ class Application
     {
         return $this->applicationType;
     }
-
-
-
 }

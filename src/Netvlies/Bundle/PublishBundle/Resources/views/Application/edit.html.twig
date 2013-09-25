@@ -1,51 +1,64 @@
+{% set settingstab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
+    <h3>{{application.name}}</h3>
+    <hr />
 
-    <section id="content">
-        <header>
-            <h1>{{application.name}}</h1>
-        </header>
-        <hr />
-        <div id="text">
+    <form action="" method="POST" class="form-horizontal">
 
+        {{ form_errors(form) }}
+        {{ form_widget(form._token) }}
 
-        <form action="" method="POST">
-            {% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
-            {{ form_errors(form) }}
-            {{ form_widget(form._token) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.customer) }}
 
-            {{ form_row(form.name) }}
-            {{ form_row(form.customer) }}
+        <label >Shared files and directories</label>
+        <div class="userfiles" data-prototype="{{
+            '<div class="col-lg-2"></div>
+            <div class="col-lg-2" id="application_edit_userFiles___name___type">
+                <label class="radio-inline">
+                    <input type="radio" id="application_edit_userFiles___name___type_0" name="application_edit[userFiles][__name__][type]" required="required" value="D" checked="checked">
+                    Directory
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" id="application_edit_userFiles___name___type_1" name="application_edit[userFiles][__name__][type]" required="required" value="F">
+                    File
+                </label>
+            </div>
+            <div class="col-lg-6">
+                <input type="text" id="application_edit_userFiles___name___path" name="application_edit[userFiles][__name__][path]" required="required" maxlength="255" class="form-control">
+            </div>'|escape('html') }}">
 
-            <ul class="userfiles" data-prototype="{{ form_widget(form.userFiles.vars.prototype)|e }}">
-                {# iterate over each existing tag and render its only field: name #}
-                {% for userfile in form.userFiles %}
-                    <li>
-                        {{ form_row(userfile.path) }}
-                        {{ form_row(userfile.type) }}
-                    </li>
-                {% endfor %}
-            </ul>
-
-
-
-
-            <br/>
-            <input type="submit" value="Opslaan" class="button"/>
-            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
-            <br>
-            <br>
-            {% if deleteable %}
-                <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="button">Applicatie verwijderen</a>
-            {% endif %}
-
-
-        </form>
+            {# iterate over each existing tag and render its only field: name #}
+            {% for userfile in form.userFiles %}
+                <div class="form-group">
+                    {#{{ form_label(userfile.path, false, {'label_attr': {'class': 'control-label col-lg-2'} }) }}#}
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-2">
+                        {{ form_widget(userfile.type) }}
+                    </div>
+                    <div class="col-lg-6">
+                        {{ form_widget(userfile.path, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-        </section>
-    </div>
+
+        <br/>
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+
+        <br>
+        <br>
+        {% if deleteable %}
+            <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="btn btn-danger">Delete application</a>
+        {% endif %}
+
+
+    </form>
 
 {% endblock %}

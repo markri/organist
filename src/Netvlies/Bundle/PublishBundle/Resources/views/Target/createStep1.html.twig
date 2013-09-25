@@ -1,27 +1,22 @@
+{% set targettab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
+    <h3>Adding target for {{application.name}} - Step 1</h3>
+    <hr>
+    <form action="" method="POST" class="form-horizontal">
 
-    <section id="content">
-        <header>
-            <h1>Adding target for {{application.name}} - Step 1</h1>
-        </header>
-        <hr />
-        <div id="text">
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
 
-            <form action="" method="POST">
-
-                {{ form_errors(form) }}
-                {{ form_widget(form) }}
-
-                <input type="submit" value="Next" class="button"/>
-                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="button">Annuleren</a>
-
-            </form>
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Next" class="btn btn-default"/>
         </div>
-    </section>
+
+    </form>
+
 </div>
 
 

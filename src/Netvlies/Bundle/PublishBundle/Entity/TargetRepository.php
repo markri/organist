@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -16,55 +24,47 @@ use PDO;
 class TargetRepository extends EntityRepository
 {
 
-    public function getByAppAndEnv($application, $environment){
-
-        $entityManager = $this->getEntityManager();
-
-        $query = $entityManager->createQuery('
-            SELECT t FROM Netvlies\Bundle\PublishBundle\Entity\Target t
-            WHERE t.application = :app
-            AND t.environment = :env
-            AND t.inactive IS NOT TRUE
-        ');
-
-        $query->setParameter('app', $application);
-        $query->setParameter('env', $environment);
-
-        return $query->getResult();
-    }
-
-
     /**
-     * Yuck, but currently no solution for having this query hydrated to objects in one time
      *
      * @param $app
      * @return array
      */
-    public function getOrderedByDTAP($app){
+    public function getOrderedByDTAP($app)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery('
+            SELECT t FROM Netvlies\Bundle\PublishBundle\Entity\Target t
+            WHERE t.application = :app
+            AND t.inactive <> 1
+        ');
 
-        $query = "
-            SELECT t.id FROM Target t
-            INNER JOIN Environment e ON t.environment_id = e.id
-            WHERE t.application_id = :id
-            AND t.inactive IS NOT TRUE
-            ORDER BY FIELD(e.type, 'D', 'T', 'A', 'P'), t.id DESC";
+        $query->setParameter('app', $app);
+        $result = $query->getResult();
 
-        $conn = $this->getEntityManager()->getConnection();
-        $stmt = $conn->prepare($query);
-        $stmt->bindValue('id', $app->getId());
-        $stmt->execute();
-        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        usort($result, function($targetA, $targetB){
 
-        $results = array();
+            $order = array('D'=>0, 'T'=>1, 'A'=>2, 'P'=>3);
 
-        // Especially this part feels wrong. On the other hand, how many targets are there at most? just a few. Usually
-        // 4 at most. so acceptable for now
-        foreach($ids as $id){
-            $results[] = $target = $this->findOneById($id);
-        }
+            if(!array_key_exists($targetA->getEnvironment()->getType(), $order)
+            || !array_key_exists($targetB->getEnvironment()->getType(), $order)){
+                return -1;
+            }
 
-        return $results;
+            $orderA = $order[$targetA->getEnvironment()->getType()];
+            $orderB = $order[$targetB->getEnvironment()->getType()];
+
+            if($orderA > $orderB){
+                return 1;
+            }
+
+            if($orderA < $orderB){
+                return -1;
+            }
+
+            return 0;
+
+        });
+
+        return $result;
     }
-
-
 }

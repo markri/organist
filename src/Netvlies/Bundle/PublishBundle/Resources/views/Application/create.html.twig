@@ -1,28 +1,24 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
 
-    <section id="content">
-        <header>
+    <h3>Create application</h3>
+    <hr />
 
-        </header>
-        <hr />
-        <div id="text">
+    <form action="" method="POST" class="form-horizontal">
 
-            <form action="" method="POST">
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
 
-                {{ form_errors(form) }}
-                {{ form_widget(form) }}
+        <br/>
 
-                <br/>
-                <p>Choosing the application type will have effect on some default settings (e.g. shared files and folders)</p>
-                <input type="submit" value="Opslaan" class="button"/>
-                <a href="{{ path('netvlies_publish_default_index') }}" class="button">Annuleren</a>
-
-            </form>
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_default_index') }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
         </div>
-    </section>
-</div>
+
+    </form>
+
 
 {% endblock %}

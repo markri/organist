@@ -1,17 +1,21 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
-use Doctrine\ORM\EntityRepository;
-use Netvlies\Bundle\PublishBundle\Form\DataTransformer\IdToEnvironment;
 
 class FormTargetEditType extends AbstractType
 {
-
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -22,15 +26,18 @@ class FormTargetEditType extends AbstractType
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username) *',
+                'label'=>'Username *',
+                'attr' => array('data-help'=> 'in which homedir it will be deployed, just username. This will be used on SSH connection'),
                 'required'=>true,
             ))
             ->add('label', 'text', array(
-                'label'=>'Label (e.g. "Settings for myapp.dev1.netvlies.net") *',
+                'label'=>'Label *',
+                'attr' => array('data-help' => 'e.g. "(P) www.mywonderfullsite.com"'),
                 'required'=>true)
             )
             ->add('primarydomain', 'text', array(
-                'label'=>'Primary domain (e.g. myapp.dev1.netvlies.net) *',
+                'label'=>'Primary domain *',
+                'attr' => array('data-help' => 'e.g. www.mywonderfullsite.com'),
                 'required'=>true)
             )
             ->add('mysqldb', 'text', array(
@@ -58,17 +65,7 @@ class FormTargetEditType extends AbstractType
                 'label'=>'Capistrano root')
             );
 
-
     }
-
-
-    public function getDefaultOptions(array $options)
-    {
-        $options['csrf_protection'] = false;
-        $options['envchoice'] = null;
-        return $options;
-    }
-
 
     public function getName()
     {
@@ -76,4 +73,3 @@ class FormTargetEditType extends AbstractType
     }
 
 }
-

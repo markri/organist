@@ -1,8 +1,9 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: mdekrijger
- * Date: 8/15/12
- * Time: 11:08 PM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */

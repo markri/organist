@@ -1,14 +1,20 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
 
 use Doctrine\ORM\EntityRepository;
-
 
 class FormTargetStep1Type extends AbstractType
 {
@@ -21,23 +27,16 @@ class FormTargetStep1Type extends AbstractType
                 'required' => true,
             ))
             ->add('username', 'text', array(
-                'label'=>'Username. (in which homedir it will be deployed, just username) *',
+                'label'=>'Username *',
+                'attr' => array('data-help'=> 'in which homedir it will be deployed, just username. User will be used on SSH connection'),
                 'required'=>true,
             ));
     }
 
 
-    public function getDefaultOptions(array $options)
-    {
-        $options['csrf_protection'] = false;
-        return $options;
-    }
-
-
     public function getName()
     {
-        return 'netvlies_publishbundle_targettype1';
+        return 'netvlies_publishbundle_target_step1';
     }
 
 }
-

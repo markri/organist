@@ -1,105 +1,50 @@
+{% set commandtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
+{% form_theme deployForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+{% form_theme rollbackForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
-<div id="content-wrapper">
+    <h3>{{application.name}}</h3>
+    <hr />
 
-    <section id="content">
-        <header>
-            <h1>{{application.name}}</h1>
-        </header>
-        <hr />
-        <div id="text">
-            Customer: {{application.customer}}<br>
-            Repository: {{application.scmUrl}}<br>
-            Application type: {{application.applicationType}}<br>
+    <h4>Last update</h4>
+    <dl class="dl-horizontal">
+        <dt>Last commit</dt> <dd>{{headRevision.datetime|timediff}} ({{ headRevision.datetime|date('Y-m-d H:i:s') }})</dd>
+        <dt>Author</dt> <dd>{{headRevision.author}}</dd>
+        <dt>Revision</dt> <dd>{{headRevision.reference}}</dd>
+        <dt>Commit message</dt> <dd>{{ headRevision.message }}</dd>
+        <dt></dt><dd><br><a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
+    </dl>
 
-            <hr/>
-            <h2>Update repository</h2>
-            <a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="button">Update branches/tags</a>
-
-
-            <hr/>
-            <h2>Deploy</h2>
-            <form id="#deploy_form" name="deploy_form" method="POST">
-                {{ form_errors(deployForm) }}
-                {{ form_widget(deployForm) }}
-
-                <br>
-                <input value="Deploy" type="submit" class="button"/>
-            </form>
-
-            <hr />
-            <h2>Rollback</h2>
-            This works just like ctrl-z. (It will undo last successful deployment).
-            <form id="#rollback_form" name="rollback_form" method="POST">
-                {{ form_errors(rollbackForm) }}
-                {{ form_widget(rollbackForm) }}
-                <br>
-                <input type="submit" value="Rollback" class="button"/>
-            </form>
-
+    <h4>Deploy</h4>
+    <form id="#deploy_form" name="deploy_form" method="POST" class="form-horizontal">
+        {{ form_errors(deployForm) }}
+        <div class="form-group">
+            {{ form_label(deployForm.target, 'Target *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            <div class="col-lg-10">
+                {{ form_widget(deployForm.target, { 'attr': {'class': 'form-control'}} ) }}
+            </div>
         </div>
+        <div class="form-group">
+            {{ form_label(deployForm.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            <div class="col-lg-10">
+                {{ form_widget(deployForm.revision, { 'attr': {'class': 'form-control'}} ) }}
+            </div>
+        </div>
+        {{ form_rest(deployForm) }}
 
-    </section>
-</div>
+        <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Deploy</button>
+        <br>
+    </form>
+    <hr />
+
+    <h4>Rollback</h4>
+    <form id="#rollback_form" name="rollback_form" method="POST" class="form-horizontal">
+        {{ form_errors(rollbackForm) }}
+        {{ form_widget(rollbackForm) }}
+        <br>
+        <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Rollback</button>
+    </form>
+
 {% endblock %}
-{% block oms_javascripts %}
-
-    {{ parent() }}
-    <script>
-
-    {#$('#netvlies_publishbundle_applicationdeploy_target_target').change( function() {#}
-
-        {#if($(this).val()==''){#}
-            {#return;#}
-        {#}#}
-
-        {#$.ajax({#}
-            {#type: "GET",#}
-            {#data: "id=" + $(this).val(),#}
-            {#url:"{{ path('netvlies_publish_target_getreference') }}",#}
-            {#beforeSend: function(){#}
-
-                {#$('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();#}
-            {#},#}
-            {#success: function(msg){#}
-                {#if (msg != ''){#}
-                        {#$('#reference_return').html(msg).show();#}
-                   {#}#}
-                   {#else#}
-                   {#{#}
-                       {#$('#reference_return').html('<em>Oops! Something went wrong</em>');#}
-                   {#}#}
-               {#}#}
-           {#});#}
-      {#});#}
-
-
-    {#$('#netvlies_publishbundle_applicationdeploy_revision_reference').change( function (){#}
-        {#if($(this).val()==''){#}
-            {#return;#}
-        {#}#}
-
-        {#$.ajax({#}
-            {#type: "GET",#}
-            {#data: "id=" + {{ application.id }}  + "&ref="+$(this).val(),#}
-            {#url:"{{ path('netvlies_publish_target_loadchangeset') }}",#}
-            {#beforeSend: function(){#}
-                {#$('#reference_return').html('<img src="{{ asset('bundles/netvliespublish/img/loading.gif') }}" />').show();#}
-            {#},#}
-            {#success: function(msg){#}
-                {#if (msg != ''){#}
-                        {#$('#reference_return').html(msg).show();#}
-                   {#}#}
-                   {#else#}
-                   {#{#}
-                       {#$('#reference_return').html('<em>Oops! Something went wrong</em>');#}
-                   {#}#}
-               {#}#}
-           {#});#}
-      {#});#}
-
-    </script>
-{%endblock%}
 

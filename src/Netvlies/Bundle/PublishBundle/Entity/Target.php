@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Entity;
 
@@ -36,7 +44,7 @@ class Target
     /**
      * @var Application $application
      * @Assert\NotBlank(message="application is required/key could not be found")
-     * @ORM\ManyToOne(targetEntity="Application")
+     * @ORM\ManyToOne(targetEntity="Application", inversedBy="targets")
      */
     protected $application;
 
@@ -199,8 +207,6 @@ class Target
         return $this->lastDeployedTag;
     }
 
-
-
     /**
      * @param string $username
      */
@@ -232,7 +238,6 @@ class Target
     {
         return $this->lastDeployedBranch;
     }
-
 
     /**
      * @param string $approot
@@ -386,6 +391,4 @@ class Target
     {
         return $this->inactive;
     }
-
-
 }

@@ -4,7 +4,10 @@ imports:
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+        storage_id: session.storage.filesystem
+
+liip_functional_test:
+    cache_sqlite_db: true
 
 web_profiler:
     toolbar: false
@@ -12,3 +15,11 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    dbal:
+        driver:   pdo_sqlite
+        path:     %kernel.cache_dir%/test.db
+
+netvlies_publish:
+    repositorypath: %kernel.cache_dir%/repos

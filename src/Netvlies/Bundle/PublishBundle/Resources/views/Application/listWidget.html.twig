@@ -1,41 +1,44 @@
-{#<div id="content-wrapper">#}
-<div id="content-wrapper">
+<h3>Application list</h3>
+<hr>
+<section id="relevant-repos">
+    {% if apps|length > 0 %}
 
+            <div class="tabbed-filter-widget repo-filter-widget">
 
-    <section id="relevant-repos">
-
-        <h1>Application list</h1>
-        <div class="tabbed-filter-widget repo-filter-widget">
-
-            <div class="tabbed-filter">
-                <input type="text" placeholder="Find application" class="filter-box">
-                <div class="aui-tabs horizontal-tabs aui-tabs-disabled filter-tabs">
-                    <ul class="tabs-menu">
-                        <li class="menu-item active-tab"><a href="#all" class="all">All</a></li>
-                        {#<li class="menu-item"><a href="#following" class="following">Watching</a></li>#}
-                        {#<li class="menu-item"><a href="#mine" class="mine">Mine</a></li>#}
-                        {#<li class="menu-item"><a href="#latest" class="latest">Latest</a></li>#}
-                    </ul>
+                <div class="tabbed-filter">
+                    <input type="text" placeholder="Find application" class="filter-box">
+                    <div class="aui-tabs horizontal-tabs aui-tabs-disabled filter-tabs">
+                        <ul class="tabs-menu">
+                            <li class="menu-item active-tab"><a href="#all" class="all">All</a></li>
+                            {#<li class="menu-item"><a href="#following" class="following">Watching</a></li>#}
+                            {#<li class="menu-item"><a href="#mine" class="mine">Mine</a></li>#}
+                            {#<li class="menu-item"><a href="#latest" class="latest">Latest</a></li>#}
+                        </ul>
+                    </div>
                 </div>
+
+                <ol class="filter-list all">
+                    {% for app in apps %}
+                        <li class="filter-item">
+                            <a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {#<li id="id_repo_2336551" class="filter-item private mine following">#}
+                        {#<a href="/sjopet/configs" class="repo" title="sjopet/configs"><span class="owner">sjopet</span> / <span class="slug">configs</span></a>#}
+                    {#</li>#}
+
+                </ol>
+                <div class="handle"></div>
             </div>
 
-            <ol class="filter-list all">
-                {% for app in apps %}
-                    <li class="filter-item">
-                        <a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>
-                    </li>
-                {% else %}
-                    <li class="empty-msg">No matching repositories.</li>
-                {% endfor %}
 
-                {#<li id="id_repo_2336551" class="filter-item private mine following">#}
-                    {#<a href="/sjopet/configs" class="repo" title="sjopet/configs"><span class="owner">sjopet</span> / <span class="slug">configs</span></a>#}
-                {#</li>#}
-
-            </ol>
-            <div class="handle"></div>
-        </div>
+    {% else %}
+        Oops! There are no applications present. Try adding one with button below
         <br>
-        <a href="{{path('netvlies_publish_application_create')}}" class="button">Add new application</a>
-    </section>
-</div>
+    {% endif %}
+
+    <br>
+    <a href="{{path('netvlies_publish_application_create')}}" class="btn btn-default">Add new application</a>
+
+</section>

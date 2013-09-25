@@ -1,10 +1,11 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: markri
- * Date: 13-1-12
- * Time: 9:52
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Command;
@@ -124,5 +125,4 @@ class AnytermCommand extends ContainerAwareCommand
         $this->stop();
         $this->start();
     }
-
 }

@@ -1,11 +1,11 @@
 <?php
 /**
- * (c) Netvlies Internetdiensten
- *
- * @author M. de Krijger <mdekrijger@netvlies.nl>
+ * This file is part of Organist
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
 
 namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
@@ -21,7 +21,6 @@ use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Commit;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\BranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\CommitInterface;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
-
 
 class Git implements VersioningInterface
 {
@@ -60,6 +59,8 @@ class Git implements VersioningInterface
 
     /**
      * Must update your repository
+     * This method is kind of expensive when there are many branches.
+     * @todo do fetch -a so we have all remote branches and tags, and only checkout local branch when deployment for it is requested
      *
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return boolean
@@ -77,14 +78,11 @@ class Git implements VersioningInterface
         $repo->checkoutAllRemoteBranches(); // remotes/origin/mybranch will be mybranch
 
 
-
-
         $allBranches = $repo->getBranches(true, true);
         $remoteBranches = array_filter($allBranches, function($branch) {
             return preg_match('/^remotes(.+)$/', $branch)
             && !preg_match('/^(.+)(HEAD)(.*?)$/', $branch);
         });
-
 
 
         // Get all tracked branches and reset them to origin/{branchname}
@@ -148,7 +146,7 @@ class Git implements VersioningInterface
      */
     function getChangesets(Application $app, $fromRef, $toRef)
     {
-        // TODO: Implement getChangesets() method.
+        $repo = $this->getRepository($app);
     }
 
     /**
@@ -225,10 +223,28 @@ class Git implements VersioningInterface
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return array()
      */
-    function getCommitLog(Application $app)
+    function getCommitLog(Application $app, $branch)
     {
         // TODO: Implement getCommitLog() method.
     }
+
+    /**
+     * @param Application $app
+     * @return CommitInterface
+     */
+    function getHeadRevision(Application $app)
+    {
+        $repo = $this->getRepository($app);
+        $log = $repo->getLog()->first();
+        $commit = new Commit();
+        $commit->setMessage($log->getMessage());
+        $commit->setReference($log->getSha());
+        $commit->setAuthor($log->getAuthor()->getName().' <'.$log->getAuthor()->getEmail().'>');
+        $commit->setDateTime($log->getDatetimeCommitter());
+
+        return $commit;
+    }
+
 
     /**
      * This must return the local checked out repository
@@ -259,6 +275,5 @@ class Git implements VersioningInterface
     {
         return $this->privateKey;
     }
-
 
 }

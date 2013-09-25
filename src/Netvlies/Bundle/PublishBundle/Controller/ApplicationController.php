@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
@@ -18,7 +26,6 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 
 use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
-
 
 class ApplicationController extends Controller
 {
@@ -71,8 +78,11 @@ class ApplicationController extends Controller
             }
         }
 
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
-            'form' => $form->createView()
+            'form' => $formView
         );
     }
 
@@ -146,8 +156,13 @@ class ApplicationController extends Controller
 
         $deletable = $application->getTargets()->count() == 0 && $application->getUserFiles()->count() == 0;
 
+
+        // This is to let layout know some extra attribute on which layout logic will be based for form building
+        $formView = $form->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
         return array(
-            'form' => $form->createView(),
+            'form' => $formView,
             'application' => $application,
             'deleteable' => $deletable
         );
@@ -201,6 +216,7 @@ class ApplicationController extends Controller
 
         $command = new CheckoutCommand();
         $command->setApplication($application);
+        $command->setEnvironment($this->get('kernel')->getEnvironment());
 
         return $this->forward('NetvliesPublishBundle:Command:execApplicationCommand', array(
             'command'  => $command
@@ -229,7 +245,4 @@ class ApplicationController extends Controller
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('id' => $application->getId())));
     }
-
-
-
 }

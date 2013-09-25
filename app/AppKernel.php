@@ -21,7 +21,6 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Netvlies\Bundle\PublishBundle\NetvliesPublishBundle(),
-            new Netvlies\Bundle\MigrationBundle\NetvliesMigrationBundle(),
             new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
         );
 
@@ -29,6 +28,10 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+        }
+
+        if (in_array($this->getEnvironment(), array('test'))) {
+            $bundles[] = new Liip\FunctionalTestBundle\LiipFunctionalTestBundle();
         }
 
         return $bundles;

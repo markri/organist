@@ -1,8 +1,13 @@
 <?php
 /**
- * @author: M. de Krijger
- * Creation date: 9-1-12
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
+
 
 namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 
@@ -46,8 +51,6 @@ class EnvironmentType extends AbstractType
         return 'entity';
     }
 
-
-
     /**
      * @param array $options
      * @return array
@@ -77,5 +80,4 @@ class EnvironmentType extends AbstractType
     {
         return $this->em->getRepository('NetvliesPublishBundle:Environment')->getOrderedByTypeAndHost();
     }
-
 }

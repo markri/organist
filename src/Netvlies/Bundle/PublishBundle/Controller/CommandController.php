@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
@@ -20,11 +28,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-
-
-
-class CommandController extends Controller {
-
+class CommandController extends Controller
+{
 
     /**
      * @Route("/application/{id}/commands")
@@ -39,6 +44,7 @@ class CommandController extends Controller {
          */
         $versioningService = $this->get($application->getScmService());
         $repoPath = $versioningService->getRepositoryPath($application);
+        $headRevision = $versioningService->getHeadRevision($application);
 
         if(!file_exists($repoPath)){
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
@@ -84,10 +90,15 @@ class CommandController extends Controller {
             }
         }
 
+        // This is to let layout know some extra attribute on which layout logic will be based for form building
+        $rollbackView = $rollbackForm->createView();
+        $rollbackView->vars['attr']['data-horizontal'] = true;
+
         return array(
             'deployForm' => $deployForm->createView(),
-            'rollbackForm' => $rollbackForm->createView(),
+            'rollbackForm' => $rollbackView,
             'application' => $application,
+            'headRevision' => $headRevision
         );
     }
 
@@ -116,11 +127,11 @@ class CommandController extends Controller {
         $commandLog->setTarget($command->getTarget());
         $commandLog->setType($command->getTarget()->getEnvironment()->getType());
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $commandLog->setUser($userName);
@@ -149,11 +160,11 @@ class CommandController extends Controller {
         $commandLog->setDatetimeStart(new \DateTime());
         $commandLog->setHost('localhost');
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $commandLog->setUser($userName);
@@ -183,7 +194,7 @@ class CommandController extends Controller {
         $application = $commandLog->getApplication();
 
         if($commandLog->getDatetimeEnd()){
-            $this->get('session')->getFlashBag()->add('error', sprintf('This command is already executed. <a href="%s">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
+            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
             return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
         }
 
@@ -232,6 +243,7 @@ class CommandController extends Controller {
     public function reExecuteAction($commandLog)
     {
         $newCommand = new CommandLog();
+        $newCommand->setApplication($commandLog->getApplication());
         $newCommand->setTarget($commandLog->getTarget());
         $newCommand->setType($commandLog->getType());
         $newCommand->setCommand($commandLog->getCommand());
@@ -239,11 +251,11 @@ class CommandController extends Controller {
         $newCommand->setHost($commandLog->getHost());
         $newCommand->setCommandLabel($commandLog->getCommandLabel());
 
-        try{
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
-        catch(\Exception $e){
-            $userName = 'nobody';
+        else{
+            $userName = 'anonymous';
         }
 
         $newCommand->setUser($userName);
@@ -257,7 +269,5 @@ class CommandController extends Controller {
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $newCommand->getId())));
     }
-
-
 
 }

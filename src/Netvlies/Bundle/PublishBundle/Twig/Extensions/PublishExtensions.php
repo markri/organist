@@ -1,22 +1,21 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: mdekrijger
- * Date: 8/9/12
- * Time: 12:43 AM
- * To change this template use File | Settings | File Templates.
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
  */
+
 namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Twig_Extension;
 
-
 class PublishExtensions extends Twig_Extension
 {
-
-
     protected $container;
 
     public function setContainer($container)
@@ -35,7 +34,8 @@ class PublishExtensions extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('apptypelabel', array($this, 'getApplicationTypeLabel'), array('keyname'))
+            new \Twig_SimpleFilter('apptypelabel', array($this, 'getApplicationTypeLabel'), array('keyname')),
+            new \Twig_SimpleFilter('timediff', array($this, 'getTimeDiff'), array('datetime'))
         );
     }
 
@@ -45,8 +45,6 @@ class PublishExtensions extends Twig_Extension
             new \Twig_SimpleTest('checkedout', array($this, 'isApplicationCheckedOut', array('id')))
         );
     }
-
-
 
     /**
      * Returns the name of the extension.
@@ -71,6 +69,33 @@ class PublishExtensions extends Twig_Extension
     }
 
     /**
+     */
+    public function getTimeDiff(\DateTime $dateTime)
+    {
+        $now = new \DateTime();
+        $diff = $now->getTimestamp() - $dateTime->getTimestamp();
+
+        switch(true){
+
+            case $diff < 0 || $diff < 10 * 60:
+                return 'a moment ago';
+            case $diff > 10 * 60 && $diff < 60 * 60:
+                return floor($diff/60).' minutes ago';
+            case $diff > 60 * 60 && $diff < 60 * 60 * 24:
+                $hours = floor($diff/60/60);
+                return $hours == 1 ? 'an hour ago' : $hours.' hours ago';
+            case $diff > 60 * 60 * 24 && $diff < 30 * 60 * 60 * 24:
+                $days = floor($diff/60/60/24);
+                return $days == 1 ? 'a day ago' : $days.' days ago';
+            default:
+                $months = floor($diff/60/60/24/(365/12));
+                return $months == 1 ? 'a month ago' : $months.' months ago';
+
+        }
+
+    }
+
+    /**
      * @return string
      */
     public function getApplicationSelect($id=null)
@@ -78,12 +103,23 @@ class PublishExtensions extends Twig_Extension
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->findAll();
         $current = '';
+        $url = '';
 
         if(!empty($id)){
             $current = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
         }
 
-        return $this->container->get('templating')->render('NetvliesPublishBundle:Application:select.html.twig', array('apps'=>$apps, 'current'=>$current));
+        // Generate default route for first app (if present) and replace id with %s, to generate a route template for dashboard
+        if(count($apps)){
+            $url = $this->container->get('router')->generate('netvlies_publish_application_dashboard', array('id'=> $apps[0]->getId()), null);
+            $url = str_replace($apps[0]->getId(), '%s', $url);
+        }
+
+        return $this->container->get('templating')->render('NetvliesPublishBundle:Application:select.html.twig', array(
+            'dashboardurl'=> $url,
+            'apps'=>$apps,
+            'current'=>$current)
+        );
     }
 
 
@@ -102,5 +138,4 @@ class PublishExtensions extends Twig_Extension
 
         return file_exists($versioning->getRepositoryPath($application));
     }
-
 }
