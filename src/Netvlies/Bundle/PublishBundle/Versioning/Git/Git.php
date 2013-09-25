@@ -13,8 +13,10 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 use GitElephant\Objects\TreeBranch;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
+use GitElephant\Objects\Log;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncBranchesCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncTagsCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\LogCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetBranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Commit;
@@ -235,7 +237,11 @@ class Git implements VersioningInterface
     function getHeadRevision(Application $app)
     {
         $repo = $this->getRepository($app);
-        $log = $repo->getLog()->first();
+
+        $logCommand = LogCommand::getInstance();
+        $outputLines = $repo->getCaller()->execute($logCommand->showAllLog('HEAD', null, 1), true, $repo->getPath())->getOutputLines();
+        $log = Log::createFromOutputLines($repo, $outputLines)->first();
+
         $commit = new Commit();
         $commit->setMessage($log->getMessage());
         $commit->setReference($log->getSha());

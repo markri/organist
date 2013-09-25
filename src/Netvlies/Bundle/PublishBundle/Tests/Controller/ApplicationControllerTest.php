@@ -111,10 +111,7 @@ class ApplicationControllerTest extends WebTestCase
 
     /**
      * @depends Netvlies\Bundle\PublishBundle\Tests\Controller\ApplicationControllerTest::testCheckoutRepository
-<<<<<<< HEAD
      * @todo add test for deleted branches and tags (should be removed)
-=======
->>>>>>> 0828f90ead8f31f8168548e92243ec6928abcc07
      */
     public function testUpdateRepository()
     {
@@ -142,8 +139,5 @@ class ApplicationControllerTest extends WebTestCase
         $ps->run();
     }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 0828f90ead8f31f8168548e92243ec6928abcc07
+
