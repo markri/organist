@@ -14,11 +14,6 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
 
 use GitElephant\Command\BaseCommand;
 
-/**
- * FetchCommand
- *
- * @author Matteo Giachino <matteog@gmail.com>
- */
 class SyncTagsCommand extends BaseCommand
 {
 

@@ -21,7 +21,7 @@ use GitElephant\Command\BaseCommand;
  */
 class ResetBranchCommand extends BaseCommand
 {
-    const GIT_RESET_COMMAND = 'reset';
+    const GIT_RESET_COMMAND = 'reset --hard';
 
     /**
      * @return FetchCommand
@@ -43,7 +43,6 @@ class ResetBranchCommand extends BaseCommand
     {
         $this->clearAll();
         $this->addCommandName(static::GIT_RESET_COMMAND);
-        $this->addCommandArgument('--hard');
         $this->addCommandArgument($originBranch);
 
         return $this->getCommand();

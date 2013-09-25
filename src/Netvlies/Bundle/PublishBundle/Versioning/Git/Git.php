@@ -17,6 +17,9 @@ use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncBranchesCommand
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncTagsCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetBranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Commit;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\BranchCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\CommitInterface;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
 
@@ -90,10 +93,14 @@ class Git implements VersioningInterface
             /**
              * @var TreeBranch $branch
              */
-            $repo->checkout($branch->getName());
             $originBranch = 'origin/'.$branch->getName();
             if(in_array('remotes/'.$originBranch, $remoteBranches)){
+                $repo->checkout($branch->getName());
                 $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch($originBranch));
+            }
+            else{
+                // Force removal of local branch in case it is not on remote
+                $repo->getCaller()->execute(BranchCommand::getInstance()->forceDelete($branch->getName()));
             }
         }
     }

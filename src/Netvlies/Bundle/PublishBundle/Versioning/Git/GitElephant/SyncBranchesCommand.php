@@ -17,7 +17,7 @@ use GitElephant\Command\BaseCommand;
 /**
  * FetchCommand
  *
- * @author Matteo Giachino <matteog@gmail.com>
+ * @todo this should be refactored to FetchCommand
  */
 class SyncBranchesCommand extends BaseCommand
 {
@@ -44,7 +44,6 @@ class SyncBranchesCommand extends BaseCommand
         $this->clearAll();
         $this->addCommandName(static::GIT_FETCH_COMMAND);
         $this->addCommandArgument('origin');
-        $this->addCommandArgument('--prune');
 
         return $this->getCommand();
     }
