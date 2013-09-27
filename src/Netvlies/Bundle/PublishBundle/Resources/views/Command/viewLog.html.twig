@@ -60,7 +60,7 @@
     <br>
 
     <h4>Command</h4>
-    <pre>{{ log.command | replace({'&&': '<br>'}) | raw | trim }}</pre>
+    <pre>{{ log.command | replace({' && ': '<br>', ' &&': '<br>', '&& ': '<br>', '&&': '<br>'}) |  raw }}</pre>
     <br>
 
     <h4>Output</h4>

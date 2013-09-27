@@ -119,6 +119,7 @@ class ApplicationControllerTest extends WebTestCase
 
     /**
      * @depends Netvlies\Bundle\PublishBundle\Tests\Controller\ApplicationControllerTest::testCheckoutRepository
+     * @todo add test for deleted branches and tags (should be removed)
      */
     public function testUpdateRepository()
     {
@@ -147,3 +148,4 @@ class ApplicationControllerTest extends WebTestCase
     }
 
 }
+
