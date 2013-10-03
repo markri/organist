@@ -13,11 +13,14 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 use GitElephant\Objects\TreeBranch;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
+use GitElephant\Objects\Log;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncBranchesCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncTagsCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\LogCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetBranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Commit;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\BranchCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\CommitInterface;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
@@ -90,10 +93,14 @@ class Git implements VersioningInterface
             /**
              * @var TreeBranch $branch
              */
-            $repo->checkout($branch->getName());
             $originBranch = 'origin/'.$branch->getName();
             if(in_array('remotes/'.$originBranch, $remoteBranches)){
+                $repo->checkout($branch->getName());
                 $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch($originBranch));
+            }
+            else{
+                // Force removal of local branch in case it is not on remote
+                $repo->getCaller()->execute(BranchCommand::getInstance()->forceDelete($branch->getName()));
             }
         }
     }
@@ -230,7 +237,11 @@ class Git implements VersioningInterface
     function getHeadRevision(Application $app)
     {
         $repo = $this->getRepository($app);
-        $log = $repo->getLog()->first();
+
+        $logCommand = LogCommand::getInstance();
+        $outputLines = $repo->getCaller()->execute($logCommand->showAllLog('HEAD', null, 1), true, $repo->getPath())->getOutputLines();
+        $log = Log::createFromOutputLines($repo, $outputLines)->first();
+
         $commit = new Commit();
         $commit->setMessage($log->getMessage());
         $commit->setReference($log->getSha());
