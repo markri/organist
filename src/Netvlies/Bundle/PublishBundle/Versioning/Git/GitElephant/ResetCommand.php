@@ -17,7 +17,7 @@ use GitElephant\Command\BaseCommand;
  *
  * @author Matteo Giachino <matteog@gmail.com>
  */
-class ResetBranchCommand extends BaseCommand
+class ResetCommand extends BaseCommand
 {
     const GIT_RESET_COMMAND = 'reset --hard';
 

@@ -15,7 +15,6 @@ use GitElephant\Command\BranchCommand as BaseCommand;
 class BranchCommand extends BaseCommand
 {
 
-
     /**
      * @return BranchCommand
      */

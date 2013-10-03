@@ -25,16 +25,6 @@ interface VersioningInterface
 
 
     /**
-     * Must return last changeset
-     *
-     * @abstract
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return ChangeSetInterface
-     */
-    function getLastChangeset(Application $app);
-
-
-    /**
      * Must checkout/clone a repository
      *
      * @abstract
@@ -80,16 +70,6 @@ interface VersioningInterface
      */
     function getBranches(Application $app);
 
-    /**
-     * Must return an URL which shows the latest commitlogs
-     *
-     * @abstract
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @param $branch
-     * @return array()
-     */
-    function getCommitLog(Application $app, $branch);
-
 
     /**
      * @param Application $app
@@ -115,9 +95,6 @@ interface VersioningInterface
      * - Organist connects to target  host
      * - From target host a connection will be made to the versioning server to retrieve right version
      *
-     * Maybe a deployement should be precompiled by tarballing it and then uploading it to target host. But currently
-     * capifony is built in a way that composer is fetched and executed on target machine. So currently it is much
-     * more easier to use these predefined functions rather than making it custom.
      *
      * @return string
      */

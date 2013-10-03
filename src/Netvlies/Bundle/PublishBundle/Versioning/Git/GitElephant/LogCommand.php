@@ -16,7 +16,6 @@ use GitElephant\Objects\Commit as BaseCommit;
 class LogCommand extends BaseCommand
 {
 
-
     /**
      * @return BranchCommand
      */
@@ -67,27 +66,5 @@ class LogCommand extends BaseCommand
 
         return $this->getCommand();
     }
-
-
-//    public function parseOutputLines($outputLines)
-//    {
-//        $commitLines = null;
-//        $commits = array();
-//        foreach ($outputLines as $line) {
-//            if ('' == $line) {
-//                continue;
-//            }
-//            if (preg_match('/^commit (\w+)$/', $line) > 0) {
-//                if (null !== $commitLines) {
-//                    $commits = BaseCommit::createFromOutputLines($this->repository, $commitLines);
-//                }
-//                $commitLines = array();
-//            }
-//            $commitLines[] = $line;
-//        }
-//        if (null !== $commitLines && count($commitLines) > 0) {
-//            $commits = BaseCommit::createFromOutputLines($this->repository, $commitLines);
-//        }
-//    }
 
 }
