@@ -19,7 +19,9 @@ class GitRepo
     public static function createRepo($path)
     {
         mkdir($path);
-        exec(sprintf('cd %s && git init && touch test && git add test && git commit -m "add test" && git branch develop', escapeshellarg($path)));
+        // Altough test, it must have a tag because branches are only allowed when tracking a remote within organist
+        // A tag isnt checked for existing on remote origin, so use tag for now
+        exec(sprintf('cd %s && git init && touch test && git add test && git commit -m "add test" && git tag develop && git branch develop', escapeshellarg($path)));
     }
 
 

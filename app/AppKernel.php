@@ -37,6 +37,14 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    protected function initializeContainer() {
+        parent::initializeContainer();
+        if (PHP_SAPI == 'cli') {
+            $this->getContainer()->enterScope('request');
+            $this->getContainer()->set('request', new \Symfony\Component\HttpFoundation\Request(), 'request');
+        }
+    }
+
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
