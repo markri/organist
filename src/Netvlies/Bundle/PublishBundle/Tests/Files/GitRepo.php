@@ -14,6 +14,7 @@ class GitRepo
 {
 
     /**
+     * @todo we should include a tar.gz file which includes a remotely tracked repository, see comment below
      * @param $container
      */
     public static function createRepo($path)

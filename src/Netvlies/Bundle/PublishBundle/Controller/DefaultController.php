@@ -24,7 +24,10 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        $em = $this->container->get('doctrine.orm.entity_manager');
+        $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
+
+        return array('apps' => $apps);
     }
 
     /**
