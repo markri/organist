@@ -1,0 +1,12 @@
+<div class="col-lg-2"></div>
+<div class="col-lg-10">
+    <label>Changeset that will be deployed</label>
+    <table class="table">
+    {% for commit in messages  %}
+        <tr>
+            <td>{{ commit.author }}</td>
+            <td>{{ commit.message }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>

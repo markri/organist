@@ -67,4 +67,26 @@ class LogCommand extends BaseCommand
         return $this->getCommand();
     }
 
+
+    /**
+     * Simplified version for the needed command
+     * @param $from
+     * @param $to
+     * @return string
+     */
+    public function getCommitMessagesBetween($from, $to)
+    {
+        $this->clearAll();
+
+        $this->addCommandName(self::GIT_LOG);
+        $this->addCommandArgument('-s');
+        $this->addCommandArgument('--all');
+        $this->addCommandArgument('--pretty=raw');
+        $this->addCommandArgument('--no-color');
+        $this->addCommandSubject(sprintf('%s..%s', $to, $from));
+
+        return $this->getCommand();
+        //return sprintf('git --no-pager log --pretty=oneline %s..%s', $from, $to);
+    }
+
 }

@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManager;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
+use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Action\CommandInterface;
 use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
@@ -268,6 +269,27 @@ class CommandController extends Controller
         $em->flush();
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $newCommand->getId())));
+    }
+
+
+    /**
+     * @Route("/command/loadchangeset/{target}/{revision}")
+     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @Template()
+     * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target
+     * @param $revision
+     */
+    public function loadChangesetAction($target, $revision)
+    {
+        /**
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
+         */
+        $versioningService = $this->get($target->getApplication()->getScmService());
+        $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
+//var_dump($messages);
+        return array(
+            'messages' => $messages
+        );
     }
 
 }

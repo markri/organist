@@ -119,7 +119,26 @@ class Git implements VersioningInterface
     function getChangesets(Application $app, $fromRef, $toRef)
     {
         $repo = $this->getRepository($app);
-        //@todo
+        $outputLines = $repo->getCaller()->execute(LogCommand::getInstance()->getCommitMessagesBetween($fromRef, $toRef))->getOutputLines();
+        $logs = Log::createFromOutputLines($repo, $outputLines);
+
+        $changeset = array();
+        foreach($logs as $log){
+            $msg = $log->getAuthor();
+            if(empty($msg)){
+                // Skip empty logs
+                continue;
+            }
+
+            $commit = new Commit();
+            $commit->setMessage($log->getMessage());
+            $commit->setReference($log->getSha());
+            $commit->setAuthor($log->getAuthor()->getName());
+            $commit->setDateTime($log->getDatetimeCommitter());
+            $changeset[] = $commit;
+        }
+
+        return $changeset;
     }
 
     /**
