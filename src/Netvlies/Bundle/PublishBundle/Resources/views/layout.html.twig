@@ -62,6 +62,10 @@
                                 <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
                             </li>
 
+                        {% else %}
+                            <li {% if environmentstab is defined %}class="active" {% endif %}>
+                                <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Environments</a>
+                            </li>
                         {% endif %}
 
                     </ul>

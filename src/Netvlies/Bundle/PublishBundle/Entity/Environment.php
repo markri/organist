@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Netvlies\Bundle\PublishBundle\Entity\Environment
  *
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\EnvironmentRepository")
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="DTAPhost", columns={"type", "hostname"}), @ORM\UniqueConstraint(name="keyname", columns={"keyname"})})
  */
 class Environment
 {
@@ -27,13 +26,6 @@ class Environment
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @var string $keyName
-     * @Assert\NotBlank(message="Unique keyname is required")
-     * @ORM\Column(name="keyName", type="string", length=255)
-     */
-    protected $keyName;
 
     /**
      * @ORM\Column(name="type", type="string", length=255)
@@ -48,6 +40,11 @@ class Environment
      */
     protected $hostname;
 
+    /**
+     * @var object $targets
+     * @ORM\OneToMany(targetEntity="Target", mappedBy="environment")
+     */
+    protected $targets;
 
     /**
      * Get id
@@ -59,21 +56,6 @@ class Environment
         return $this->id;
     }
 
-    /**
-     * @param string $keyName
-     */
-    public function setKeyName($keyName)
-    {
-        $this->keyName = $keyName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKeyName()
-    {
-        return $this->keyName;
-    }
 
     /**
      * Set type
@@ -114,6 +96,16 @@ class Environment
     {
         return $this->hostname;
     }
+
+
+    /**
+     * @return object
+     */
+    public function getTargets()
+    {
+        return $this->targets;
+    }
+
 
     /**
      * To identify this entity in forms
