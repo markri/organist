@@ -28,7 +28,6 @@ class LoadEnvironment implements FixtureInterface
         $env = new Environment();
         $env->setHostname('localhost');
         $env->setType('P');
-        $env->setKeyName('P_localhost');
 
         $manager->persist($env);
         $manager->flush();

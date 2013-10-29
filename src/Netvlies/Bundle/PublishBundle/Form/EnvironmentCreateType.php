@@ -42,7 +42,7 @@ class EnvironmentCreateType extends AbstractType
 
     public function getName()
     {
-        return 'netvlies_publishbundle_environment_create';
+        return 'environment_create';
     }
 
 }

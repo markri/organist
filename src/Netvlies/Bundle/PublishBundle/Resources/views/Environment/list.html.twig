@@ -2,33 +2,31 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% block content %}
 
-    <h3>Targets</h3>
+    <h3>Environments</h3>
     <hr>
-
-
-        <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead>
-                <th>Type</th>
-                <th>Host</th>
-                <th>Actions</th>
-            </thead>
-        {% for environment in environments %}
-            <tr>
-                <td>{{ environment.type }}</td>
-                <td>{{ environment.hostname }}</td>
-                <td>
-                    <a href="{{path('netvlies_publish_environment_edit', {'id': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
-                    {% if environment.targets | length == 0 %}
-                     | <a onclick="confirm('Are you sure you want to delete this environment?')? window.location = '{{path('netvlies_publish_environment_delete', {'id': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </table>
-        </div>
-
-
+    <div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <th>Type</th>
+            <th>Host</th>
+            <th>Actions</th>
+        </thead>
+    {% for environment in environments %}
+        <tr>
+            <td>{{ environment.type }}</td>
+            <td>{{ environment.hostname }}</td>
+            <td>
+                <a href="{{path('netvlies_publish_environment_edit', {'id': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
+                {% if environment.targets | length == 0 %}
+                 | <a onclick="confirm('Are you sure you want to delete this environment?')? window.location = '{{path('netvlies_publish_environment_delete', {'id': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+            <tr><td colspan="3">Oops, no environments available</td></tr>
+    {% endfor %}
+    </table>
+    </div>
 
     <a href="{{ path('netvlies_publish_environment_create') }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add environment</a>
 {% endblock %}
