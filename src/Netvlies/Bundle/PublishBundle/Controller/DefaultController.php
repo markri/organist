@@ -27,7 +27,19 @@ class DefaultController extends Controller
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
 
-        return array('apps' => $apps);
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        else{
+            $userName = 'anonymous';
+        }
+
+        $favouriteApps = $em->getRepository('NetvliesPublishBundle:CommandLog')->getFavouriteApplications($userName);
+
+        return array(
+            'apps' => $apps,
+            'favourites' => $favouriteApps
+        );
     }
 
     /**
