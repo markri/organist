@@ -112,13 +112,18 @@ class CommandController extends Controller
     {
         $commandLog = new CommandLog();
         $versioningService = $this->container->get($command->getApplication()->getScmService());
+        $repoPath = $versioningService->getRepositoryPath($command->getApplication());
+
+        if(!file_exists($repoPath)){
+            throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
+        }
 
         // Anyterm strips all env vars before executing exec.sh under user deploy
         // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
         $script = 'export HOME='.$_SERVER['HOME'].' && ';
 
         // Change dir to app repository
-        $script .='cd '.$versioningService->getRepositoryPath($command->getApplication())." && ";
+        $script .='cd '. $repoPath ." && ";
         $script .=$command->getCommand();
 
         $commandLog->setCommandLabel($command->getLabel());

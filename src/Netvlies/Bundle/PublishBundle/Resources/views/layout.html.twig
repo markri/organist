@@ -74,36 +74,39 @@
         </nav>
 
         <div class="container">
+            {% block messages %}
 
-            {% for flash in app.session.flashbag.get('error') %}
-                <div class="alert alert-danger">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Oops!</strong> {{ flash|raw }}
-                </div>
-            {% endfor %}
+                {% for flash in app.session.flashbag.get('error') %}
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Oops!</strong> {{ flash|raw }}
+                    </div>
+                {% endfor %}
 
-            {% for flash in app.session.flashbag.get('success') %}
-                <div class="alert alert-success">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Yay!</strong> {{ flash|raw }}
-                </div>
-            {% endfor %}
+                {% for flash in app.session.flashbag.get('success') %}
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Yay!</strong> {{ flash|raw }}
+                    </div>
+                {% endfor %}
 
-            {% for flash in app.session.flashbag.get('warning') %}
-                <div class="alert alert-warning">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <strong>Focus! </strong> {{ flash|raw }}
-                </div>
-            {% endfor %}
+                {% for flash in app.session.flashbag.get('warning') %}
+                    <div class="alert alert-warning">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <strong>Warning!</strong> {{ flash|raw }}
+                    </div>
+                {% endfor %}
 
-            {% for flash in app.session.flashbag.all %}
-                <div class="alert alert-info">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    {% for message in flash %}
-                        <strong>FYI</strong> {{ message |raw }}
-                    {% endfor %}
-                </div>
-            {% endfor %}
+                {% for flash in app.session.flashbag.all %}
+                    <div class="alert alert-info">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {% for message in flash %}
+                            <strong>Info:</strong> {{ message |raw }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+            {% endblock %}
 
             <div class="panel panel-default">
                 <div class="panel-body">

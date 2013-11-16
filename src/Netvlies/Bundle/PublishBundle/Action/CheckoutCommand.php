@@ -21,16 +21,6 @@ class CheckoutCommand implements CommandApplicationInterface
      */
     protected $application;
 
-    /**
-     * @var VersioningInterface $versioningService
-     */
-    protected $versioningService;
-
-    /**
-     * @var string $environment
-     */
-    protected $environment;
-
 
     /**
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $application
@@ -49,33 +39,12 @@ class CheckoutCommand implements CommandApplicationInterface
     }
 
     /**
-     * @param VersioningInterface $versioningService
-     */
-    public function setVersioningService(VersioningInterface $versioningService)
-    {
-        $this->versioningService = $versioningService;
-    }
-
-    /**
-     * @param string $environment
-     */
-    public function setEnvironment($environment)
-    {
-        $this->environment = $environment;
-    }
-
-    /**
      * @return string
      */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
-
     public function getCommand()
     {
         $appRoot = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-        return sprintf('cd %s && app/console publish:checkout --key=%s --env=%s', $appRoot, $this->getApplication()->getKeyName(), $this->getEnvironment());
+        return sprintf('cd %s && app/console publish:checkout --key=%s', $appRoot, $this->getApplication()->getKeyName());
     }
 
     /**

@@ -2,6 +2,19 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig'  %}
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
+
+{% block messages %}
+    {{ parent() }}
+    {% if application.id is not checkedout %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> Application isn't checked out yet. <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id}) }}" class="alert-link">Click here</a> to checkout repository.
+        </div>
+    {% endif %}
+{% endblock %}
+
+
+
 {% block content %}
 
     <h3>{{application.name}}</h3>
