@@ -28,7 +28,11 @@
         <div class="form-group">
             {{ form_label(deployForm.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
             <div class="col-lg-10">
-                {{ form_widget(deployForm.revision, { 'attr': {'class': 'form-control'}} ) }}
+                {% if deployForm.revision.vars.choices | length > 10 %}
+                    {{ form_widget(deployForm.revision, { 'attr': {'class': 'bigrevisionselect', 'style': 'width: 100%;'}} ) }}
+                {% else %}
+                    {{ form_widget(deployForm.revision, { 'attr': {'class': 'form-control'}} ) }}
+                {% endif %}
             </div>
         </div>
         <div class="form-group" id="loadchangeset" data-env="{{ app.environment }}"></div>

@@ -2,7 +2,7 @@ $(function () {
 
     $(document).ready(function() {
 
-        // ****************** Filter
+        // ****************** Application filter
         $("#appselect").select2(
             {
                 placeholder: 'Type in here to find your application'
@@ -15,11 +15,17 @@ $(function () {
             });
 
 
-        $('.filter-list').liveFilter('.filter-box', 'li', {
-            filterChildSelector: 'a'
-        });
+//        $('.filter-list').liveFilter('.filter-box', 'li', {
+//            filterChildSelector: 'a'
+//        });
 
 
+        // ******************* Branch/Tag filter
+        $(".bigrevisionselect").select2(
+            {
+                placeholder: 'Type in here to find your revision'
+            }
+        );
 
         // ****************** Load changeset
         $("#netvlies_publishbundle_applicationdeploy_target").change(
