@@ -1,6 +1,7 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 
 {% block content %}
+    <div class="hidden-xs">
     <h3>Application list</h3>
     <hr>
     <section id="relevant-repos">
@@ -45,4 +46,5 @@
         <a href="{{path('netvlies_publish_application_create')}}" class="btn btn-default">Add new application</a>
 
     </section>
+    </div>
 {% endblock %}

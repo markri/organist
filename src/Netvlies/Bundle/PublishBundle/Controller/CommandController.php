@@ -291,7 +291,7 @@ class CommandController extends Controller
          */
         $versioningService = $this->get($target->getApplication()->getScmService());
         $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
-//var_dump($messages);
+
         return array(
             'messages' => $messages
         );
