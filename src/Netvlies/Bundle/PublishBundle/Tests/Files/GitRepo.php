@@ -19,6 +19,13 @@ class GitRepo
      */
     public static function createRepo($path)
     {
+        // Make sure the repos path exists in app/cache/test
+
+        $parent = dirname($path);
+        if(!file_exists($parent)){
+            mkdir($parent);
+        }
+
         mkdir($path);
         // Altough test, it must have a tag because branches are only allowed when tracking a remote within organist
         // A tag isnt checked for existing on remote origin, so use tag for now

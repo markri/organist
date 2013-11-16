@@ -44,7 +44,7 @@ class CheckoutCommand extends ContainerAwareCommand
          */
         $application = $em->getRepository('NetvliesPublishBundle:Application')->findOneByKeyName($key);
         if(empty($application)){
-            $output->writeln(sprintf('Application with %s doesnt exist', $key));
+            $output->writeln(sprintf('Application with key "%s" doesnt exist', $key));
             return;
         }
 

@@ -5,6 +5,7 @@
     <h3>Organist dashboard</h3>
     <hr>
 
+    {% if apps|length > 0 %}
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
@@ -19,8 +20,12 @@
                 {% endfor %}
             </table>
         </div>
-        <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
-
+    {% else %}
+        Oops! There are no applications present. Try adding one with button below
+        <br>
+        <br>
+        <a href="{{path('netvlies_publish_application_create')}}" class="btn btn-default">Add new application</a>
+    {% endif %}
 
     {#<div class="hidden-xs">#}
     {#<section id="relevant-repos">#}
@@ -53,15 +58,8 @@
                 {#</ol>#}
                 {#<div class="handle"></div>#}
             {#</div>#}
-
-
-        {#{% else %}#}
-            {#Oops! There are no applications present. Try adding one with button below#}
-            {#<br>#}
         {#{% endif %}#}
 
-        {#<br>#}
-        {#<a href="{{path('netvlies_publish_application_create')}}" class="btn btn-default">Add new application</a>#}
 
     {#</section>#}
     {#</div>#}

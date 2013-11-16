@@ -19,7 +19,7 @@ class DefaultControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/');
-        $this->assertTrue($crawler->filter('html:contains("Application list")')->count() > 0);
+        $this->assertTrue($crawler->filter('html:contains("Top applications")')->count() > 0);
     }
 
 
