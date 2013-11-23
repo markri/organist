@@ -11,6 +11,14 @@
             <strong>Warning!</strong> Application isn't checked out yet. <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id}) }}" class="alert-link">Click here</a> to checkout repository.
         </div>
     {% endif %}
+
+    {% for overlap in usercontentoverlap(application.id) %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> User content also in repository for "{{ overlap }}". Please remove from <a href="{{ path('netvlies_publish_application_edit', {'id': application.id}) }}" class="alert-link">settings</a> or from repository
+        </div>
+    {% endfor %}
+
 {% endblock %}
 
 

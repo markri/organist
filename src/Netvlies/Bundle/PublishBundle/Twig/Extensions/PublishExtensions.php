@@ -28,6 +28,7 @@ class PublishExtensions extends Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('applicationselect', array($this, 'getApplicationSelect'), array('id')),
+            new \Twig_SimpleFunction('usercontentoverlap', array($this, 'getUserContentOverlap'), array('id')),
         );
     }
 
@@ -137,5 +138,44 @@ class PublishExtensions extends Twig_Extension
         $versioning = $this->container->get($application->getScmService());
 
         return file_exists($versioning->getRepositoryPath($application));
+    }
+
+
+
+    public function getUserContentOverlap($id)
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+
+        /**
+         * @var Application $application
+         */
+        $application = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
+        /**
+         * @var VersioningInterface $versioning
+         */
+        $versioning = $this->container->get($application->getScmService());
+
+        $userFiles = $application->getUserFiles();
+        $overlaps = array();
+
+
+        foreach($userFiles as $userFile){
+            /**
+             * @var UserFile $userFile
+             */
+            $path = $versioning->getRepositoryPath($application) . DIRECTORY_SEPARATOR . $userFile->getPath();
+
+            if(file_exists($path)){
+                if($userFile->getType() == 'D' && is_dir($path)){
+                    $overlaps[] = $userFile->getPath();
+                }
+                if($userFile->getType() == 'F' && is_file($path)){
+                    $overlaps[] = $userFile->getPath();
+                }
+            }
+        }
+
+        return $overlaps;
     }
 }
