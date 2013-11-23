@@ -290,9 +290,18 @@ class CommandController extends Controller
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
          */
         $versioningService = $this->get($target->getApplication()->getScmService());
-        $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
+        $errorMsg = '';
+        $messages = array();
+
+        try{
+            $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
+        }
+        catch(\Exception $e){
+            $errorMsg = $e->getMessage();
+        }
 
         return array(
+            'errorMsg' => $errorMsg,
             'messages' => $messages
         );
     }
