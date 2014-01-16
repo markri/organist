@@ -10,6 +10,8 @@ php:
 
 before_script:
     - cp app/config/parameters.T.yml app/config/parameters.yml
+    - git config --global user.email "mdekrijger@netvlies.nl"
+    - git config --global user.name "M. de Krijger"
     - composer install --dev
 
 script:  phpunit --configuration app/phpunit.xml.dist
