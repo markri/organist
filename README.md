@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/organist/organist.png?branch=master)](https://travis-ci.org/organist/organist)
 
+Organist is an open source tool which helps you manage and execute deployments. It's built on top of Symfony2 and Capistrano/Capifony. [More @ http://organist.github.io](http://organist.github.io)
+
+
 ## Setup ##
 
 This is the bare Organist application including the Symfony 2.2. framework. Unless you want to change/add customizations
