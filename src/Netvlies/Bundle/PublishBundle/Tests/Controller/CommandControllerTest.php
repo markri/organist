@@ -54,8 +54,7 @@ class CommandControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/application/1/commands');
 
         $form= $crawler->selectButton('Deploy')->form();
-
-        $form['netvlies_publishbundle_applicationdeploy[revision]'] = 'develop';
+        $form['netvlies_publishbundle_applicationdeploy[revision]'] = GitRepo::$lastCommit;
         $form['netvlies_publishbundle_applicationdeploy[target]'] = '1';
 
         $crawler = $client->submit($form);

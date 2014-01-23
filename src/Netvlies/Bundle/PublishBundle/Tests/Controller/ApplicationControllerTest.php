@@ -72,6 +72,7 @@ class ApplicationControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
+
         $crawler = $client->request('GET', '/application/settings/1');
         $link = $crawler->selectLink('Delete application')->link();
         $client->click($link);
