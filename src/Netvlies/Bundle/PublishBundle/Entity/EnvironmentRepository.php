@@ -30,6 +30,7 @@ class EnvironmentRepository extends EntityRepository
     {
         $query = $this->getEntityManager()->createQuery('
             SELECT e FROM Netvlies\Bundle\PublishBundle\Entity\Environment e
+            ORDER BY e.hostname
         ');
 
         $result = $query->getResult();

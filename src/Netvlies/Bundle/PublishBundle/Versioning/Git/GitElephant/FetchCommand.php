@@ -6,8 +6,6 @@
  * file that was distributed with this source code.
  *
  * @author: markri <mdekrijger@netvlies.nl>
- *
- * This is extra on top of the GitElephantBundle
  */
 
 namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
@@ -15,16 +13,14 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
 use GitElephant\Command\BaseCommand;
 
 /**
- * PullCommand
- *
- * @author Matteo Giachino <matteog@gmail.com>
+ * FetchCommand
  */
-class PullCommand extends BaseCommand
+class FetchCommand extends BaseCommand
 {
-    const GIT_PULL_COMMAND = 'pull';
+    const GIT_FETCH_COMMAND = 'fetch';
 
     /**
-     * @return PullCommand
+     * @return FetchCommand
      */
     static public function getInstance()
     {
@@ -39,11 +35,11 @@ class PullCommand extends BaseCommand
      *
      * @return string command
      */
-    public function pullAllUpdates()
+    public function fetchOrigin()
     {
         $this->clearAll();
-        $this->addCommandName(static::GIT_PULL_COMMAND);
-        $this->addCommandArgument('--all');
+        $this->addCommandName(static::GIT_FETCH_COMMAND);
+        $this->addCommandArgument('origin');
 
         return $this->getCommand();
     }

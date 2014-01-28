@@ -42,4 +42,46 @@ class CommandLogRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    public function getFavouriteApplications($user='anonymous', $limit=5)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery('
+            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
+            WHERE c.user = :user
+            GROUP BY c.application
+            ORDER BY c.id DESC
+        ')->setParameter('user', $user);
+
+        $query->setMaxResults($limit);
+
+        $result = $query->getResult();
+        $apps = array();
+        $appIds = array();
+
+        foreach($result as $log){
+            $apps[] = $log->getApplication();
+            $appIds[] = $log->getApplication()->getId();
+        }
+
+        if(count($apps) < $limit){
+
+            $query = $entityManager->createQuery('
+               SELECT a FROM Netvlies\Bundle\PublishBundle\Entity\Application a
+               WHERE a.id NOT IN (:appIds)
+               ORDER BY a.id DESC'
+            )->setParameter('appIds', $appIds);
+
+            $query->setMaxResults($limit - count($apps));
+            $result = $query->getResult();
+
+            foreach($result as $app){
+                $apps[] = $app;
+            }
+        }
+
+        return $apps;
+    }
+
 }

@@ -8,7 +8,7 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
+namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 
 use Netvlies\Bundle\PublishBundle\Versioning\CommitInterface;
 

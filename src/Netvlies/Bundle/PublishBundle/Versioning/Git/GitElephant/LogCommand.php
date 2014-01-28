@@ -16,7 +16,6 @@ use GitElephant\Objects\Commit as BaseCommit;
 class LogCommand extends BaseCommand
 {
 
-
     /**
      * @return BranchCommand
      */
@@ -69,25 +68,25 @@ class LogCommand extends BaseCommand
     }
 
 
-//    public function parseOutputLines($outputLines)
-//    {
-//        $commitLines = null;
-//        $commits = array();
-//        foreach ($outputLines as $line) {
-//            if ('' == $line) {
-//                continue;
-//            }
-//            if (preg_match('/^commit (\w+)$/', $line) > 0) {
-//                if (null !== $commitLines) {
-//                    $commits = BaseCommit::createFromOutputLines($this->repository, $commitLines);
-//                }
-//                $commitLines = array();
-//            }
-//            $commitLines[] = $line;
-//        }
-//        if (null !== $commitLines && count($commitLines) > 0) {
-//            $commits = BaseCommit::createFromOutputLines($this->repository, $commitLines);
-//        }
-//    }
+    /**
+     * Simplified version for the needed command
+     * @param $from
+     * @param $to
+     * @return string
+     */
+    public function getCommitMessagesBetween($from, $to)
+    {
+        $this->clearAll();
+
+        $this->addCommandName(self::GIT_LOG);
+        $this->addCommandArgument('-s');
+        $this->addCommandArgument('--all');
+        $this->addCommandArgument('--pretty=raw');
+        $this->addCommandArgument('--no-color');
+        $this->addCommandSubject(sprintf('%s..%s', $to, $from));
+
+        return $this->getCommand();
+        //return sprintf('git --no-pager log --pretty=oneline %s..%s', $from, $to);
+    }
 
 }

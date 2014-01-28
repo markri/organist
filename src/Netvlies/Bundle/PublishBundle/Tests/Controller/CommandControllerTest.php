@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
+
 namespace Netvlies\Bundle\PublishBundle\Tests\Controller;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -45,8 +54,7 @@ class CommandControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/application/1/commands');
 
         $form= $crawler->selectButton('Deploy')->form();
-
-        $form['netvlies_publishbundle_applicationdeploy[revision]'] = 'develop';
+        $form['netvlies_publishbundle_applicationdeploy[revision]'] = GitRepo::$lastCommit;
         $form['netvlies_publishbundle_applicationdeploy[target]'] = '1';
 
         $crawler = $client->submit($form);

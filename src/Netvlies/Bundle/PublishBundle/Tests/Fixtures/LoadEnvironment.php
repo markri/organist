@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Tests\Fixtures;
 
@@ -21,7 +28,6 @@ class LoadEnvironment implements FixtureInterface
         $env = new Environment();
         $env->setHostname('localhost');
         $env->setType('P');
-        $env->setKeyName('P_localhost');
 
         $manager->persist($env);
         $manager->flush();

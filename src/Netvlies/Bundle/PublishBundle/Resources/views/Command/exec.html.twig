@@ -3,7 +3,11 @@
 
 {% block content %}
 
-    <h3>Executing command</h3>
+    <h3>Executing command
+        {% if command.target is not empty %}
+            on ({{ command.target.environment.type }}) {{ command.target.environment.hostname }}
+        {% endif %}
+    </h3>
     <hr>
 
     <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" class="btn btn-default pull-right">Go to command overview</a>

@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Tests\Controller;
 
@@ -64,6 +72,7 @@ class ApplicationControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
+
         $crawler = $client->request('GET', '/application/settings/1');
         $link = $crawler->selectLink('Delete application')->link();
         $client->click($link);

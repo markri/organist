@@ -144,5 +144,7 @@ img#Close {
 
   overflow: auto;
   overflow-x: visible;
+  min-height: 500px;
+  max-height: 500px;
 }
 

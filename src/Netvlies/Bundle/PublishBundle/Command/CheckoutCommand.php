@@ -44,7 +44,7 @@ class CheckoutCommand extends ContainerAwareCommand
          */
         $application = $em->getRepository('NetvliesPublishBundle:Application')->findOneByKeyName($key);
         if(empty($application)){
-            $output->writeln(sprintf('Application with %s doesnt exist', $key));
+            $output->writeln(sprintf('Application with key "%s" doesnt exist', $key));
             return;
         }
 
@@ -54,5 +54,22 @@ class CheckoutCommand extends ContainerAwareCommand
         $versioning = $this->getContainer()->get($application->getScmService());
         $output->writeln(sprintf('Checking out application %s, this might take a while depending on repository size ...', $application->getName()));
         $versioning->checkoutRepository($application);
+
+        // Check if repository is there
+        if(!file_exists($versioning->getRepositoryPath($application))
+        || !file_exists($versioning->getRepositoryPath($application). DIRECTORY_SEPARATOR . '.git')){
+            // oops, checkout failed
+            // remove dir
+            exec(sprintf('rm -rf %s', $versioning->getRepositoryPath($application)));
+            return 1;
+        }
+
+        $fi = new \FilesystemIterator($versioning->getRepositoryPath($application), \FilesystemIterator::SKIP_DOTS);
+        if(iterator_count($fi) <= 1){
+            //oops only .git folder present
+            exec(sprintf('rm -rf %s', $versioning->getRepositoryPath($application)));
+            return 1;
+        }
+
     }
 }

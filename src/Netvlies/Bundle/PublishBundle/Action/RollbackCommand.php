@@ -95,7 +95,6 @@ class RollbackCommand implements CommandTargetInterface
             }
         }
 
-        //@todo eliminate bridgebin by using parameter bundle
         //@todo there is dtap and otap, otap is still there for BC
         return trim(preg_replace('/\s\s+/', ' ', "
             cap ".$this->target->getEnvironment()->getType()." deploy:rollback
@@ -116,7 +115,6 @@ class RollbackCommand implements CommandTargetInterface
             -Shostname='".$this->target->getEnvironment()->getHostname()."'
             -Sotap='".$this->target->getEnvironment()->getType()."'
             -Sdtap='".$this->target->getEnvironment()->getType()."'
-            -Sbridgebin='/home/hosting-ftp/deploy/deploy_bridge'
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'"));
     }

@@ -1,6 +1,8 @@
 $(function () {
 
     $(document).ready(function() {
+
+        // ****************** Application filter
         $("#appselect").select2(
             {
                 placeholder: 'Type in here to find your application'
@@ -13,12 +15,55 @@ $(function () {
             });
 
 
-        $('.filter-list').liveFilter('.filter-box', 'li', {
-            filterChildSelector: 'a'
-        });
+//        $('.filter-list').liveFilter('.filter-box', 'li', {
+//            filterChildSelector: 'a'
+//        });
+
+
+        // ******************* Branch/Tag filter
+        $(".bigrevisionselect").select2(
+            {
+                placeholder: 'Type in here to find your revision'
+            }
+        );
+
+        // ****************** Load changeset
+        $("#netvlies_publishbundle_applicationdeploy_target").change(
+            function(){
+                loadChangeList();
+            }
+        );
+
+        $("#netvlies_publishbundle_applicationdeploy_revision").change(
+            function(){
+                loadChangeList();
+            }
+        );
+
+        function loadChangeList(){
+            var target = $("#netvlies_publishbundle_applicationdeploy_target").val();
+            var revision = $("#netvlies_publishbundle_applicationdeploy_revision").val();
+
+            if(!target || !revision){
+                return;
+            }
+
+            var app_dev = '';
+            if($('#loadchangeset').data('env')){
+                app_dev = '/app_dev.php'
+            }
+            $('#loadchangeset').html('<div class="col-lg-2"></div><div class="col-lg-10"><img src="/bundles/netvliespublish/img/ajax-loader.gif"> Loading changeset</div>')
+
+            $.ajax({
+                url: app_dev+"/command/loadchangeset/"+target+"/"+revision
+            }).done(function(changeset) {
+                $('#loadchangeset').html(changeset);
+            });
+        }
 
 
 
+        // ******************** User files
         // Get the ul that holds the collection of tags
         var collectionHolder = $('div.userfiles');
 

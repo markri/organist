@@ -23,7 +23,7 @@ parameters:
     prod_oauth_secret: secret
 
     # Change this to IS_AUTHENTICATED_FULLY when you want to use the oauth provider. Or to IS_AUTHENTICATED_ANONYMOUSLY for disabling login
-    minimum_security_role: IS_AUTHENTICATED_FULLY
+    minimum_security_role: IS_AUTHENTICATED_ANONYMOUSLY
 
     # Optional check when using oauth to restrict e-mail adresses from certain domain
     oauth_mail_regex: /@netvlies.net$/i

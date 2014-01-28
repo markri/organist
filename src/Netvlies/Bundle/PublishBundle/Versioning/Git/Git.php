@@ -14,13 +14,11 @@ use GitElephant\Objects\TreeBranch;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
 use GitElephant\Objects\Log;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncBranchesCommand;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\SyncTagsCommand;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\LogCommand;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetBranchCommand;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Reference;
-use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\Commit;
 use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\BranchCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\LogCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\ResetCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\FetchCommand;
+use Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant\TagCommand;
 use Netvlies\Bundle\PublishBundle\Versioning\CommitInterface;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
@@ -49,20 +47,9 @@ class Git implements VersioningInterface
         $this->privateKey = $privateKey;
     }
 
-    protected function getRepository(Application $app)
-    {
-        if(empty($this->repository)){
-            $repoPath = $this->getRepositoryPath($app);
-            $this->repository = new Repository($repoPath);
-        }
-
-        return $this->repository;
-    }
-
     /**
      * Must update your repository
      * This method is kind of expensive when there are many branches.
-     * @todo do fetch -a so we have all remote branches and tags, and only checkout local branch when deployment for it is requested
      *
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return boolean
@@ -71,51 +58,33 @@ class Git implements VersioningInterface
     {
         $repo = $this->getRepository($app);
         // sync tags with origin
-        $repo->getCaller()->execute(SyncTagsCommand::getInstance()->syncAllTags());
+        $repo->getCaller()->execute(TagCommand::getInstance()->syncAllTags());
 
-        //sync branches with origin (fetch --all --prune) this will sync remotes/origin/* but no local branches that tracks one of the branches in here
-        $repo->getCaller()->execute(SyncBranchesCommand::getInstance()->syncAllBranches());
+        //sync branches with origin (fetch --all ) this will sync remotes/origin/* but no local branches that tracks one of the branches in here
+        $repo->getCaller()->execute(FetchCommand::getInstance()->fetchOrigin());
 
         // Ensure that every remote branch is locally available, so its deployment descriptors can be used
         $repo->checkoutAllRemoteBranches(); // remotes/origin/mybranch will be mybranch
+        $remoteBranches = $this->getRemoteBrancheNames($app);
 
-
-        $allBranches = $repo->getBranches(true, true);
-        $remoteBranches = array_filter($allBranches, function($branch) {
-            return preg_match('/^remotes(.+)$/', $branch)
-            && !preg_match('/^(.+)(HEAD)(.*?)$/', $branch);
-        });
-
-
-        // Get all tracked branches and reset them to origin/{branchname}
+        // Get all local branches and reset them to origin/{branchname}
         $branches = $repo->getBranches();
         foreach($branches as $branch){
             /**
              * @var TreeBranch $branch
              */
-            $originBranch = 'origin/'.$branch->getName();
-            if(in_array('remotes/'.$originBranch, $remoteBranches)){
+            if(in_array($branch->getName(), $remoteBranches)){
                 $repo->checkout($branch->getName());
-                $repo->getCaller()->execute(ResetBranchCommand::getInstance()->resetCurrentBranch($originBranch));
+                $repo->getCaller()->execute(ResetCommand::getInstance()->resetCurrentBranch($branch->getName()));
             }
             else{
+                // We dont have to delete the "untracked" branch, $this->getBranches() will only return the remote branches
                 // Force removal of local branch in case it is not on remote
-                $repo->getCaller()->execute(BranchCommand::getInstance()->forceDelete($branch->getName()));
+                //$repo->getCaller()->execute(BranchCommand::getInstance()->forceDelete($branch->getName()));
             }
         }
     }
 
-
-    /**
-     * Must return last changeset
-     *
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return ChangeSetInterface
-     */
-    function getLastChangeset(Application $app)
-    {
-        // TODO: Implement getLastChangeset() method.
-    }
 
     /**
      * Must checkout/clone a repository
@@ -131,6 +100,7 @@ class Git implements VersioningInterface
         $repo = $this->getRepository($app);
         try{
             $repo->cloneFrom($app->getScmUrl(), $repoPath);
+            $repo->checkoutAllRemoteBranches();
         }
         catch(\Exception $e){
             exec('rm -rf '.escapeshellarg($repoPath));
@@ -149,6 +119,26 @@ class Git implements VersioningInterface
     function getChangesets(Application $app, $fromRef, $toRef)
     {
         $repo = $this->getRepository($app);
+        $outputLines = $repo->getCaller()->execute(LogCommand::getInstance()->getCommitMessagesBetween($fromRef, $toRef))->getOutputLines();
+        $logs = Log::createFromOutputLines($repo, $outputLines);
+
+        $changeset = array();
+        foreach($logs as $log){
+            $msg = $log->getAuthor();
+            if(empty($msg)){
+                // Skip empty logs
+                continue;
+            }
+
+            $commit = new Commit();
+            $commit->setMessage($log->getMessage());
+            $commit->setReference($log->getSha());
+            $commit->setAuthor($log->getAuthor()->getName());
+            $commit->setDateTime($log->getDatetimeCommitter());
+            $changeset[] = $commit;
+        }
+
+        return $changeset;
     }
 
     /**
@@ -165,6 +155,7 @@ class Git implements VersioningInterface
 
     /**
      * Returns array with all branches
+     * Only return remote branches. A local untracked branch that is checked out will be skipped by then and remains there for historical purposes
      *
      * @param Application $app
      * @return array
@@ -172,18 +163,24 @@ class Git implements VersioningInterface
     function getBranches(Application $app)
     {
         $repo = $this->getRepository($app);
-        $repo->checkout('master'); // Switch to master, because when we're in detached state, output will be useless for git elephant
+        $repo->checkout('master'); // Switch to master, because when we're in detached state after deployment, output will be useless for git elephant
+        $branches = $repo->getBranches();
 
-        $branches =$repo->getBranches();
+        $remoteBranches = $this->getRemoteBrancheNames($app);
         $references = array();
 
-        foreach($branches as $branche){
+        foreach($branches as $branch){
             /**
-             * @var \GitElephant\Objects\TreeBranch $branche
+             * @var \GitElephant\Objects\Branch $branch
              */
+            if(!in_array($branch->getName(), $remoteBranches)){
+                // Skip untracked branches that do not exist on remote
+                continue;
+            }
+
             $reference = new Reference();
-            $reference->setReference($branche->getSha());
-            $reference->setName($branche->getName());
+            $reference->setReference($branch->getSha());
+            $reference->setName($branch->getName());
             $references[] = $reference;
         }
 
@@ -218,17 +215,6 @@ class Git implements VersioningInterface
         return $references;
     }
 
-
-    /**
-     * Must return an URL which shows the latest commitlogs
-     *
-     * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
-     * @return array()
-     */
-    function getCommitLog(Application $app, $branch)
-    {
-        // TODO: Implement getCommitLog() method.
-    }
 
     /**
      * @param Application $app
@@ -282,4 +268,39 @@ class Git implements VersioningInterface
         return $this->privateKey;
     }
 
+
+    protected function getRepository(Application $app)
+    {
+        if(empty($this->repository)){
+            $repoPath = $this->getRepositoryPath($app);
+            $this->repository = new Repository($repoPath);
+        }
+
+        return $this->repository;
+    }
+
+
+    /**
+     * Internal helper method to just return remote Branchenames (optionally with full path /remotes/origin)
+     * @param Application $app
+     * @return array with Branchnames
+     */
+    protected function getRemoteBrancheNames(Application $app, $fullPath=false)
+    {
+        $allBranches = $this->getRepository($app)->getBranches(true, true);
+        $remoteBrancheNames = array_filter($allBranches, function($branch) {
+            return preg_match('/^remotes(.+)$/', $branch)
+            && !preg_match('/^(.+)(HEAD)(.*?)$/', $branch);
+        });
+
+        if(!$fullPath){
+            $branches = array();
+            foreach($remoteBrancheNames as $name){
+                $branches[] = basename($name);
+            }
+            $remoteBrancheNames = $branches;
+        }
+
+        return $remoteBrancheNames;
+    }
 }

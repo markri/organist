@@ -2,6 +2,27 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig'  %}
 {% block oms_project_name %}{{application.name}}{% endblock %}
 
+
+{% block messages %}
+    {{ parent() }}
+    {% if application.id is not checkedout %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> Application isn't checked out yet. <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id}) }}" class="alert-link">Click here</a> to checkout repository.
+        </div>
+    {% endif %}
+
+    {% for overlap in usercontentoverlap(application.id) %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> User content also in repository for "{{ overlap }}". Please remove from <a href="{{ path('netvlies_publish_application_edit', {'id': application.id}) }}" class="alert-link">settings</a> or from repository
+        </div>
+    {% endfor %}
+
+{% endblock %}
+
+
+
 {% block content %}
 
     <h3>{{application.name}}</h3>
@@ -19,6 +40,8 @@
     {% if application.targets | length > 0%}
 
         <h4>Currently deployed versions</h4>
+        <div class="table-responsive">
+
         <table class="table table-bordered">
         <thead>
         <tr>
@@ -51,6 +74,8 @@
             </td>
             {%endfor%}
         </table>
+        </div>
+        <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
 
         <br><br>
     {%endif%}
@@ -61,6 +86,7 @@
         </div>
     {% else %}
         <h4>Last executed commands</h4>
+        <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
@@ -116,6 +142,8 @@
                 <td><a href="{{ path('netvlies_publish_command_listlogs', {'id': application.id}) }}">View all logs</a></td>
             </tr>
         </table>
+        </div>
+        <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
     {% endif %}
 
 {% endblock %}

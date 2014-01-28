@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManager;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
+use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Action\CommandInterface;
 use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
@@ -111,13 +112,18 @@ class CommandController extends Controller
     {
         $commandLog = new CommandLog();
         $versioningService = $this->container->get($command->getApplication()->getScmService());
+        $repoPath = $versioningService->getRepositoryPath($command->getApplication());
+
+        if(!file_exists($repoPath)){
+            throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
+        }
 
         // Anyterm strips all env vars before executing exec.sh under user deploy
         // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
         $script = 'export HOME='.$_SERVER['HOME'].' && ';
 
         // Change dir to app repository
-        $script .='cd '.$versioningService->getRepositoryPath($command->getApplication())." && ";
+        $script .='cd '. $repoPath ." && ";
         $script .=$command->getCommand();
 
         $commandLog->setCommandLabel($command->getLabel());
@@ -268,6 +274,36 @@ class CommandController extends Controller
         $em->flush();
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $newCommand->getId())));
+    }
+
+
+    /**
+     * @Route("/command/loadchangeset/{target}/{revision}")
+     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @Template()
+     * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target
+     * @param $revision
+     */
+    public function loadChangesetAction($target, $revision)
+    {
+        /**
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
+         */
+        $versioningService = $this->get($target->getApplication()->getScmService());
+        $errorMsg = '';
+        $messages = array();
+
+        try{
+            $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
+        }
+        catch(\Exception $e){
+            $errorMsg = $e->getMessage();
+        }
+
+        return array(
+            'errorMsg' => $errorMsg,
+            'messages' => $messages
+        );
     }
 
 }

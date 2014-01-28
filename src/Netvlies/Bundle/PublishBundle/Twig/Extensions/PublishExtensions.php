@@ -28,6 +28,7 @@ class PublishExtensions extends Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('applicationselect', array($this, 'getApplicationSelect'), array('id')),
+            new \Twig_SimpleFunction('usercontentoverlap', array($this, 'getUserContentOverlap'), array('id')),
         );
     }
 
@@ -80,15 +81,15 @@ class PublishExtensions extends Twig_Extension
             case $diff < 0 || $diff < 10 * 60:
                 return 'a moment ago';
             case $diff > 10 * 60 && $diff < 60 * 60:
-                return floor($diff/60).' minutes ago';
+                return ceil($diff/60).' minutes ago';
             case $diff > 60 * 60 && $diff < 60 * 60 * 24:
-                $hours = floor($diff/60/60);
+                $hours = ceil($diff/60/60);
                 return $hours == 1 ? 'an hour ago' : $hours.' hours ago';
             case $diff > 60 * 60 * 24 && $diff < 30 * 60 * 60 * 24:
-                $days = floor($diff/60/60/24);
+                $days = ceil($diff/60/60/24);
                 return $days == 1 ? 'a day ago' : $days.' days ago';
             default:
-                $months = floor($diff/60/60/24/(365/12));
+                $months = ceil($diff/60/60/24/(365/12));
                 return $months == 1 ? 'a month ago' : $months.' months ago';
 
         }
@@ -137,5 +138,44 @@ class PublishExtensions extends Twig_Extension
         $versioning = $this->container->get($application->getScmService());
 
         return file_exists($versioning->getRepositoryPath($application));
+    }
+
+
+
+    public function getUserContentOverlap($id)
+    {
+        $em = $this->container->get('doctrine.orm.entity_manager');
+
+        /**
+         * @var Application $application
+         */
+        $application = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+
+        /**
+         * @var VersioningInterface $versioning
+         */
+        $versioning = $this->container->get($application->getScmService());
+
+        $userFiles = $application->getUserFiles();
+        $overlaps = array();
+
+
+        foreach($userFiles as $userFile){
+            /**
+             * @var UserFile $userFile
+             */
+            $path = $versioning->getRepositoryPath($application) . DIRECTORY_SEPARATOR . $userFile->getPath();
+
+            if(file_exists($path)){
+                if($userFile->getType() == 'D' && is_dir($path)){
+                    $overlaps[] = $userFile->getPath();
+                }
+                if($userFile->getType() == 'F' && is_file($path)){
+                    $overlaps[] = $userFile->getPath();
+                }
+            }
+        }
+
+        return $overlaps;
     }
 }

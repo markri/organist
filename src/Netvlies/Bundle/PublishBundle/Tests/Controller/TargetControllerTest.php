@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of Organist
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @author: markri <mdekrijger@netvlies.nl>
+ */
 
 namespace Netvlies\Bundle\PublishBundle\Tests\Controller;
 
@@ -31,7 +39,7 @@ class TargetControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request('GET', '/application/1/targets');
 
-        $this->assertTrue($crawler->filter('html:contains("Add target")')->count() > 0);
+        $this->assertTrue($crawler->filter('html:contains("remote setup")')->count() > 0);
     }
 
     public function testTargetCreate()

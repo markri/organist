@@ -6,6 +6,7 @@
     <hr>
 
     <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'id': application.id})}}">
+        <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
                 <th>Environment</th>
@@ -26,6 +27,8 @@
             </tr>
         {% endfor %}
         </table>
+        </div>
+        <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
     </form>
 
 
