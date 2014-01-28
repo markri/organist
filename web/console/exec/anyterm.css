@@ -139,6 +139,8 @@ img#Close {
 .term {
   margin: 0.4ex 0 0 0;
   padding: 1px;
+  min-height: 500px;
+  max-height: 500px;
 
   overflow: auto;
   overflow-x: visible;
