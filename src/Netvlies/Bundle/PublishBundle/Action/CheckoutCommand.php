@@ -59,10 +59,6 @@ class CheckoutCommand implements CommandApplicationInterface
     {
         $appRoot = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
         return sprintf('cd %s && app/console publish:checkout --key="%s" --env=%s', $appRoot, $this->getApplication()->getKeyName(), $this->environment);
-        /**
-         * Environment is added in order to be sure that same environment is passed onto the subcommand
-         * Especially for test env, now we're sure the test db is used
-         */
     }
 
     /**
