@@ -47,25 +47,32 @@ class CommandLogRepository extends EntityRepository
     {
         $entityManager = $this->getEntityManager();
 
-        $query = $entityManager->createQuery('
-            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
-            WHERE c.user = :user
-            GROUP BY c.application
-            ORDER BY c.id DESC
-        ')->setParameter('user', $user);
+        $sql = '
+            SELECT
+              application_id,
+              MAX(datetimestart) AS datum
+            FROM
+              CommandLog
+            WHERE
+              user = ?
+            GROUP BY
+              application_id
+            ORDER BY datum DESC
+            LIMIT 5';
 
-        $query->setMaxResults($limit);
-
-        $result = $query->getResult();
-        $apps = array();
+        $statement = $entityManager->getConnection()->prepare($sql);
+        $statement->bindValue(1, $user);
+        $statement->execute();
+        $result = $statement->fetchAll();
         $appIds = array();
+        $apps = array();
 
-        foreach($result as $log){
-            $apps[] = $log->getApplication();
-            $appIds[] = $log->getApplication()->getId();
+        foreach($result as $result){
+            $appIds[] = $result['application_id'];
+            $apps[] = $this->getEntityManager()->getRepository('NetvliesPublishBundle:Application')->findOneById($result['application_id']);
         }
 
-        if(count($apps) < $limit){
+        if(count($appIds) < $limit){
 
             $query = $entityManager->createQuery('
                SELECT a FROM Netvlies\Bundle\PublishBundle\Entity\Application a
@@ -73,7 +80,7 @@ class CommandLogRepository extends EntityRepository
                ORDER BY a.id DESC'
             )->setParameter('appIds', $appIds);
 
-            $query->setMaxResults($limit - count($apps));
+            $query->setMaxResults($limit - count($appIds));
             $result = $query->getResult();
 
             foreach($result as $app){
