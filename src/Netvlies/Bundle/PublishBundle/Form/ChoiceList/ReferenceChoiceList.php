@@ -44,6 +44,7 @@ class ReferenceChoiceList extends AbstractType
          */
         $versioningService = $this->container->get($app->getScmService());
         $references = $versioningService->getBranchesAndTags($app);
+        $choices = array();
 
         foreach($references as $reference){
             /**
