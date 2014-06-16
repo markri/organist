@@ -13,6 +13,7 @@ namespace Netvlies\Bundle\PublishBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Netvlies\Bundle\PublishBundle\Entity\Application
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="nameUnique", columns={"name"})})
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="keyNameUnique", columns={"keyName"})})
  * @ORM\Entity(repositoryClass="Netvlies\Bundle\PublishBundle\Entity\ApplicationRepository")
+ * @UniqueEntity(fields={"name"}, errorPath="name", message="Name is already taken")
+ * @UniqueEntity(fields={"keyName"}, errorPath="keyname", message="Keyname is already taken")
  */
 class Application
 {

@@ -8,8 +8,14 @@
 
     <form action="" method="POST" class="form-horizontal">
 
-        {{ form_errors(form) }}
-        {{ form_widget(form) }}
+
+        {{ form_widget(form._token) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.customer) }}
+        {{ form_row(form.keyname) }}
+        {{ form_row(form.applicationType) }}
+        {{ form_row(form.scmService) }}
+        {{ form_row(form.scmUrl) }}
 
         <br/>
 

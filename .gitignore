@@ -7,3 +7,4 @@
 bootstrap.php.cache
 /composer.phar
 /app/config/parameters.yml
+/bin/phpunit
