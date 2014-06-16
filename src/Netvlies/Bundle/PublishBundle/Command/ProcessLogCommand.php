@@ -40,24 +40,15 @@ class ProcessLogCommand extends ContainerAwareCommand
 
          $ids = array();
 
-         // Also include log files older than 24 hours. They're probably not going to finish anyway. So clear them
-         $iterator = new \DirectoryIterator($logDir);
-         foreach ($iterator as $fileinfo) {
-             if ($fileinfo->isFile() && $fileinfo->getExtension() == 'log') {
-                 if(time() - $fileinfo->getMTime() > 60 * 60 * 24 * 1){
-                     $ids[] = $fileinfo->getBasename('.log');
-                 }
-             }
-         }
-
          if(!empty($id)){
              $ids[] = $id;
          }
 
+         $ids = array_merge($ids, $this->getStaleDeployments($logDir));
          $em = $this->getContainer()->get('doctrine')->getManager();
 
+         foreach($ids as $i=>$id){
 
-         foreach($ids as $id){
              /**
               * @var \Netvlies\Bundle\PublishBundle\Entity\CommandLog $commandLog
               */
@@ -86,49 +77,87 @@ class ProcessLogCommand extends ContainerAwareCommand
                  continue;
              }
 
-             $command = 'ssh '.$target->getUsername().'@'.$target->getEnvironment()->getHostname().' cat '.$target->getApproot().'/REVISION || true';
-             $revision = trim(shell_exec($command));
-
-             if(!empty($revision)){
-                 $target->setLastDeployedRevision($revision);
-
-                 /**
-                  * @var VersioningInterface $versioningService
-                  */
-                 $versioningService = $this->getContainer()->get($target->getApplication()->getScmService());
-
-                 // Find tag
-                 $tags = $versioningService->getTags($target->getApplication());
-
-                 foreach($tags as $reference){
-                     /**
-                      * @var ReferenceInterface $reference
-                      */
-                     if($reference->getReference()!=$revision){
-                         continue;
-                     }
-
-                     $target->setLastDeployedTag($reference->getName());
-                     break;
-                 }
-
-                 // Find branch
-                 $branches = $versioningService->getBranches($target->getApplication());
-                 foreach($branches as $reference){
-                     /**
-                      * @var ReferenceInterface $reference
-                      */
-                     if($reference->getReference()!=$revision){
-                         continue;
-                     }
-
-                     $target->setLastDeployedBranch($reference->getName());
-                     break;
-                 }
-
-                 $em->persist($target);
-                 $em->flush();
+             if($i>0){
+                 // Only update revision of currently deployed app, old/stale deployments shouldnt be updated
+                 continue;
              }
+
+             $this->updateRevision($target, $em);
+
          }
      }
+
+    /**
+     * @param $target
+     * @param $em
+     */
+    protected function updateRevision($target, $em)
+    {
+        //@todo retrieval of revision can be tricky, because of different SSH port, we should make port an option in environment
+        $command = 'ssh ' . $target->getUsername() . '@' . $target->getEnvironment()->getHostname() . ' cat ' . $target->getApproot() . '/REVISION || true';
+        $revision = trim(shell_exec($command));
+
+        if (!empty($revision)) {
+            $target->setLastDeployedRevision($revision);
+
+            /**
+             * @var VersioningInterface $versioningService
+             */
+            $versioningService = $this->getContainer()->get($target->getApplication()->getScmService());
+
+            // Find tag
+            $tags = $versioningService->getTags($target->getApplication());
+
+            foreach ($tags as $reference) {
+                /**
+                 * @var ReferenceInterface $reference
+                 */
+                if ($reference->getReference() != $revision) {
+                    continue;
+                }
+
+                $target->setLastDeployedTag($reference->getName());
+                break;
+            }
+
+            // Find branch
+            $branches = $versioningService->getBranches($target->getApplication());
+            foreach ($branches as $reference) {
+                /**
+                 * @var ReferenceInterface $reference
+                 */
+                if ($reference->getReference() != $revision) {
+                    continue;
+                }
+
+                $target->setLastDeployedBranch($reference->getName());
+                break;
+            }
+
+            $em->persist($target);
+            $em->flush();
+        }
+    }
+
+    /**
+     * @param $logDir
+     * @param $ids
+     * @return array
+     */
+    protected function getStaleDeployments($logDir)
+    {
+        $ids = array();
+
+        // Get log files older than 24 hours. They're probably not going to finish anyway. So clear them
+        $iterator = new \DirectoryIterator($logDir);
+        foreach ($iterator as $fileinfo) {
+            if ($fileinfo->isFile() && $fileinfo->getExtension() == 'log') {
+                if (time() - $fileinfo->getMTime() > 60 * 60 * 24 * 1) {
+                    $ids[] = $fileinfo->getBasename('.log');
+                }
+            }
+        }
+
+        return $ids;
+    }
 }
