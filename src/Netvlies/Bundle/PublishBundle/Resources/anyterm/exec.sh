@@ -9,7 +9,7 @@ console=$(dirname $0)/../../../../../../app/console
 scriptid=$1
 
 script="$logbase$scriptid.sh"
-$console publish:getcommand --id=$scriptid > $script
+$console organist:getcommand --id=$scriptid > $script
 chmod 777 $script
 
 mkdir -p $logbase
@@ -32,8 +32,8 @@ end=$(date +%s)
 diff=$(( $end - $start ))
 
 # process log and remove temp script and log
-echo "Saving log and clearing temporary files"
-$console publish:processlog --id=$scriptid --exitcode=$exitcode
+echo "Saving log and clearing temporary files ..."
+$console organist:processlog --id=$scriptid --exitcode=$exitcode
 echo ""
 
 # check if script was succesfull

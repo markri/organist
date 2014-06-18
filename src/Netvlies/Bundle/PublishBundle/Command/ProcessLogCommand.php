@@ -25,7 +25,7 @@ class ProcessLogCommand extends ContainerAwareCommand
      protected function configure()
      {
          $this
-             ->setName('publish:processlog')
+             ->setName('organist:processlog')
              ->setDescription('Processes log entry of given command.')
              ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Execution UID')
              ->addOption('exitcode', null, InputOption::VALUE_OPTIONAL, 'Exit code')
@@ -81,63 +81,9 @@ class ProcessLogCommand extends ContainerAwareCommand
                  // Only update revision of currently deployed app, old/stale deployments shouldnt be updated
                  continue;
              }
-
-             $this->updateRevision($target, $em);
-
          }
      }
 
-    /**
-     * @param $target
-     * @param $em
-     */
-    protected function updateRevision($target, $em)
-    {
-        //@todo retrieval of revision can be tricky, because of different SSH port, we should make port an option in environment
-        $command = 'ssh ' . $target->getUsername() . '@' . $target->getEnvironment()->getHostname() . ' cat ' . $target->getApproot() . '/REVISION || true';
-        $revision = trim(shell_exec($command));
-
-        if (!empty($revision)) {
-            $target->setLastDeployedRevision($revision);
-
-            /**
-             * @var VersioningInterface $versioningService
-             */
-            $versioningService = $this->getContainer()->get($target->getApplication()->getScmService());
-
-            // Find tag
-            $tags = $versioningService->getTags($target->getApplication());
-
-            foreach ($tags as $reference) {
-                /**
-                 * @var ReferenceInterface $reference
-                 */
-                if ($reference->getReference() != $revision) {
-                    continue;
-                }
-
-                $target->setLastDeployedTag($reference->getName());
-                break;
-            }
-
-            // Find branch
-            $branches = $versioningService->getBranches($target->getApplication());
-            foreach ($branches as $reference) {
-                /**
-                 * @var ReferenceInterface $reference
-                 */
-                if ($reference->getReference() != $revision) {
-                    continue;
-                }
-
-                $target->setLastDeployedBranch($reference->getName());
-                break;
-            }
-
-            $em->persist($target);
-            $em->flush();
-        }
-    }
 
     /**
      * @param $logDir

@@ -24,7 +24,7 @@ class GetCommandCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('publish:getcommand')
+            ->setName('organist:getcommand')
             ->setDescription('Gets command that is connected to id.')
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'script id')
         ;

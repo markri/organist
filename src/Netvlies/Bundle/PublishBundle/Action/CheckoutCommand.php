@@ -58,7 +58,7 @@ class CheckoutCommand implements CommandApplicationInterface
     public function getCommand()
     {
         $appRoot = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
-        return sprintf('cd %s && app/console publish:checkout --key="%s" --env=%s', $appRoot, $this->getApplication()->getKeyName(), $this->environment);
+        return sprintf('cd %s && app/console organist:checkout --key="%s" --env=%s', $appRoot, $this->getApplication()->getKeyName(), $this->environment);
     }
 
     /**

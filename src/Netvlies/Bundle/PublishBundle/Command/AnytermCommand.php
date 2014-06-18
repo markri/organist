@@ -22,7 +22,7 @@ class AnytermCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('publish:anyterm')
+            ->setName('organist:anyterm')
             ->addArgument('action', null, 'install|start|stop|restart anyterm daemon', null)
             ->setDescription('This command controls the anyterm daemon')
         ;
