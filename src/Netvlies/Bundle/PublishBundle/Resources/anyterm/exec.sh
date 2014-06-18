@@ -52,8 +52,8 @@ fi
 # Self destruct
 rm $script
 
-# Kill old ssh-agents. Sometimes they tend not to be killed
-ps -eo pid,etime,comm | awk '$2~/^1-/ && $3~/ssh-agent/ { print $1 }' | xargs --no-run-if-empty kill
+# Kill old ssh-agents. Anything that runs longer than one day. Sometimes they tend not to be killed
+ps -eo pid,etime,comm | awk '$2~/^[0-9]*-/ && $3~/ssh-agent/ { print $1 }' | xargs --no-run-if-empty kill
 
 # Be sure that anyterm displays all output. Sometimes it doestn display last output, probably because its asynchronous
 read -n1 -t1

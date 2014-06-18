@@ -126,7 +126,7 @@ class DeployCommand implements CommandTargetInterface
             $keyForwardClose.='unset SSH_AUTH_SOCK';
         }
 
-        //@todo there is dtap and otap, otap is still there for BC
+        //@todo there is dtap and otap, otap is still there for BC, remove otap and add this in library
         return trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
             git checkout '".$this->revision."' &&

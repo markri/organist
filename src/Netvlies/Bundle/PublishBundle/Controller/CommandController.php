@@ -187,7 +187,7 @@ class CommandController extends Controller
 
 
     /**
-     * This route is fixed! Due to apache proxy setting that will redirect /console/exec/anyterm to appropriate assets
+     * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
      * @Route("/console/exec/{id}", requirements={"id" = "\d+"})
