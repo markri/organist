@@ -10,6 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
@@ -249,7 +250,16 @@ class TargetController extends Controller
             $formStep2->bind($request);
 
             if($formStep2->isValid()){
+
+                foreach($target->getDomainAliases() as $alias){
+                    /**
+                     * @var DomainAlias $alias
+                     */
+                    $target->addDomainAlias($alias);
+                }
+
                 $em->persist($target);
+
                 $em->flush($target);
 
                 $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));

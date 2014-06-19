@@ -31,6 +31,14 @@ class FormTargetStep2Type extends AbstractType
                 'attr' => array('data-help' => 'e.g. "www.myapp.com"'),
                 'required'=>false)
             )
+            ->add('domainAliases', 'collection', array(
+                'label' => 'Domain aliases',
+                'type' => new DomainAliasType(),
+                'allow_add'    => true,
+                'by_reference' => false,
+                'allow_delete' => true,
+                'prototype' => false)
+            )
             ->add('mysqldb', 'text', array(
                 'required'=>false,
                 'label'=>'MySQL database')
@@ -60,7 +68,7 @@ class FormTargetStep2Type extends AbstractType
 
     public function getName()
     {
-        return 'netvlies_publishbundle_target_step2';
+        return 'targetstep2';
     }
 
 }

@@ -83,11 +83,6 @@ class Application
 
 
 
-    public function __construct()
-    {
-        $this->userFiles = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
     /**
      * Get id
      *
@@ -124,12 +119,20 @@ class Application
      */
     public function addUserFile(UserFile $file)
     {
+        if(!$this->userFiles){
+            $this->userFiles = new \Doctrine\Common\Collections\ArrayCollection();
+        }
+
         $file->setApplication($this);
         $this->userFiles->add($file);
     }
 
     public function removeUserFile($userFile)
     {
+        if(!$this->userFiles){
+            return;
+        }
+
         $this->userFiles->removeElement($userFile);
     }
 

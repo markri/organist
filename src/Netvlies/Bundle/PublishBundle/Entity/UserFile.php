@@ -111,7 +111,4 @@ class UserFile
         return $this->application;
     }
 
-    public function __toString(){
-        return 'a';
-    }
 }

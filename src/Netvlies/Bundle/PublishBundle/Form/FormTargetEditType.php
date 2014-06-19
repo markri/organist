@@ -35,10 +35,18 @@ class FormTargetEditType extends AbstractType
                 'attr' => array('data-help' => 'e.g. "(P) www.mywonderfullsite.com"'),
                 'required'=>true)
             )
-            ->add('primarydomain', 'text', array(
+            ->add('primaryDomain', 'text', array(
                 'label'=>'Primary domain *',
                 'attr' => array('data-help' => 'e.g. www.mywonderfullsite.com'),
                 'required'=>true)
+            )
+            ->add('domainAliases', 'collection', array(
+                    'label' => 'Domain aliases',
+                    'type' => new DomainAliasType(),
+                    'allow_add'    => true,
+                    'by_reference' => false,
+                    'allow_delete' => true,
+                    'prototype' => false)
             )
             ->add('mysqldb', 'text', array(
                 'required'=>false,

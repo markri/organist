@@ -117,6 +117,12 @@ class Target
 
 
     /**
+     * @ORM\OneToMany(targetEntity="DomainAlias", mappedBy="target")
+     */
+    protected $domainAliases;
+
+
+    /**
      * @ORM\Column(name="inactive", type="boolean")
      */
     protected $inactive = 0;
@@ -375,6 +381,38 @@ class Target
     {
         return $this->primaryDomain;
     }
+
+
+    /**
+     * @param UserFile $alias
+     */
+    public function addDomainAlias(DomainAlias $alias)
+    {
+        if(!$this->domainAliases){
+            $this->domainAliases = new \Doctrine\Common\Collections\ArrayCollection();
+        }
+
+        $alias->setTarget($this);
+        $this->domainAliases->add($alias);
+    }
+
+    public function removeDomainAlias($alias)
+    {
+        if(!$this->domainAliases){
+            return;
+        }
+
+        $this->domainAliases->removeElement($alias);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDomainAliases()
+    {
+        return $this->domainAliases;
+    }
+
 
     /**
      * @param mixed $inactive
