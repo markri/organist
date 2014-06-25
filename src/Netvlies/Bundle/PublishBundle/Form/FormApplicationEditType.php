@@ -26,7 +26,7 @@ class FormApplicationEditType extends AbstractType
                 'required' => false)
             )
             ->add('userFiles', 'onetomany', array(
-                'label' => 'User files and directories',
+                'label' => 'Shared files and directories',
                 'type' => new UserFileType(),
                 'allow_delete' => true,
                 'allow_add'    => true,
