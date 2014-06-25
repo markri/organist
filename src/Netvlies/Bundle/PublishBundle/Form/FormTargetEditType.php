@@ -40,13 +40,14 @@ class FormTargetEditType extends AbstractType
                 'attr' => array('data-help' => 'e.g. www.mywonderfullsite.com'),
                 'required'=>true)
             )
-            ->add('domainAliases', 'collection', array(
+            ->add('domainAliases', 'onetomany', array(
                     'label' => 'Domain aliases',
                     'type' => new DomainAliasType(),
                     'allow_add'    => true,
-                    'by_reference' => false,
                     'allow_delete' => true,
-                    'prototype' => false)
+                    'by_reference' => false,
+                    'prototype' => true,
+                    'prototype_name' => '__name__')
             )
             ->add('mysqldb', 'text', array(
                 'required'=>false,

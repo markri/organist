@@ -95,6 +95,7 @@ class InitCommand implements CommandTargetInterface
         $userFiles = $this->application->getUserFiles();
         $files = array();
         $dirs = array();
+        $vhostAliases = array();
 
         foreach($userFiles as $userFile){
             /**
@@ -107,6 +108,13 @@ class InitCommand implements CommandTargetInterface
             else{
                 $dirs[] = $userFile->getPath();
             }
+        }
+
+        foreach($this->target->getDomainAliases() as $alias){
+            /**
+             * @var DomainAlias $alias
+             */
+            $vhostAliases[] = $alias->getAlias();
         }
 
         //@todo there is dtap and otap, otap is still there for BC
@@ -131,7 +139,9 @@ class InitCommand implements CommandTargetInterface
             -Sotap='".$this->target->getEnvironment()->getType()."'
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
-            -Suserdirs='".implode(',', $dirs)."'"));
+            -Suserdirs='".implode(',', $dirs)."'
+            -Svhostaliases='".implode(',', $vhostAliases)."'"
+        ));
     }
 
     /**

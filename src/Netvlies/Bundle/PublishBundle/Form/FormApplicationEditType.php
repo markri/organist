@@ -25,15 +25,17 @@ class FormApplicationEditType extends AbstractType
                 'label' => 'Customer / Groupname',
                 'required' => false)
             )
-            ->add('userFiles', 'collection', array(
+            ->add('userFiles', 'onetomany', array(
                 'label' => 'User files and directories',
                 'type' => new UserFileType(),
+                'allow_delete' => true,
                 'allow_add'    => true,
                 'by_reference' => false,
-                'allow_delete' => true,
-                'prototype' => false,
-            )
-        );
+                'prototype' => true,
+                'prototype_name' => '__name__',
+                'layoutmacro' => 'NetvliesPublishBundle:Form:macro-onetomany-userfiles.html.twig'
+                )
+            );
     }
 
 

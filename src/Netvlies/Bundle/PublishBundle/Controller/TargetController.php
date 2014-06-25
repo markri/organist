@@ -10,6 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,22 +79,37 @@ class TargetController extends Controller
      * @Route("/target/edit/{id}")
      * @ParamConverter("target", class="NetvliesPublishBundle:Target")
      * @Template()
+     * @param Target $target
      */
     public function editAction($target)
     {
         $request = $this->getRequest();
         $form = $this->createForm(new FormTargetEditType(), $target, array());
 
+        $originalAliases = clone $target->getDomainAliases();
+
         if($request->getMethod() == 'POST'){
 
             $form->bind($request);
             if($form->isValid()){
+
                 $em  = $this->getDoctrine()->getManager();
+
+                foreach ($originalAliases as $alias) {
+                    if (false === $target->getDomainAliases()->contains($alias)) {
+                        $em->remove($alias);
+                    }
+                }
+
                 $em->persist($target);
                 $em->flush($target);
 
                 $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is updated', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$target->getApplication()->getId())));
+            }
+            else{
+                var_dump($form->getErrorsAsString());
+                exit;
             }
         }
 

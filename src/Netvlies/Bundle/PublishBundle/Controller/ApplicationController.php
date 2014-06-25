@@ -149,7 +149,7 @@ class ApplicationController extends Controller
                 $em->flush();
 
                 // Redirect to same edit page
-                $this->get('session')->getFlashBag()->add('success', sprintf('Application %s is updated', $application->getName()));
+                $this->get('session')->getFlashBag()->add('success', sprintf('Settings for application %s is updated', $application->getName()));
                 return $this->redirect($this->generateUrl('netvlies_publish_application_edit', array('id'=>$application->getId())));
             }
         }

@@ -1,0 +1,8 @@
+{% macro onetomanyfields(fields) %}
+    {% for childwidget in fields %}
+        <div class="col-lg-2"></div>
+        <div class="col-lg-9">
+            {{ form_widget(childwidget,  {'attr': {'class': 'form-control'} }) }}
+        </div>
+    {% endfor %}
+{% endmacro %}

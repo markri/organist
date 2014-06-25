@@ -117,7 +117,7 @@ class Target
 
 
     /**
-     * @ORM\OneToMany(targetEntity="DomainAlias", mappedBy="target")
+     * @ORM\OneToMany(targetEntity="DomainAlias", mappedBy="target", cascade={"persist", "remove"})
      */
     protected $domainAliases;
 
@@ -126,6 +126,12 @@ class Target
      * @ORM\Column(name="inactive", type="boolean")
      */
     protected $inactive = 0;
+
+
+    public function __construct()
+    {
+        $this->domainAliases = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -388,10 +394,6 @@ class Target
      */
     public function addDomainAlias(DomainAlias $alias)
     {
-        if(!$this->domainAliases){
-            $this->domainAliases = new \Doctrine\Common\Collections\ArrayCollection();
-        }
-
         $alias->setTarget($this);
         $this->domainAliases->add($alias);
     }

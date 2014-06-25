@@ -11,6 +11,7 @@
 namespace Netvlies\Bundle\PublishBundle\Action;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
+use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
@@ -99,6 +100,8 @@ class DeployCommand implements CommandTargetInterface
         $userFiles = $this->application->getUserFiles();
         $files = array();
         $dirs = array();
+        $vhostAliases = array();
+
         $keyForwardOpen = '';
         $keyForwardClose = '';
 
@@ -113,6 +116,13 @@ class DeployCommand implements CommandTargetInterface
             else{
                 $dirs[] = $userFile->getPath();
             }
+        }
+
+        foreach($this->target->getDomainAliases() as $alias){
+            /**
+             * @var DomainAlias $alias
+             */
+            $vhostAliases[] = $alias->getAlias();
         }
 
         if($this->versioningService->getPrivateKey()){
@@ -150,6 +160,7 @@ class DeployCommand implements CommandTargetInterface
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'
+            -Svhostaliases='".implode(',', $vhostAliases)."'
             $keyForwardClose
             "));
     }

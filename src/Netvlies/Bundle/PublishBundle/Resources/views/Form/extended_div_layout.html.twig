@@ -1,5 +1,6 @@
 {% extends 'form_div_layout.html.twig' %}
 
+
 {# to prevent numbering collection items #}
 {% block form_label %}
     {% spaceless %}
@@ -60,6 +61,59 @@
 {% endblock form_row %}
 
 
+{% block onetomany_row %}
+    {% spaceless %}
+        <div class="form-group">
+            {% if form.parent.vars.attr['data-horizontal'] is defined %}
+                {% set horizontal = form.parent.vars.attr['data-horizontal'] %}
+            {% else %}
+                {% set horizontal = false %}
+            {% endif %}
+
+            {% if horizontal %}
+                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label col-lg-2')|trim}) %}
+            {% endif %}
+            {{ form_label(form, label, {'label_attr': label_attr}) }}
+            {{ form_errors(form) }}
+        </div>
+
+        {{ form_widget(form, {'attr': attr}) }}
+
+    {% endspaceless %}
+{% endblock %}
+
+
+{% block onetomany_widget %}
+
+    {% if form.vars.layoutmacro == 'self' %}
+        {% import 'NetvliesPublishBundle:Form:macro-onetomany.html.twig' as mymacro %}
+    {% else %}
+        {% import form.vars.layoutmacro as mymacro %}
+    {% endif %}
+
+    <div class="onetomanycontainer" data-prototype="{{  mymacro.onetomanyfields(form.vars.prototype) | escape('html') }}">
+
+        {# iterate over each existing tag and render its only field: name #}
+        {% for childform in form %}
+            <div class="form-group">
+                {{ mymacro.onetomanyfields(childform) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+{% macro onetomanyfields(fields) %}
+
+    {% for childwidget in fields %}
+        <div class="col-lg-2"></div>
+        <div class="col-lg-9">
+            {{ form_widget(childwidget,  {'attr': {'class': 'form-control'} }) }}
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+
 {# implements inline radio/checkboxes with twitterbootstrap#}
 {% block choice_widget_expanded %}
     {% spaceless %}
@@ -73,3 +127,5 @@
         </div>
     {% endspaceless %}
 {% endblock choice_widget_expanded %}
+
+

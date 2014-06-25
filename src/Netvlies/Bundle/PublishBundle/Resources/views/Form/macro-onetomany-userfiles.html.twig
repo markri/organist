@@ -1,0 +1,11 @@
+{% macro onetomanyfields(fields) %}
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-2">
+        {{ form_widget(fields.type) }}
+
+    </div>
+    <div class="col-lg-6">
+        {{ form_widget(fields.path, {'attr': {'class': 'form-control'}}) }}
+    </div>
+{% endmacro %}

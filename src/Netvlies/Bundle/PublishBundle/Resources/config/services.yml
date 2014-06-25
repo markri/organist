@@ -37,6 +37,11 @@ services:
             - {name: form.type, alias: applicationtype_choicelist }
 
 
+    netvlies_publish.form.onetomany:
+        class: Netvlies\Bundle\PublishBundle\Form\OneToManyType
+        tags:
+            - { name: form.type, alias: onetomany }
+
 
     # dashboard application selector
     netvlies_publish_twig_extensions:

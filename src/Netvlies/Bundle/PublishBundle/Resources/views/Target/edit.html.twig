@@ -15,45 +15,7 @@
 
         {{ form_errors(form) }}
 
-
-        {{ form_errors(form) }}
-
-        {{ form_widget(form._token) }}
-        {{ form_row(form.label) }}
-        {{ form_row(form.primaryDomain) }}
-
-
-        <div class="form-group">
-            <label class="control-label col-lg-2" for="targetstep2_domainaliases">Domain aliases</label>
-        </div>
-
-        <div class="form-group">
-            <div class="domainaliases" data-prototype="{{
-            '<div class="col-lg-2"></div>
-            <div class="col-lg-9" id="targetstep2_domainAliases___name___alias">
-                <label></label>
-                <input type="text" id="targetstep2_domainAliases___name___alias_0" name="targetstep2[domainAliases][__name__][alias]" class="form-control">
-            </div>'|escape('html') }}">
-
-                {# iterate over each existing tag and render its only field: name #}
-                {% for alias in form.domainAliases %}
-                    <div class="form-group">
-                        <div class="col-lg-2"></div>
-                        <div class="col-lg-9">
-                            {{ form_widget(alias.alias, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        {{ form_row(form.mysqldb) }}
-        {{ form_row(form.mysqluser) }}
-        {{ form_row(form.mysqlpw) }}
-        {{ form_row(form.caproot) }}
-        {{ form_row(form.approot) }}
-        {{ form_row(form.webroot) }}
-
+        {{ form_widget(form) }}
 
         <div class="pull-right">
             <a href="{{ path('netvlies_publish_target_targets', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
