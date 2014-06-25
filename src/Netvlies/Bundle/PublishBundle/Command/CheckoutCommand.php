@@ -24,7 +24,7 @@ class CheckoutCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('publish:checkout')
+            ->setName('organist:checkout')
             ->setDescription('Used to checkout repository if it is not already checked out')
             ->addOption('key', null, InputOption::VALUE_REQUIRED, 'key')
         ;

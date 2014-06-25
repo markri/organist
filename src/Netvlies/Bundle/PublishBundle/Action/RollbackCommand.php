@@ -15,7 +15,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class RollbackCommand implements CommandTargetInterface
+class RollbackCommand extends BaseUpdateCommand
 {
     /**
      * @var Application $application
@@ -96,12 +96,16 @@ class RollbackCommand implements CommandTargetInterface
             }
         }
 
+
         foreach($this->target->getDomainAliases() as $alias){
             /**
              * @var DomainAlias $alias
              */
             $vhostAliases[] = $alias->getAlias();
         }
+
+        $updateVersionScript = $this->getUpdateVersionScript();
+
 
         //@todo there is dtap and otap, otap is still there for BC
         return trim(preg_replace('/\s\s+/', ' ', "
@@ -125,8 +129,9 @@ class RollbackCommand implements CommandTargetInterface
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'
-            -Svhostaliases='".implode(',', $vhostAliases)
-            )
+            -Svhostaliases='".implode(',', $vhostAliases)."'".
+           $updateVersionScript
+           )
         );
     }
 

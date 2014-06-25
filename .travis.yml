@@ -1,6 +1,6 @@
 branches:
     only:
-        - develop
+        - master
 
 language: php
 php:
@@ -12,5 +12,6 @@ before_script:
     - git config --global user.email "mdekrijger@netvlies.nl"
     - git config --global user.name "M. de Krijger"
     - composer install --dev
+    - app/console cache:clear --env=test
 
 script:  phpunit --configuration app/phpunit.xml.dist

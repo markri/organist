@@ -22,7 +22,7 @@ class AnytermCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('publish:anyterm')
+            ->setName('organist:anyterm')
             ->addArgument('action', null, 'install|start|stop|restart anyterm daemon', null)
             ->setDescription('This command controls the anyterm daemon')
         ;
@@ -70,7 +70,7 @@ class AnytermCommand extends ContainerAwareCommand
         }
 
 
-        $initd = file_get_contents(__DIR__.'/Anyterm/anyterm');
+        $initd = file_get_contents(dirname(__DIR__).'/Resources/anyterm/anyterm');
         $initd = str_replace('#path#', dirname(dirname(dirname(dirname(dirname(__DIR__))))).'/app/console', $initd);
         file_put_contents('/etc/init.d/anyterm', $initd);
         chmod('/etc/init.d/anyterm', 777);
@@ -86,7 +86,8 @@ class AnytermCommand extends ContainerAwareCommand
      */
     protected function start()
     {
-        $pidFile = '/var/run/anyterm.pid';
+        $pidFile = $this->getPidFile();
+
         if(is_file($pidFile)){
             echo "PID present, so service is already started\n";
             exit;
@@ -94,7 +95,7 @@ class AnytermCommand extends ContainerAwareCommand
 
         $user = $this->getContainer()->getParameter('netvlies_publish.anyterm_user');
         $port = $this->getContainer()->getParameter('netvlies_publish.anyterm_exec_port');
-        $command = 'anytermd -c "'.__DIR__.'/Anyterm/exec.sh %p" -p '.$port.' -u '.$user.' --name anyterm';
+        $command = 'anytermd -c "'.dirname(__DIR__).'/Resources/anyterm/exec.sh %p" -p '.$port.' -u '.$user.' --name anyterm';
         shell_exec($command);
     }
 
@@ -103,7 +104,8 @@ class AnytermCommand extends ContainerAwareCommand
      */
     protected function stop()
     {
-        $pidFile = '/var/run/anyterm.pid';
+        $pidFile = $this->getPidFile();
+
         if(!is_file($pidFile)){
             echo "PID file not present, so service is not started\n";
             exit;
@@ -115,6 +117,12 @@ class AnytermCommand extends ContainerAwareCommand
 
         shell_exec('kill `cat /var/run/anyterm.pid`');
         unlink($pidFile);
+    }
+
+    protected function getPidFile()
+    {
+        $port = $this->getContainer()->getParameter('netvlies_publish.anyterm_exec_port');
+        return  sprintf('/var/run/anyterm-%s.pid', $port);
     }
 
     /**

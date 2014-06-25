@@ -49,7 +49,7 @@ $(function () {
             }
 
             var app_dev = '';
-            if($('#loadchangeset').data('env')){
+            if($('#loadchangeset').data('env') == 'dev'){
                 app_dev = '/app_dev.php'
             }
             $('#loadchangeset').html('<div class="col-lg-2"></div><div class="col-lg-10"><img src="/bundles/netvliespublish/img/ajax-loader.gif"> Loading changeset</div>')

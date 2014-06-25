@@ -9,14 +9,14 @@
 # Start the service anyterm
 start() {
         echo "Starting anyterm daemon"
-        #path# publish:anyterm start
+        #path# organist:anyterm start
 
 }
 
 # Stop the service Anyterm
 stop() {
         echo "Stopping Anyterm server"
-        #path# publish:anyterm stop
+        #path# organist:anyterm stop
 }
 
 ### main logic ###
@@ -28,7 +28,7 @@ case "$1" in
         stop
         ;;
   restart|reload)
-        #path# publish:anyterm restart
+        #path# organist:anyterm restart
         ;;
   *)
         echo $"Usage: $0 {start|stop|restart}"

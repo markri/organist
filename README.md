@@ -1,14 +1,19 @@
 # Organist #
 
+[![Build Status](https://travis-ci.org/organist/organist.png?branch=master)](https://travis-ci.org/organist/organist)
+
+Organist is an open source tool which helps you manage and execute deployments. It's built on top of Symfony2 and Capistrano/Capifony. [More @ http://organist.github.io](http://organist.github.io)
+
+
 ## Setup ##
 
 This is the bare Organist application including the Symfony 2.2. framework. Unless you want to change/add customizations
 to Organist, you may want to [start here to read instructions howto build up the box](https://github.com/organist/packer).
-Which will include installing the Organist application.
+Which will build a fully functional box (this is due to some system dependencies like Anyterm)
 
 ## Manual Setup ##
 
-If you want to use it without packer and puppet than these are the instructions for setting up:
+If you want to use it without packer and puppet than these are the rough instructions for setting up:
 
  - Clone this repository
  - Use composer to install vendors
@@ -52,10 +57,8 @@ netvlies_publish:
 ## License ##
 Organist is licensed under the MIT licence. View the LICENSE file
 
+
 ## Todo ##
 
- - add unit tests
- - improve layout
- - add parameter bundle
- - remove migration bundle
- - rename publishbundle to organistbundle
+ - Add flexible parameter settings (per target/application/environment)
+ - Please let me know by creating an issue

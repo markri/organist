@@ -16,7 +16,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class DeployCommand implements CommandTargetInterface
+class DeployCommand extends BaseUpdateCommand
 {
     /**
      * @var Application $application
@@ -136,7 +136,9 @@ class DeployCommand implements CommandTargetInterface
             $keyForwardClose.='unset SSH_AUTH_SOCK';
         }
 
-        //@todo there is dtap and otap, otap is still there for BC
+        $updateVersionScript = $this->getUpdateVersionScript();
+
+        //@todo there is dtap and otap, otap is still there for BC, remove otap and add this in library
         return trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
             git checkout '".$this->revision."' &&
@@ -161,6 +163,7 @@ class DeployCommand implements CommandTargetInterface
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'
             -Svhostaliases='".implode(',', $vhostAliases)."'
+            $updateVersionScript
             $keyForwardClose
             "));
     }

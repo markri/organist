@@ -75,7 +75,7 @@ class Git implements VersioningInterface
              */
             if(in_array($branch->getName(), $remoteBranches)){
                 $repo->checkout($branch->getName());
-                $repo->getCaller()->execute(ResetCommand::getInstance()->resetCurrentBranch($branch->getName()));
+                $repo->getCaller()->execute(ResetCommand::getInstance()->resetCurrentBranch('origin/'.$branch->getName()));
             }
             else{
                 // We dont have to delete the "untracked" branch, $this->getBranches() will only return the remote branches

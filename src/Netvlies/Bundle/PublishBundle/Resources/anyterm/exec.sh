@@ -9,7 +9,7 @@ console=$(dirname $0)/../../../../../../app/console
 scriptid=$1
 
 script="$logbase$scriptid.sh"
-$console publish:getcommand --id=$scriptid > $script
+$console organist:getcommand --id=$scriptid > $script
 chmod 777 $script
 
 mkdir -p $logbase
@@ -32,8 +32,8 @@ end=$(date +%s)
 diff=$(( $end - $start ))
 
 # process log and remove temp script and log
-echo "Saving log and clearing temporary files"
-$console publish:processlog --id=$scriptid --exitcode=$exitcode
+echo "Saving log and clearing temporary files ..."
+$console organist:processlog --id=$scriptid --exitcode=$exitcode
 echo ""
 
 # check if script was succesfull
@@ -51,6 +51,9 @@ fi
 
 # Self destruct
 rm $script
+
+# Kill old ssh-agents. Anything that runs longer than one day. Sometimes they tend not to be killed
+ps -eo pid,etime,comm | awk '$2~/^[0-9]*-/ && $3~/ssh-agent/ { print $1 }' | xargs --no-run-if-empty kill
 
 # Be sure that anyterm displays all output. Sometimes it doestn display last output, probably because its asynchronous
 read -n1 -t1

@@ -28,7 +28,7 @@
 {# implements twitter bootstrap horizontal forms #}
 {% block form_row %}
     {% spaceless %}
-        <div class="form-group">
+        <div class="form-group {% if form_errors(form) | length > 0 %}has-error has-feedback{% endif %}">
             {% if form.parent.vars.attr['data-horizontal'] is defined %}
                 {% set horizontal = form.parent.vars.attr['data-horizontal'] %}
             {% else %}
@@ -39,26 +39,45 @@
                 {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' control-label col-lg-2')|trim}) %}
             {% endif %}
             {{ form_label(form, label, {'label_attr': label_attr}) }}
-            {{ form_errors(form) }}
+
+
 
             {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
             {% if horizontal %}
                 <div class="col-lg-10">
                     {{ form_widget(form, {'attr': attr}) }}
+                    {% if form_errors(form) | length > 0 %}
+                        <span class="help-block">{{ form_errors(form) }}</span>
+                    {% endif %}
                     {% if attr['data-help'] is defined %}
                         <span class="help-block">{{ attr['data-help'] }}</span>
                     {% endif %}
                 </div>
             {% else %}
                 {{ form_widget(form, {'attr': attr}) }}
+                {% if form_errors(form) | length > 0 %}
+                    <span class="help-block">{{ form_errors(form) }}</span>
+                {% endif %}
                 {% if attr['data-help'] is defined %}
                     <span class="help-block">{{ attr['data-help'] }}</span>
                 {% endif %}
             {% endif %}
 
+
+
         </div>
     {% endspaceless %}
 {% endblock form_row %}
+
+{% block form_errors %}
+{% spaceless %}
+    {% if errors|length > 0 %}
+        {% for error in errors %}
+            {{ error.message }}
+        {% endfor %}
+    {% endif %}
+{% endspaceless %}
+{% endblock %}
 
 
 {% block onetomany_row %}
