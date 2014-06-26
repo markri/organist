@@ -95,7 +95,7 @@ class AnytermCommand extends ContainerAwareCommand
 
         $user = $this->getContainer()->getParameter('netvlies_publish.anyterm_user');
         $port = $this->getContainer()->getParameter('netvlies_publish.anyterm_exec_port');
-        $command = 'anytermd -c "'.dirname(__DIR__).'/Resources/anyterm/exec.sh %p" -p '.$port.' -u '.$user.' --name anyterm';
+        $command = 'anytermd -c "'.dirname(__DIR__).'/Resources/anyterm/exec.sh %p" -p '.$port.' -u '.$user.' --name anyterm'.$port;
         shell_exec($command);
     }
 
