@@ -36,6 +36,11 @@ class EnvironmentCreateType extends AbstractType
                 'label'=>'Hostname *',
                 'attr' => array('data-help'=> 'either IP or DNS'),
                 'required'=>true,
+            ))
+            ->add('port', 'text', array(
+                'label'=>'SSH port *',
+                'data' => isset($options['data']) && !is_null($options['data']->getPort()) ? $options['data']->getPort() : '22',
+                'required'=>true
             ));
     }
 

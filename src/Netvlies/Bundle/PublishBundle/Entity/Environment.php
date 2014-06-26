@@ -41,10 +41,17 @@ class Environment
     protected $hostname;
 
     /**
-     * @var object $targets
+     * @var Target $targets
      * @ORM\OneToMany(targetEntity="Target", mappedBy="environment")
      */
     protected $targets;
+
+    /**
+     * @var string SSH port to connect to this host
+     * @ORM\Column(name="port", type="string", length=255)
+     * @Assert\NotBlank(message="ssh port is required")
+     */
+    protected $port;
 
     /**
      * Get id
@@ -106,6 +113,21 @@ class Environment
         return $this->targets;
     }
 
+    /**
+     * @param \Netvlies\Bundle\PublishBundle\Entity\SSH $port
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+    }
+
+    /**
+     * @return \Netvlies\Bundle\PublishBundle\Entity\SSH
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
 
     /**
      * To identify this entity in forms

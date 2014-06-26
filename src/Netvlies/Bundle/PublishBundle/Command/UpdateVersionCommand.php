@@ -52,7 +52,7 @@ class UpdateVersionCommand extends ContainerAwareCommand
 
 
         //@todo retrieval of revision can be tricky, because of different SSH port, we should make port an option in environment
-        $command = 'ssh ' . $target->getUsername() . '@' . $target->getEnvironment()->getHostname() . ' cat ' . $target->getApproot() . '/REVISION || true';
+        $command = 'ssh ' . $target->getUsername() . '@' . $target->getEnvironment()->getHostname() . '-p '.$target->getEnvironment()->getPort().' cat ' . $target->getApproot() . '/REVISION || true';
         $revision = trim(shell_exec($command));
 
         $output->writeln(sprintf('Found revision %s on target %s', $revision, $target->getLabel()));

@@ -31,6 +31,7 @@ class EnvironmentControllerTest extends WebTestCase
 
         $form['environment_create[type]'] = 'D';
         $form['environment_create[hostname]'] = 'test_hostname';
+        $form['environment_create[port]'] = '22';
 
         $client->submit($form);
         $crawler = $client->followRedirect();

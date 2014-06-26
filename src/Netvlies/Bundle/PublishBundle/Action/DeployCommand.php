@@ -158,6 +158,7 @@ class DeployCommand extends BaseUpdateCommand
             -Sprimarydomain='".$this->target->getPrimaryDomain()."'
             -ShomedirsBase='/home'
             -Shostname='".$this->target->getEnvironment()->getHostname()."'
+            -Ssshport='".$this->target->getEnvironment()->getPort()."'
             -Sotap='".$this->target->getEnvironment()->getType()."'
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
