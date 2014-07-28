@@ -154,17 +154,13 @@ class ApplicationController extends Controller
             }
         }
 
-        $deletable = $application->getTargets()->count() == 0 && $application->getUserFiles()->count() == 0;
-
-
         // This is to let layout know some extra attribute on which layout logic will be based for form building
         $formView = $form->createView();
         $formView->vars['attr']['data-horizontal'] = true;
 
         return array(
             'form' => $formView,
-            'application' => $application,
-            'deleteable' => $deletable
+            'application' => $application
         );
     }
 
@@ -176,7 +172,8 @@ class ApplicationController extends Controller
     public function deleteAction($application)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($application);
+        $application->setStatus(Application::STATUS_DELETED);
+        $em->persist($application);
         $em->flush();
 
         return $this->redirect($this->generateUrl('netvlies_publish_default_index'));

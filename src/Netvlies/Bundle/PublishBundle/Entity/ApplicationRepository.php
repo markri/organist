@@ -24,7 +24,8 @@ class ApplicationRepository extends EntityRepository
     /**
      * Get all sites
      */
-    public function getAll(){
-        return $this->findBy(array(), array('name' => 'ASC'));
+    public function getAll()
+    {
+        return $this->findBy(array('status'=> Application::STATUS_ACTIVE), array('name' => 'ASC'));
     }
 }

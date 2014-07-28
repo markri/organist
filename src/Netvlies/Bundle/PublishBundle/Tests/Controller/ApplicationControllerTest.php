@@ -74,8 +74,12 @@ class ApplicationControllerTest extends WebTestCase
         $client = static::createClient();
 
         $crawler = $client->request('GET', '/application/settings/1');
-        $link = $crawler->selectLink('Delete application')->link();
-        $client->click($link);
+
+//        javascript confirm. URL is not in href so call link directly
+//        $link = $crawler->selectLink('Delete application')->link();
+//        $client->click($link);
+
+        $crawler = $client->request('GET', '/application/delete/1');
 
         $crawler = $client->followRedirect();
         $this->assertTrue($crawler->filter('html:contains("Oops! There are no applications present")')->count() > 0);
