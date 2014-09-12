@@ -24,7 +24,8 @@ class ApplicationRepository extends EntityRepository
     /**
      * Get all sites
      */
-    public function getAll(){
+    public function getAll()
+    {
         return $this->findBy(array(), array('name' => 'ASC'));
     }
 }

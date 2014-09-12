@@ -9,7 +9,7 @@
     {% for overlap in usercontentoverlap(application.id) %}
         <div class="alert alert-warning">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Warning!</strong> User content also in repository for "{{ overlap }}". Please remove from <a href="{{ path('netvlies_publish_application_edit', {'id': application.id}) }}" class="alert-link">settings</a> or from repository
+            <strong>Warning!</strong> User content also in repository for "{{ overlap }}". Please remove from <a href="{{ path('netvlies_publish_application_edit', {'application': application.id}) }}" class="alert-link">settings</a> or from repository
         </div>
     {% endfor %}
 {% endblock %}
@@ -28,14 +28,14 @@
 
         <br/>
         <div class="pull-right">
-            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-warning">Cancel</a>
             <input type="submit" value="Save" class="btn btn-default"/>
         </div>
 
         <br>
         <br>
         {% if deleteable %}
-            <a href="{{ path('netvlies_publish_application_delete', {'id': application.id}) }}" class="btn btn-danger">Delete application</a>
+            <a href="{{ path('netvlies_publish_application_delete', {'application': application.id}) }}" class="btn btn-danger">Delete application</a>
         {% endif %}
 
 

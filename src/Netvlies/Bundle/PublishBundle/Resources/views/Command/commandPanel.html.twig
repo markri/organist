@@ -13,7 +13,7 @@
         <dt>Author</dt> <dd>{{headRevision.author}}</dd>
         <dt>Revision</dt> <dd>{{headRevision.reference}}</dd>
         <dt>Commit message</dt> <dd>{{ headRevision.message }}</dd>
-        <dt></dt><dd><br><a href="{{ path('netvlies_publish_application_updaterepository', {'id': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
+        <dt></dt><dd><br><a href="{{ path('netvlies_publish_application_updaterepository', {'application': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
     </dl>
 
     <h4>Deploy</h4>

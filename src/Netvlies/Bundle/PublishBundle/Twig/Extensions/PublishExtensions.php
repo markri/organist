@@ -112,7 +112,7 @@ class PublishExtensions extends Twig_Extension
 
         // Generate default route for first app (if present) and replace id with %s, to generate a route template for dashboard
         if(count($apps)){
-            $url = $this->container->get('router')->generate('netvlies_publish_application_dashboard', array('id'=> $apps[0]->getId()), null);
+            $url = $this->container->get('router')->generate('netvlies_publish_application_dashboard', array('application'=> $apps[0]->getId()), null);
             $url = str_replace($apps[0]->getId(), '%s', $url);
         }
 

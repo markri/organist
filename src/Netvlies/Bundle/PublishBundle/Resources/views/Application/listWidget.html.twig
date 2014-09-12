@@ -20,7 +20,7 @@
                 {#<ol class="filter-list all">#}
                     {#{% for app in apps %}#}
                         {#<li class="filter-item">#}
-                            {#<a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>#}
+                            {#<a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>#}
                         {#</li>#}
                     {#{% endfor %}#}
 

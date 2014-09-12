@@ -14,7 +14,7 @@
                 </thead>
                 {% for app in favourites %}
                     <tr>
-                        <td><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}<a/></td>
+                        <td><a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}">{{ app.name }}<a/></td>
 
                     </tr>
                 {% endfor %}
@@ -47,7 +47,7 @@
                 {#<ol class="filter-list all">#}
                     {#{% for app in apps %}#}
                         {#<li class="filter-item">#}
-                            {#<a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>#}
+                            {#<a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}" class="repo" title="{{ app.name }}">{{ app.name }}</a>#}
                         {#</li>#}
                     {#{% endfor %}#}
 

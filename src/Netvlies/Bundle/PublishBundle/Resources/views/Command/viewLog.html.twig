@@ -12,7 +12,7 @@
             {{ log.host }}
         {% endif %}</h3>
 
-    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
+    <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
     <br>
 
     <h4>Summary</h4>
@@ -66,6 +66,6 @@
     <h4>Output</h4>
     <pre>{{ log.log|trim }}</pre>
 
-    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
+    <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
 
 {% endblock %}

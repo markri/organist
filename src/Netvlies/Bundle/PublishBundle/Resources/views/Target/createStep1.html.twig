@@ -11,7 +11,7 @@
         {{ form_widget(form) }}
 
         <div class="pull-right">
-            <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-warning">Cancel</a>
             <input type="submit" value="Next" class="btn btn-default"/>
         </div>
 

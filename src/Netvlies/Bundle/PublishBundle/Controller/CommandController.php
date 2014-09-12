@@ -48,7 +48,7 @@ class CommandController extends Controller
         $headRevision = $versioningService->getHeadRevision($application);
 
         if(!file_exists($repoPath)){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
         $deployCommand = new DeployCommand();
@@ -201,7 +201,7 @@ class CommandController extends Controller
 
         if($commandLog->getDatetimeEnd()){
             $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
-            return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('application' => $application->getId())));
         }
 
         return array(

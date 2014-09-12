@@ -7,7 +7,7 @@
     <h3>All logs for {{ application.name }}</h3>
     <hr>
 
-    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
+    <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
     <br><br><br>
 
     <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
@@ -57,7 +57,7 @@
     </div>
     <br>
 
-    <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
+    <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" class="btn btn-default pull-right">Back to dashboard</a>
 
 
 

@@ -34,11 +34,10 @@ class TargetController extends Controller
     /**
      * Will return a list of all targets for this application
      *
-     * @Route("/application/{id}/targets")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/{application}/targets")
      * @Template()
      */
-    public function targetsAction($application)
+    public function targetsAction(Application $application)
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByDTAP($application);
@@ -105,7 +104,7 @@ class TargetController extends Controller
                 $em->flush($target);
 
                 $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is updated', $target->getLabel()));
-                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$target->getApplication()->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $target->getApplication()->getId())));
             }
             else{
                 var_dump($form->getErrorsAsString());
@@ -136,7 +135,7 @@ class TargetController extends Controller
         $em->flush();
 
         $this->get('session')->getFlashBag()->add('warning', sprintf('Target %s is deleted', $label));
-        return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $app->getId())));
     }
 
 
@@ -155,7 +154,7 @@ class TargetController extends Controller
 
         if($request->getMethod() == 'POST'){
 
-            $formStep1->bind($request);
+            $formStep1->handleRequest($request);
 
             // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
             $envId = $target->getEnvironment()->getId();
@@ -164,6 +163,7 @@ class TargetController extends Controller
 
                 $request->getSession()->set('target.env', $envId);
                 $request->getSession()->set('target.user', $target->getUsername());
+                $request->getSession()->save();
 
                 return $this->redirect($this->generateUrl('netvlies_publish_target_createstep2', array('id'=>$app->getId())));
             }
@@ -197,6 +197,9 @@ class TargetController extends Controller
          * @var \Netvlies\Bundle\PublishBundle\Entity\Environment $env
          */
         $env = $em->getRepository('NetvliesPublishBundle:Environment')->findOneById($envId);
+        if(!$env){
+            throw new \Exception(sprintf('No such environment with id "%s"', $envId));
+        }
 
         $target->setApplication($app);
         $target->setEnvironment($env);
@@ -211,7 +214,9 @@ class TargetController extends Controller
             // @todo sure about this predefined stuff?
             switch($env->getType()){
                 case 'D':
+
                     $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName();
+
                     $target->setApproot($appRoot);
                     $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
                     break;
@@ -279,7 +284,7 @@ class TargetController extends Controller
                 $em->flush($target);
 
                 $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));
-                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('id'=>$app->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $app->getId())));
             }
         }
 

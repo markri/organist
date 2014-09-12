@@ -44,22 +44,22 @@
                         {% if application is defined %}
 
                             <li {% if dashboardtab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_application_dashboard', {'id': application.id}) }}" ><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
+                                <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" ><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
                             </li>
                             {% if application.id is checkedout %}
                                 <li {% if commandtab is defined %}class="active" {% endif %}>
                                     <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Commands</a>
                                 </li>
                                 <li {% if targettab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_target_targets', {'id': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
+                                    <a href="{{ path('netvlies_publish_target_targets', {'application': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
                                 </li>
                             {% else %}
                                 <li {% if commandtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_application_checkoutrepository', {'id': application.id }) }}"><span class="glyphicon glyphicon-transfer"></span> Checkout repository</a>
+                                    <a href="{{ path('netvlies_publish_application_checkoutrepository', {'application': application.id }) }}"><span class="glyphicon glyphicon-transfer"></span> Checkout repository</a>
                                 </li>
                             {% endif %}
                             <li {% if settingstab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_application_edit', {'id': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
+                                <a href="{{ path('netvlies_publish_application_edit', {'application': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
                             </li>
 
                         {% else %}

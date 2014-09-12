@@ -72,7 +72,7 @@ class CommandLogRepository extends EntityRepository
             $apps[] = $this->getEntityManager()->getRepository('NetvliesPublishBundle:Application')->findOneById($result['application_id']);
         }
 
-        if(count($appIds) < $limit){
+        if(count($appIds) < $limit && count($appIds) > 0){
 
             $query = $entityManager->createQuery('
                SELECT a FROM Netvlies\Bundle\PublishBundle\Entity\Application a

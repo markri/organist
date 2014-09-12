@@ -12,14 +12,12 @@ namespace Netvlies\Bundle\PublishBundle\Controller;
 
 use Netvlies\Bundle\PublishBundle\Action\CheckoutCommand;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
-use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use GitElephant\Repository;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Netvlies\Bundle\PublishBundle\Entity\CommandLogRepository;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
@@ -45,7 +43,7 @@ class ApplicationController extends Controller
         );
 
         if($request->getMethod()=='POST'){
-            $form->bind($request);
+            $form->handleRequest($request);
 
             if($form->isValid()){
                 $em = $this->container->get('doctrine.orm.entity_manager');
@@ -74,7 +72,7 @@ class ApplicationController extends Controller
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add('success', sprintf('Application %s is succesfully created', $application->getName()));
-                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('id'=>$application->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('application' => $application->getId())));
             }
         }
 
@@ -90,9 +88,8 @@ class ApplicationController extends Controller
     /**
      * Dashboard view
      *
-     * @Route("/application/dashboard/{id}")
+     * @Route("/application/dashboard/{application}")
      * @Template()
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
      * @param Application $application
      * @return array
      */
@@ -113,13 +110,12 @@ class ApplicationController extends Controller
 
 
     /**
-     * @Route("/application/settings/{id}")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/settings/{application}")
      * @Template()
-     * @param $application Application
+     * @param Application $application
      * @return array
      */
-    public function editAction($application)
+    public function editAction(Application $application)
     {
         $form = $this->createForm(new FormApplicationEditType(), $application);
         $request = $this->getRequest();
@@ -128,7 +124,7 @@ class ApplicationController extends Controller
 
         if($request->getMethod() == 'POST'){
 
-            $form->bind($request);
+            $form->handleRequest($request);
 
             if($form->isValid()){
                 $em = $this->container->get('doctrine.orm.entity_manager');
@@ -150,7 +146,7 @@ class ApplicationController extends Controller
 
                 // Redirect to same edit page
                 $this->get('session')->getFlashBag()->add('success', sprintf('Settings for application %s is updated', $application->getName()));
-                return $this->redirect($this->generateUrl('netvlies_publish_application_edit', array('id'=>$application->getId())));
+                return $this->redirect($this->generateUrl('netvlies_publish_application_edit', array('application' => $application->getId())));
             }
         }
 
@@ -169,11 +165,11 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Route("/application/delete/{id}")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/delete/{application}")
      * @param $application Application
+     * @return RedirectResponse
      */
-    public function deleteAction($application)
+    public function deleteAction(Application $application)
     {
         $em = $this->getDoctrine()->getManager();
         $em->remove($application);
@@ -188,6 +184,7 @@ class ApplicationController extends Controller
      *
      * @Route("/application/list/widget")
      * @Template()
+     * @return array
      */
     public function listWidgetAction()
     {
@@ -199,11 +196,11 @@ class ApplicationController extends Controller
 
 
     /**
-     * @Route("/application/{id}/checkoutrepository")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/{application}/checkoutrepository")
      * @param Application $application
+     * @return Response
      */
-    public function checkoutRepository($application)
+    public function checkoutRepository(Application $application)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
@@ -211,7 +208,7 @@ class ApplicationController extends Controller
         $versioningService = $this->get($application->getScmService());
 
         if(file_exists($versioningService->getRepositoryPath($application))){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('id' => $application->getId())));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_updaterepository', array('application' => $application->getId())));
         }
 
         $command = new CheckoutCommand();
@@ -224,11 +221,11 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Route("/application/{id}/updaterepository")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/{application}/updaterepository")
      * @param Application $application
+     * @return RedirectResponse
      */
-    public function updateRepositoryAction($application)
+    public function updateRepositoryAction(Application $application)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
@@ -236,7 +233,7 @@ class ApplicationController extends Controller
         $versioningService = $this->get($application->getScmService());
 
         if(!file_exists($versioningService->getRepositoryPath($application))){
-            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('id' => $application->getId())));
+            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
         $versioningService->updateRepository($application);

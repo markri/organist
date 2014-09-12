@@ -5,7 +5,7 @@
     <h3>Targets</h3>
     <hr>
 
-    <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'id': application.id})}}">
+    <form id="target" name="target" method="POST" action="{{ path('netvlies_publish_target_targets', {'application': application.id})}}">
         <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>

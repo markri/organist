@@ -10,9 +10,9 @@
             {% set url = dashboardurl|format(app.id) %}
 
             {% if current is not empty and current.name == app.name %}
-                <option value="{{ url }}" selected=selected><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+                <option value="{{ url }}" selected=selected><a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}">{{ app.name }}</a></option>
             {% else %}
-                <option value="{{ url }}"><a href="{{ path('netvlies_publish_application_dashboard', {'id': app.id }) }}">{{ app.name }}</a></option>
+                <option value="{{ url }}"><a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}">{{ app.name }}</a></option>
             {% endif %}
             {% if loop.last %}
                 </optgroup>
