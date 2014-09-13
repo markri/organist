@@ -240,6 +240,6 @@ class ApplicationController extends Controller
 
         $this->get('session')->getFlashBag()->add('success', sprintf('Repository for %s is updated', $application->getName()));
 
-        return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('id' => $application->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_command_commandpanel', array('application' => $application->getId())));
     }
 }

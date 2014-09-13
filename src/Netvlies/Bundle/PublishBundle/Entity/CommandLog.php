@@ -122,7 +122,7 @@ class CommandLog
     }
 
     /**
-     * @param \Netvlies\Bundle\PublishBundle\Entity\DateTime $datetimeStart
+     * @param \DateTime $datetimeStart
      */
     public function setDatetimeStart($datetimeStart)
     {
@@ -130,7 +130,7 @@ class CommandLog
     }
 
     /**
-     * @return \Netvlies\Bundle\PublishBundle\Entity\DateTime
+     * @return \DateTime
      */
     public function getDatetimeStart()
     {
@@ -139,7 +139,7 @@ class CommandLog
 
 
     /**
-     * @param \Netvlies\Bundle\PublishBundle\Entity\DateTime $datetimeEnd
+     * @param \DateTime $datetimeEnd
      */
     public function setDatetimeEnd($datetimeEnd)
     {
@@ -147,7 +147,7 @@ class CommandLog
     }
 
     /**
-     * @return \Netvlies\Bundle\PublishBundle\Entity\DateTime
+     * @return \DateTime
      */
     public function getDatetimeEnd()
     {

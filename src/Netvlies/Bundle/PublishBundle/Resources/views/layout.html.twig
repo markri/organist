@@ -48,7 +48,7 @@
                             </li>
                             {% if application.id is checkedout %}
                                 <li {% if commandtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'id': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Commands</a>
+                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'application': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Commands</a>
                                 </li>
                                 <li {% if targettab is defined %}class="active" {% endif %}>
                                     <a href="{{ path('netvlies_publish_target_targets', {'application': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>

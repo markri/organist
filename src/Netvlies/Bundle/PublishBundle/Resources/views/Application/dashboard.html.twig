@@ -60,7 +60,7 @@
                     {% if not loop.first %}
                     <hr>
                     {%endif%}
-                    <a href="{{ path('netvlies_publish_target_edit', { 'id': target.id}) }}">{{target.label}}</a><br>
+                    <a href="{{ path('netvlies_publish_target_edit', { 'target': target.id}) }}">{{target.label}}</a><br>
                     {%if target.lastDeployedTag is not empty%}
                         {{ target.lastDeployedTag }}<br>
                     {%elseif target.lastDeployedBranch is not empty%}
@@ -83,7 +83,7 @@
 
     {% if logs|length == 0 %}
         <div class="alert alert-warning">
-            Hmmmm, no logs yet, you probably want to <a href="{{ path('netvlies_publish_target_createstep1', {'id': application.id}) }}" class="alert-link">add a target</a> and start deploying so we can create some logs!
+            Hmmmm, no logs yet, you probably want to <a href="{{ path('netvlies_publish_target_createstep1', {'application': application.id}) }}" class="alert-link">add a target</a> and start deploying so we can create some logs!
         </div>
     {% else %}
         <h4>Last executed commands</h4>
@@ -134,13 +134,13 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('netvlies_publish_command_viewlog', {'id': log.id, 'application': application.id}) }}">View log</a>
+                        <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id, 'application': application.id}) }}">View log</a>
                     </td>
                 </tr>
             {% endfor %}
             <tr>
                 <td colspan="5" align="right">&nbsp;</td>
-                <td><a href="{{ path('netvlies_publish_command_listlogs', {'id': application.id}) }}">View all logs</a></td>
+                <td><a href="{{ path('netvlies_publish_command_listlogs', {'application': application.id}) }}">View all logs</a></td>
             </tr>
         </table>
         </div>

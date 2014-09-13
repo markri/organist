@@ -16,9 +16,9 @@
             <td>{{ environment.type }}</td>
             <td>{{ environment.hostname }}</td>
             <td>
-                <a href="{{path('netvlies_publish_environment_edit', {'id': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
+                <a href="{{path('netvlies_publish_environment_edit', {'environment': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
                 {% if environment.targets | length == 0 %}
-                 | <a onclick="confirm('Are you sure you want to delete this environment?')? window.location = '{{path('netvlies_publish_environment_delete', {'id': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
+                 | <a onclick="confirm('Are you sure you want to delete this environment?')? window.location = '{{path('netvlies_publish_environment_delete', {'environment': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
                 {% endif %}
             </td>
         </tr>

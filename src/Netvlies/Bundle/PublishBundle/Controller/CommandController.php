@@ -19,7 +19,6 @@ use Doctrine\ORM\EntityManager;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
-use Netvlies\Bundle\PublishBundle\Action\CommandInterface;
 use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
@@ -27,18 +26,16 @@ use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class CommandController extends Controller
 {
 
     /**
-     * @Route("/application/{id}/commands")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/application/{application}/commands")
      * @Template()
      * @param Application $application
      */
-    public function commandPanelAction($application)
+    public function commandPanelAction(Application $application)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
@@ -69,7 +66,7 @@ class CommandController extends Controller
 
             if ($request->request->has($deployForm->getName())){
 
-                $deployForm->bind($request);
+                $deployForm->handleRequest($request);
 
                 if($deployForm->isValid()){
 
@@ -80,7 +77,7 @@ class CommandController extends Controller
             }
 
             if ($request->request->has($rollbackForm->getName())){
-                $rollbackForm->bind($request);
+                $rollbackForm->handleRequest($request);
 
                 if($rollbackForm->isValid()){
 
@@ -104,9 +101,10 @@ class CommandController extends Controller
     }
 
     /**
-     * Other controllers will forward to this action
-     * @param CommandInterface $command
-     * @template()
+     * @param CommandTargetInterface $command
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
+     * @return Response
      */
     public function execTargetCommandAction(CommandTargetInterface $command)
     {
@@ -149,7 +147,7 @@ class CommandController extends Controller
         $em->persist($commandLog);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $commandLog->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
     }
 
 
@@ -182,7 +180,7 @@ class CommandController extends Controller
         $em->persist($commandLog);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $commandLog->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
     }
 
 
@@ -190,17 +188,16 @@ class CommandController extends Controller
      * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
-     * @Route("/console/exec/{id}", requirements={"id" = "\d+"})
-     * @ParamConverter("commandLog", class="NetvliesPublishBundle:CommandLog")
+     * @Route("/console/exec/{commandlog}", requirements={"id" = "\d+"})
      * @Template()
      * @param CommandLog $commandLog
      */
-    public function execAction($commandLog)
+    public function execAction(CommandLog $commandLog)
     {
         $application = $commandLog->getApplication();
 
         if($commandLog->getDatetimeEnd()){
-            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('id'=>$commandLog->getId()))));
+            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('commandlog'=>$commandLog->getId()))));
             return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('application' => $application->getId())));
         }
 
@@ -212,12 +209,10 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/{application}/viewlog/{id}")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
-     * @ParamConverter("commandLog", class="NetvliesPublishBundle:CommandLog")
+     * @Route("/console/{application}/viewlog/{commandlog}")
      * @Template()
      */
-    public function viewLogAction($commandLog, $application)
+    public function viewLogAction(CommandLog $commandLog, Application $application)
     {
         return array(
             'log' => $commandLog,
@@ -227,12 +222,11 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/logs/{id}")
-     * @ParamConverter("application", class="NetvliesPublishBundle:Application")
+     * @Route("/console/logs/{application}")
      * @Template()
      * @param Application $application
      */
-    public function listLogsAction($application)
+    public function listLogsAction(Application $application)
     {
         return array(
             'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application),
@@ -242,11 +236,11 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/reexecute/{id}")
-     * @ParamConverter("commandLog", class="NetvliesPublishBundle:CommandLog")
+     * @Route("/console/reexecute/{commandLog}")
      * @param CommandLog $commandLog
+     * @return Response
      */
-    public function reExecuteAction($commandLog)
+    public function reExecuteAction(CommandLog $commandLog)
     {
         $newCommand = new CommandLog();
         $newCommand->setApplication($commandLog->getApplication());
@@ -273,18 +267,17 @@ class CommandController extends Controller
         $em->persist($newCommand);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('id' => $newCommand->getId())));
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $newCommand->getId())));
     }
 
 
     /**
      * @Route("/command/loadchangeset/{target}/{revision}")
-     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
      * @Template()
      * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target
      * @param $revision
      */
-    public function loadChangesetAction($target, $revision)
+    public function loadChangesetAction(Target $target, $revision)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService

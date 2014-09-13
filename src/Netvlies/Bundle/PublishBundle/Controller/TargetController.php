@@ -10,15 +10,12 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
@@ -49,38 +46,172 @@ class TargetController extends Controller
     }
 
     /**
-     * @Route("/application/{id}/target/new/step1")
+     * @Route("/application/{application}/target/new/step1")
      * @Template()
      */
-    public function createStep1Action($id)
+    public function createStep1Action(Application $application)
     {
-        $em  = $this->getDoctrine()->getManager();
-        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
+        $request = $this->getRequest();
 
-        return $this->handleFormStep1($app);
+        $target = new Target();
+        $target->setApplication($application);
+
+        $formStep1 = $this->createForm(new FormTargetStep1Type(), $target, array());
+
+        if($request->getMethod() == 'POST'){
+
+            $formStep1->handleRequest($request);
+
+            // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
+            $envId = $target->getEnvironment()->getId();
+
+            if($formStep1->isValid()){
+
+                $request->getSession()->set('target.env', $envId);
+                $request->getSession()->set('target.user', $target->getUsername());
+                $request->getSession()->save();
+
+                return $this->redirect($this->generateUrl('netvlies_publish_target_createstep2', array('application' => $application->getId())));
+            }
+        }
+
+        $formView = $formStep1->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
+        return array(
+            'application' => $application,
+            'form' => $formView,
+        );
     }
 
 
     /**
-     * @Route("/application/{id}/target/new/step2")
+     * @Route("/application/{application}/target/new/step2")
      * @Template()
      */
-    public function createStep2Action($id)
+    public function createStep2Action(Application $application)
     {
+        $target = new Target();
+        $request = $this->getRequest();
         $em  = $this->getDoctrine()->getManager();
-        $app = $em->getRepository('NetvliesPublishBundle:Application')->findOneById($id);
 
-        return $this->handleFormStep2($app);
+        $envId = $request->getSession()->get('target.env');
+        $user = $request->getSession()->get('target.user');
+
+        /**
+         * @var \Netvlies\Bundle\PublishBundle\Entity\Environment $env
+         */
+        $env = $em->getRepository('NetvliesPublishBundle:Environment')->findOneById($envId);
+        if(!$env){
+            throw new \Exception(sprintf('No such environment with id "%s"', $envId));
+        }
+
+        $target->setApplication($application);
+        $target->setEnvironment($env);
+        $target->setUsername($user);
+
+        if($request->getMethod() != 'POST'){
+            // Skip this part if not needed
+
+            $homedir = '/home';
+
+            // Init default values in target
+            // @todo sure about this predefined stuff?
+            switch($env->getType()){
+                case 'D':
+
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$application->getKeyName();
+
+                    $target->setApproot($appRoot);
+                    $target->setPrimaryDomain($application->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    break;
+                case 'T':
+                    if($target->getUsername()=='tester'){
+                        $target->setPrimaryDomain($application->getKeyName().'.'.$env->getHostname());
+                    }
+                    else{
+                        $target->setPrimaryDomain($application->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
+                    }
+                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$application->getKeyName().'/current';
+                    $target->setApproot($appRoot);
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/vhosts/'.$application->getKeyName());
+                    break;
+                case 'A':
+                    $target->setPrimaryDomain($application->getKeyName().'.a.nvsotap.nl');
+                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
+                    $target->setApproot($appRoot);
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
+                    break;
+                case 'P':
+                    $target->setPrimaryDomain('www.'.$application->getKeyName().'.nl');
+                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
+                    $target->setApproot($appRoot);
+                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
+                    break;
+                default:
+                    throw new \Exception('No such type (DTAP)');
+            }
+
+            switch($application->getApplicationType()){
+                case 'symfony2':
+                    $target->setWebroot($appRoot.'/web');
+                    break;
+                default:
+                    $target->setWebroot($appRoot);
+                    break;
+            }
+
+            $target->setMysqldb($application->getKeyName());
+            $target->setMysqluser($application->getKeyName());
+
+            // Just some random password
+            $target->setMysqlpw(substr(str_shuffle(strtolower(sha1(rand() . time() . "my salty string"))),0, 10));
+            $target->setLabel('('.$env->getType().') '.$application->getName());
+        }
+
+        $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
+        $em  = $this->getDoctrine()->getManager();
+
+        if($request->getMethod() == 'POST'){
+
+            // Init form2
+            $formStep2->handleRequest($request);
+
+            if($formStep2->isValid()){
+
+                foreach($target->getDomainAliases() as $alias){
+                    /**
+                     * @var DomainAlias $alias
+                     */
+                    $target->addDomainAlias($alias);
+                }
+
+                $em->persist($target);
+
+                $em->flush($target);
+
+                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));
+                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $application->getId())));
+            }
+        }
+
+        $formView = $formStep2->createView();
+        $formView->vars['attr']['data-horizontal'] = true;
+
+        return array(
+            'application' => $application,
+            'form' => $formView,
+        );
     }
 
 
     /**
-     * @Route("/target/edit/{id}")
-     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @Route("/target/edit/{target}")
      * @Template()
      * @param Target $target
+     * @return Response
      */
-    public function editAction($target)
+    public function editAction(Target $target)
     {
         $request = $this->getRequest();
         $form = $this->createForm(new FormTargetEditType(), $target, array());
@@ -89,7 +220,7 @@ class TargetController extends Controller
 
         if($request->getMethod() == 'POST'){
 
-            $form->bind($request);
+            $form->handleRequest($request);
             if($form->isValid()){
 
                 $em  = $this->getDoctrine()->getManager();
@@ -123,10 +254,9 @@ class TargetController extends Controller
 
 
     /**
-     * @Route("/target/delete/{id}")
-     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @Route("/target/delete/{target}")
      */
-    public function deleteAction($target)
+    public function deleteAction(Target $target)
     {
         $em  = $this->getDoctrine()->getManager();
         $label = $target->getLabel();
@@ -140,170 +270,11 @@ class TargetController extends Controller
 
 
     /**
-     * @param $app \Netvlies\Bundle\PublishBundle\Entity\Application
-     * @return array
-     */
-    protected function handleFormStep1($app)
-    {
-        $request = $this->getRequest();
-
-        $target = new Target();
-        $target->setApplication($app);
-
-        $formStep1 = $this->createForm(new FormTargetStep1Type(), $target, array());
-
-        if($request->getMethod() == 'POST'){
-
-            $formStep1->handleRequest($request);
-
-            // This is still an id, because we use a choicelist in order to get an ordered list of envs by O, T, A, P
-            $envId = $target->getEnvironment()->getId();
-
-            if($formStep1->isValid()){
-
-                $request->getSession()->set('target.env', $envId);
-                $request->getSession()->set('target.user', $target->getUsername());
-                $request->getSession()->save();
-
-                return $this->redirect($this->generateUrl('netvlies_publish_target_createstep2', array('id'=>$app->getId())));
-            }
-        }
-
-        $formView = $formStep1->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
-        return array(
-            'application' => $app,
-            'form' => $formView,
-        );
-
-    }
-
-
-    /**
-     * @param Application $app
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    protected function handleFormStep2($app)
-    {
-        $target = new Target();
-        $request = $this->getRequest();
-        $em  = $this->getDoctrine()->getManager();
-
-        $envId = $request->getSession()->get('target.env');
-        $user = $request->getSession()->get('target.user');
-
-        /**
-         * @var \Netvlies\Bundle\PublishBundle\Entity\Environment $env
-         */
-        $env = $em->getRepository('NetvliesPublishBundle:Environment')->findOneById($envId);
-        if(!$env){
-            throw new \Exception(sprintf('No such environment with id "%s"', $envId));
-        }
-
-        $target->setApplication($app);
-        $target->setEnvironment($env);
-        $target->setUsername($user);
-
-        if($request->getMethod() != 'POST'){
-            // Skip this part if not needed
-
-            $homedir = '/home';
-
-            // Init default values in target
-            // @todo sure about this predefined stuff?
-            switch($env->getType()){
-                case 'D':
-
-                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName();
-
-                    $target->setApproot($appRoot);
-                    $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
-                    break;
-                case 'T':
-                    if($target->getUsername()=='tester'){
-                        $target->setPrimaryDomain($app->getKeyName().'.'.$env->getHostname());
-                    }
-                    else{
-                        $target->setPrimaryDomain($app->getKeyName().'.'.$target->getUsername().'.'.$env->getHostname());
-                    }
-                    $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName().'/current';
-                    $target->setApproot($appRoot);
-                    $target->setCaproot($homedir.'/'.$target->getUsername().'/vhosts/'.$app->getKeyName());
-                    break;
-                case 'A':
-                    $target->setPrimaryDomain($app->getKeyName().'.a.nvsotap.nl');
-                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
-                    $target->setApproot($appRoot);
-                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
-                    break;
-                case 'P':
-                    $target->setPrimaryDomain('www.'.$app->getKeyName().'.nl');
-                    $appRoot = $homedir.'/'.$target->getUsername().'/www/current';
-                    $target->setApproot($appRoot);
-                    $target->setCaproot($homedir.'/'.$target->getUsername().'/www');
-                    break;
-            }
-
-            switch($app->getApplicationType()){
-                case 'symfony2':
-                    $target->setWebroot($appRoot.'/web');
-                    break;
-                default:
-                    $target->setWebroot($appRoot);
-                    break;
-            }
-
-            $target->setMysqldb($app->getKeyName());
-            $target->setMysqluser($app->getKeyName());
-
-            // Just some random password
-            $target->setMysqlpw(substr(str_shuffle(strtolower(sha1(rand() . time() . "my salty string"))),0, 10));
-            $target->setLabel('('.$env->getType().') '.$app->getName());
-        }
-
-        $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
-        $em  = $this->getDoctrine()->getManager();
-
-        if($request->getMethod() == 'POST'){
-
-            // Init form2
-            $formStep2->bind($request);
-
-            if($formStep2->isValid()){
-
-                foreach($target->getDomainAliases() as $alias){
-                    /**
-                     * @var DomainAlias $alias
-                     */
-                    $target->addDomainAlias($alias);
-                }
-
-                $em->persist($target);
-
-                $em->flush($target);
-
-                $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is added', $target->getLabel()));
-                return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $app->getId())));
-            }
-        }
-
-        $formView = $formStep2->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
-        return array(
-            'application' => $app,
-            'form' => $formView,
-        );
-    }
-
-
-    /**
-     * @Route("/target/init/{id}")
-     * @ParamConverter("target", class="NetvliesPublishBundle:Target")
+     * @Route("/target/init/{target}")
      * @param Target $target
+     * @return Response
      */
-    public function initAction($target)
+    public function initAction(Target $target)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService

@@ -10,15 +10,13 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Netvlies\Bundle\PublishBundle\Form\EnvironmentCreateType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
 
 use Netvlies\Bundle\PublishBundle\Entity\Environment;
 
@@ -29,18 +27,18 @@ class EnvironmentController extends Controller
     /**
      * Returns edit form for certain env
      *
-     * @Route("/environment/edit/{id}")
-     * @ParamConverter("environment", class="NetvliesPublishBundle:Environment")
+     * @Route("/environment/edit/{environment}")
      * @Template()
      */
-    public function editAction($environment)
+    public function editAction(Environment $environment)
     {
         $request = $this->getRequest();
         $form = $this->createForm(new EnvironmentCreateType(), $environment, array());
 
         if($request->getMethod() == 'POST'){
 
-            $form->bind($request);
+            $form->handleRequest($request);
+
             if($form->isValid()){
                 $em  = $this->getDoctrine()->getManager();
                 $em->persist($environment);
@@ -73,7 +71,7 @@ class EnvironmentController extends Controller
 
         if($request->getMethod() == 'POST'){
 
-            $form->bind($request);
+            $form->handleRequest($request);
 
             if($form->isValid()){
 
@@ -116,10 +114,10 @@ class EnvironmentController extends Controller
     }
 
     /**
-     * @Route("/environment/delete/{id}")
-     * @ParamConverter("environment", class="NetvliesPublishBundle:Environment")
+     * @Route("/environment/delete/{environment}")
+     * @return Response
      */
-    public function deleteAction($environment)
+    public function deleteAction(Environment $environment)
     {
         $em  = $this->getDoctrine()->getManager();
         $label = $environment->getHostname();
@@ -127,6 +125,7 @@ class EnvironmentController extends Controller
         $em->flush();
 
         $this->get('session')->getFlashBag()->add('warning', sprintf('Environment %s is deleted', $label));
+
         return $this->redirect($this->generateUrl('netvlies_publish_environment_list' ));
     }
 

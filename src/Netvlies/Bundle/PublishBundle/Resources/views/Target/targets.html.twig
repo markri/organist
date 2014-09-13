@@ -20,9 +20,9 @@
                 <td>{{ target.label }}</td>
                 <td>{{ target.environment.hostname }}</td>
                 <td>
-                    <a href="{{path('netvlies_publish_target_edit', {'id': target.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a> |
-                    <a onclick="confirm('Are you sure you want to delete this target?')? window.location = '{{path('netvlies_publish_target_delete', {'id': target.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a> |
-                    <a href="{{path('netvlies_publish_target_init', {'id': target.id})}}"><span class="glyphicon glyphicon-transfer"></span> remote setup</a>
+                    <a href="{{path('netvlies_publish_target_edit', {'target': target.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a> |
+                    <a onclick="confirm('Are you sure you want to delete this target?')? window.location = '{{path('netvlies_publish_target_delete', {'target': target.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a> |
+                    <a href="{{path('netvlies_publish_target_init', {'target': target.id})}}"><span class="glyphicon glyphicon-transfer"></span> remote setup</a>
                 </td>
             </tr>
         {% endfor %}
@@ -32,7 +32,7 @@
     </form>
 
 
-    <a href="{{path('netvlies_publish_target_createstep1', {'id': application.id})}}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add target</a>
+    <a href="{{path('netvlies_publish_target_createstep1', {'application': application.id})}}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add target</a>
 {% endblock %}
 
 

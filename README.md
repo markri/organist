@@ -43,10 +43,10 @@ netvlies_publish:
         git:
             forward_key: /home/deploy/.ssh/id_rsa_bitbucket
     applicationtypes:
-        symfony20:
-            label: Symfony 2.0
-        symfony21:
-            label: Symfony 2.1
+        symfony23:
+            label: Symfony 2.3
+        symfony25:
+            label: Symfony 2.5
         myapplicationtype:
             label: My Super CMS
             userdirs: [ 'img', 'cache', 'lucene', 'tmp' ]
