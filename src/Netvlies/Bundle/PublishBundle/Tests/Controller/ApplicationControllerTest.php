@@ -88,7 +88,16 @@ class ApplicationControllerTest extends WebTestCase
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication'
         ));
 
+        // Be sure that directory doesnt exist, so remove it
+        $path = $this->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
+
+        $ps = new Process('rm -rf '.escapeshellarg($path));
+        $ps->run();
+        $this->assertTrue(!file_exists($path));
+
+        // Run test
         $client = static::createClient();
+        $client->followRedirects(false);
         $crawler = $client->request('GET', '/application/1/checkoutrepository');
 
         $this->assertTrue($crawler->filter('html:contains("Redirecting to /console/exec/1")')->count() > 0 );
@@ -99,22 +108,20 @@ class ApplicationControllerTest extends WebTestCase
         $commandLog = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository('NetvliesPublishBundle:CommandLog')->findOneById(1);
 
         $this->assertTrue(!empty($commandLog));
-
         $proces = new Process($commandLog->getCommand());
-        $proces->run();
 
-// Debug output
-//        $proces->run(function ($type, $buffer) {
+
+        $proces->run(function ($type, $buffer) {
+           // Debug output
 //            if (Process::ERR === $type) {
 //                echo 'ERR > '.$buffer;
 //            } else {
 //                echo 'OUT > '.$buffer;
 //            }
-//        });
+        });
 
         $this->assertTrue($proces->isSuccessful());
 
-        $path = $this->getContainer()->getParameter('netvlies_publish.repositorypath').'/testkey';
         $this->assertTrue(file_exists($path));
     }
 
@@ -130,6 +137,7 @@ class ApplicationControllerTest extends WebTestCase
 
         $client = static::createClient();
         $client->request('GET', '/application/1/updaterepository');
+
         $crawler = $client->followRedirect();
 
         $this->assertTrue($crawler->filter('html:contains("Repository for testname is updated")')->count() > 0);

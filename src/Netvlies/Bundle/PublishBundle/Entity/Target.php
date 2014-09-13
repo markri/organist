@@ -31,7 +31,7 @@ class Target
 
     /**
      * @Assert\NotBlank(message="environment is required/key could not be found")
-     * @ORM\ManyToOne(targetEntity="Environment")
+     * @ORM\ManyToOne(targetEntity="Environment", inversedBy="targets")
      */
     protected $environment;
 
