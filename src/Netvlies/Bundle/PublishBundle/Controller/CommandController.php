@@ -23,6 +23,7 @@ use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
 use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -188,21 +189,21 @@ class CommandController extends Controller
      * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
-     * @Route("/console/exec/{commandlog}", requirements={"id" = "\d+"})
+     * @Route("/console/exec/{commandlog}")
      * @Template()
-     * @param CommandLog $commandLog
+     * @param CommandLog $commandlog
      */
-    public function execAction(CommandLog $commandLog)
+    public function execAction(CommandLog $commandlog)
     {
-        $application = $commandLog->getApplication();
+        $application = $commandlog->getApplication();
 
-        if($commandLog->getDatetimeEnd()){
-            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('commandlog'=>$commandLog->getId()))));
+        if($commandlog->getDatetimeEnd()){
+            $this->get('session')->getFlashBag()->add('warning', sprintf('This command is already executed. <a href="%s" class="alert-link">Click here</a> if you want to re-execute it', $this->generateUrl('netvlies_publish_command_reexecute', array('commandlog'=>$commandlog->getId()))));
             return $this->redirect($this->generateUrl('netvlies_publish_application_dashboard', array('application' => $application->getId())));
         }
 
         return array(
-            'command' => $commandLog,
+            'command' => $commandlog,
             'application' => $application
         );
     }
@@ -212,10 +213,10 @@ class CommandController extends Controller
      * @Route("/console/{application}/viewlog/{commandlog}")
      * @Template()
      */
-    public function viewLogAction(CommandLog $commandLog, Application $application)
+    public function viewLogAction(Application $application, CommandLog $commandlog)
     {
         return array(
-            'log' => $commandLog,
+            'log' => $commandlog,
             'application' => $application
         );
     }
@@ -236,20 +237,20 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/reexecute/{commandLog}")
-     * @param CommandLog $commandLog
+     * @Route("/console/reexecute/{commandlog}")
+     * @param CommandLog $commandlog
      * @return Response
      */
-    public function reExecuteAction(CommandLog $commandLog)
+    public function reExecuteAction(CommandLog $commandlog)
     {
         $newCommand = new CommandLog();
-        $newCommand->setApplication($commandLog->getApplication());
-        $newCommand->setTarget($commandLog->getTarget());
-        $newCommand->setType($commandLog->getType());
-        $newCommand->setCommand($commandLog->getCommand());
+        $newCommand->setApplication($commandlog->getApplication());
+        $newCommand->setTarget($commandlog->getTarget());
+        $newCommand->setType($commandlog->getType());
+        $newCommand->setCommand($commandlog->getCommand());
         $newCommand->setDatetimeStart(new \DateTime());
-        $newCommand->setHost($commandLog->getHost());
-        $newCommand->setCommandLabel($commandLog->getCommandLabel());
+        $newCommand->setHost($commandlog->getHost());
+        $newCommand->setCommandLabel($commandlog->getCommandLabel());
 
         if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
