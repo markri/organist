@@ -144,6 +144,8 @@ class DeployCommand extends BaseUpdateCommand
             git checkout '".$this->revision."' &&
             cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
+            -Sapptype='".$this->application->getApplicationType()."'
+            -Sappkey='".$this->application->getKeyName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
             -Srepositorypath='".$this->getRepositoryPath()."'
             -Ssudouser='deploy'

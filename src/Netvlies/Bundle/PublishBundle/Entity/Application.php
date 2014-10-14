@@ -26,6 +26,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Application
 {
+
+    const STATUS_ACTIVE = 1;
+    const STATUS_DELETED = 2;
+
     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -84,6 +88,11 @@ class Application
      */
     protected $applicationType;
 
+    /**
+     * @var
+     * @ORM\Column(name="status", type="string", length=255)
+     */
+    protected $status = 1;
 
 
     /**
@@ -244,4 +253,21 @@ class Application
     {
         return $this->applicationType;
     }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
 }

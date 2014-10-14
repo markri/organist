@@ -102,7 +102,7 @@ class PublishExtensions extends Twig_Extension
     public function getApplicationSelect($id=null)
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
-        $apps = $em->getRepository('NetvliesPublishBundle:Application')->findAll();
+        $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();
         $current = '';
         $url = '';
 

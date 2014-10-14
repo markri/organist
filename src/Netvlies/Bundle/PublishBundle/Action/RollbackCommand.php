@@ -111,6 +111,8 @@ class RollbackCommand extends BaseUpdateCommand
         return trim(preg_replace('/\s\s+/', ' ', "
             cap ".$this->target->getEnvironment()->getType()." deploy:rollback
             -Sproject='".$this->application->getName()."'
+            -Sapptype='".$this->application->getApplicationType()."'
+            -Sappkey='".$this->application->getKeyName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
             -Srepositorypath='".$this->repositoryPath."'
             -Ssudouser='deploy'

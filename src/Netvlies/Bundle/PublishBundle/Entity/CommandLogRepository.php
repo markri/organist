@@ -49,19 +49,22 @@ class CommandLogRepository extends EntityRepository
 
         $sql = '
             SELECT
-              application_id,
-              MAX(datetimestart) AS datum
+              c.application_id,
+              MAX(c.datetimestart) AS datum
             FROM
-              CommandLog
+              CommandLog c
+              INNER JOIN Application a ON c.application_id = a.id
             WHERE
-              user = ?
+              c.user = ?
+              AND a.status = ?
             GROUP BY
-              application_id
+              c.application_id
             ORDER BY datum DESC
             LIMIT 5';
 
         $statement = $entityManager->getConnection()->prepare($sql);
         $statement->bindValue(1, $user);
+        $statement->bindValue(2, Application::STATUS_ACTIVE);
         $statement->execute();
         $result = $statement->fetchAll();
         $appIds = array();
@@ -77,8 +80,12 @@ class CommandLogRepository extends EntityRepository
             $query = $entityManager->createQuery('
                SELECT a FROM Netvlies\Bundle\PublishBundle\Entity\Application a
                WHERE a.id NOT IN (:appIds)
+               AND a.status = :status
                ORDER BY a.id DESC'
-            )->setParameter('appIds', $appIds);
+            )
+                ->setParameter('appIds', empty($appIds)? array(0) : $appIds)
+                ->setParameter('status', Application::STATUS_ACTIVE);
+
 
             $query->setMaxResults($limit - count($appIds));
             $result = $query->getResult();
