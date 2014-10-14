@@ -34,7 +34,7 @@
 
         <br>
         <br>
-        <a onclick="confirm('Are you sure you want to delete this application?')? window.location='{{path('netvlies_publish_application_delete', {'id': application.id})}}': false" href="#" class="btn btn-danger">Delete application</a>
+        <a onclick="confirm('Are you sure you want to delete this application?')? window.location='{{path('netvlies_publish_application_delete', {'application': application.id})}}': false" href="#" class="btn btn-danger">Delete application</a>
 
 
     </form>
