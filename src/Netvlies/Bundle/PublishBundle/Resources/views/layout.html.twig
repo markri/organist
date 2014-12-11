@@ -12,15 +12,15 @@
         <link href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.css') }}" rel="stylesheet"/>
 
-
         <!-- Bootstrap -->
         <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
-
+        <script type="text/javascript" src="https://statuspage-production.s3.amazonaws.com/se-v2.js"></script>
     {% endblock %}
 
 </head>
 
 <body>
+
     {% block body %}
 
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -62,12 +62,17 @@
                                 <a href="{{ path('netvlies_publish_application_edit', {'application': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
                             </li>
 
-                        {% else %}
-                            <li {% if environmentstab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Environments</a>
-                            </li>
                         {% endif %}
 
+                        <li {% if environmentstab is defined %}class="active" {% endif %}>
+                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Environments</a>
+                        </li>
+
+                    </ul>
+                    <ul class="nav navbar-nav-color navbar-right">
+                        <li>
+                            <a href="http://status.bitbucket.org/" id="bitbucketlink"><span class="glyphicon glyphicon-cloud-download" id="bitbucketstatus"></span></a>
+                        </li>
                     </ul>
                 </div>
             </div>

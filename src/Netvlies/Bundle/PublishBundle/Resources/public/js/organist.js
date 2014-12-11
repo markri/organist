@@ -2,6 +2,32 @@ $(function () {
 
     $(document).ready(function() {
 
+        /** Bitbucket status **/
+        $("#bitbucketstatus").ready(
+            function(){
+                var sp = new StatusPage.page({ page : 'bqlf8qjztdtr' });
+                sp.status({
+                    success : function(data) {
+                        var status = data.status.indicator;
+                        var label = '';
+                        var level = 'btn btn-success'
+
+                        if (status == 'none') {
+                            label = ' Bitbucket: ok!';
+                            level = '#5cb85c';
+
+                        } else {
+                            label = ' Bitbucket: oops!';
+                            level = '#d9534f'
+                        }
+
+                        $("#bitbucketstatus").after(label);
+                        $("#bitbucketlink").css('background-color', level);
+                    }
+                });
+            }
+        );
+
         // ****************** Application filter
         $("#appselect").select2(
             {
@@ -13,12 +39,6 @@ $(function () {
             function(e) {
                 document.location.href= $(this).val();
             });
-
-
-//        $('.filter-list').liveFilter('.filter-box', 'li', {
-//            filterChildSelector: 'a'
-//        });
-
 
         // ******************* Branch/Tag filter
         $(".bigrevisionselect").select2(

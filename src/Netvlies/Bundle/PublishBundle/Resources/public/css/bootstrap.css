@@ -4525,6 +4525,19 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-color: #080808;
 }
 
+.navbar-inverse .navbar-nav-color > li > a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: #ffffff;
+}
+
+.navbar-inverse .navbar-nav-color > li > a:hover,
+.navbar-inverse .navbar-nav-color > li > a:focus {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: #ffffff;
+}
+
 .navbar-inverse .navbar-nav > .disabled > a,
 .navbar-inverse .navbar-nav > .disabled > a:hover,
 .navbar-inverse .navbar-nav > .disabled > a:focus {
