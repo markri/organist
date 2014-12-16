@@ -10,11 +10,9 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 
-class FormTargetEditType extends AbstractType
+class TargetEditType extends HorizontalAbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)

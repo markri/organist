@@ -7,7 +7,7 @@ Organist is an open source tool which helps you manage and execute deployments. 
 
 ## Setup ##
 
-This is the bare Organist application including the Symfony 2.2. framework. Unless you want to change/add customizations
+This is the bare Organist application including the Symfony 2.3 framework. Unless you want to change/add customizations
 to Organist, you may want to [start here to read instructions howto build up the box](https://github.com/organist/packer).
 Which will build a fully functional box (this is due to some system dependencies like Anyterm)
 

@@ -12,6 +12,9 @@ namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Router;
 use Twig_Extension;
 
 class PublishExtensions extends Twig_Extension
@@ -23,12 +26,12 @@ class PublishExtensions extends Twig_Extension
         $this->container = $container;
     }
 
-
     public function getFunctions()
     {
         return array(
             new \Twig_SimpleFunction('applicationselect', array($this, 'getApplicationSelect'), array('id')),
             new \Twig_SimpleFunction('usercontentoverlap', array($this, 'getUserContentOverlap'), array('id')),
+            new \Twig_SimpleFunction('applicationcontext', array($this, 'getApplicationContext'), array()),
         );
     }
 
@@ -57,6 +60,37 @@ class PublishExtensions extends Twig_Extension
         return 'publish_extensions';
     }
 
+    /**
+     * With this method it is possible to inject "application" as a global variable in twig templates
+     * see layout.html.twig where this function is used
+     *
+     * @return Application
+     */
+    public function getApplicationContext()
+    {
+        /**
+         * @var Request $request
+         */
+        $request = $this->container->get('request');
+        $pathinfo = $request->getPathInfo();
+
+        /**
+         * @var Router $router
+         */
+        $router = $this->container->get('router');
+
+        /**
+         * @var Route $route
+         */
+        $routeParams = $router->match($pathinfo);
+
+        if (isset($routeParams['application'])){
+            $em = $this->container->get('doctrine.orm.entity_manager');
+            return $em->getRepository('NetvliesPublishBundle:Application')->findOneById($routeParams['application']);
+        }
+
+        return null;
+    }
 
     public function getApplicationTypeLabel($keyname)
     {
@@ -93,7 +127,6 @@ class PublishExtensions extends Twig_Extension
                 return $months == 1 ? 'a month ago' : $months.' months ago';
 
         }
-
     }
 
     /**

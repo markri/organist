@@ -21,9 +21,9 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Action\InitCommand;
 
-use Netvlies\Bundle\PublishBundle\Form\FormTargetEditType;
-use Netvlies\Bundle\PublishBundle\Form\FormTargetStep1Type;
-use Netvlies\Bundle\PublishBundle\Form\FormTargetStep2Type;
+use Netvlies\Bundle\PublishBundle\Form\TargetEditType;
+use Netvlies\Bundle\PublishBundle\Form\TargetStep1Type;
+use Netvlies\Bundle\PublishBundle\Form\TargetStep2Type;
 
 class TargetController extends Controller
 {
@@ -40,7 +40,6 @@ class TargetController extends Controller
         $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByDTAP($application);
 
         return array(
-            'application' => $application,
             'targets' => $targets
         );
     }
@@ -56,7 +55,7 @@ class TargetController extends Controller
         $target = new Target();
         $target->setApplication($application);
 
-        $formStep1 = $this->createForm(new FormTargetStep1Type(), $target, array());
+        $formStep1 = $this->createForm(new TargetStep1Type(), $target, array());
 
         if($request->getMethod() == 'POST'){
 
@@ -75,12 +74,8 @@ class TargetController extends Controller
             }
         }
 
-        $formView = $formStep1->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'application' => $application,
-            'form' => $formView,
+            'form' => $formStep1->createView(),
         );
     }
 
@@ -169,7 +164,7 @@ class TargetController extends Controller
             $target->setLabel('('.$env->getType().') '.$application->getName());
         }
 
-        $formStep2 = $this->createForm(new FormTargetStep2Type(), $target, array());
+        $formStep2 = $this->createForm(new TargetStep2Type(), $target, array());
         $em  = $this->getDoctrine()->getManager();
 
         if($request->getMethod() == 'POST'){
@@ -195,12 +190,8 @@ class TargetController extends Controller
             }
         }
 
-        $formView = $formStep2->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'application' => $application,
-            'form' => $formView,
+            'form' => $formStep2->createView(),
         );
     }
 
@@ -214,7 +205,7 @@ class TargetController extends Controller
     public function editAction(Target $target)
     {
         $request = $this->getRequest();
-        $form = $this->createForm(new FormTargetEditType(), $target, array());
+        $form = $this->createForm(new TargetEditType(), $target, array());
 
         $originalAliases = clone $target->getDomainAliases();
 
@@ -237,18 +228,11 @@ class TargetController extends Controller
                 $this->get('session')->getFlashBag()->add('success', sprintf('Target %s is updated', $target->getLabel()));
                 return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $target->getApplication()->getId())));
             }
-            else{
-                var_dump($form->getErrorsAsString());
-                exit;
-            }
         }
 
-        $formView = $form->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'application' => $target->getApplication(),
-            'form' => $formView,
+            'target' => $target,
+            'form' => $form->createView(),
         );
     }
 

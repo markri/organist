@@ -83,6 +83,12 @@ class Application
     protected $targets;
 
     /**
+     * @var object $scheduledDeployments
+     * @ORM\OneToMany(targetEntity="ScheduledDeployment", mappedBy="application")
+     */
+    protected $scheduledDeployments;
+
+    /**
      * @var string $applicationType
      * @ORM\Column(name="applicationType", type="string", length=255)
      */
@@ -237,6 +243,23 @@ class Application
     {
         return $this->targets;
     }
+
+    /**
+     * @param object $scheduledDeployments
+     */
+    public function setScheduledDeployments($scheduledDeployments)
+    {
+        $this->scheduledDeployments = $scheduledDeployments;
+    }
+
+    /**
+     * @return object
+     */
+    public function getScheduledDeployments()
+    {
+        return $this->scheduledDeployments;
+    }
+
 
     /**
      * @param string $applicationType

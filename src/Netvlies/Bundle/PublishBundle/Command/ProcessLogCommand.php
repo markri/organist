@@ -26,7 +26,7 @@ class ProcessLogCommand extends ContainerAwareCommand
      {
          $this
              ->setName('organist:processlog')
-             ->setDescription('Processes log entry of given command.')
+             ->setDescription('Processes log entry of given deployment.')
              ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Execution UID')
              ->addOption('exitcode', null, InputOption::VALUE_OPTIONAL, 'Exit code')
          ;

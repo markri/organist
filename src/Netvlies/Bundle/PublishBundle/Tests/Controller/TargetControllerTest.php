@@ -28,7 +28,7 @@ class TargetControllerTest extends WebTestCase
         GitRepo::deleteRepo($path);
     }
 
-    public function testTargetsView()
+    public function testViewTargets()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication',
@@ -42,7 +42,7 @@ class TargetControllerTest extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("remote setup")')->count() > 0);
     }
 
-    public function testTargetCreate()
+    public function testCreateTarget()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication',
@@ -70,7 +70,7 @@ class TargetControllerTest extends WebTestCase
     }
 
 
-    public function testEdit()
+    public function testEditTarget()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication',
@@ -80,7 +80,7 @@ class TargetControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request('GET', '/target/edit/1');
-        $form= $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form['netvlies_publishbundle_targetedittype[label]'] = 'testedit';
 
@@ -90,7 +90,7 @@ class TargetControllerTest extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("Target testedit is updated")')->count() > 0);
     }
 
-    public function testDelete()
+    public function testDeleteTarget()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication',

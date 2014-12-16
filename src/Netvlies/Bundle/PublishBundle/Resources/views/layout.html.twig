@@ -1,3 +1,4 @@
+{% set application = applicationcontext() %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,10 +31,14 @@
                 </div>
                 <div class="navbar-collapse navbar-ex1-collapse">
                     <ul class="nav navbar-nav">
+
+                        <li {% if environmentstab is defined %}class="active" {% endif %}>
+                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Hosts</a>
+                        </li>
                         <li>
                             <form class="navbar-form" role="search">
                                 <div class="form-group">
-                                    {% if application is defined %}
+                                    {% if application is not empty%}
                                         {{applicationselect(application.id)|raw}}
                                     {% else %}
                                         {{applicationselect()|raw}}
@@ -41,14 +46,16 @@
                                 </div>
                             </form>
                         </li>
-                        {% if application is defined %}
-
+                        {% if application is not empty %}
                             <li {% if dashboardtab is defined %}class="active" {% endif %}>
                                 <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" ><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
                             </li>
                             {% if application.id is checkedout %}
                                 <li {% if commandtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'application': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Commands</a>
+                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'application': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Deployment</a>
+                                </li>
+                                <li {% if scheduledtab is defined %}class="active" {% endif %}>
+                                    <a href="{{ path('organist_scheduled_list', {'application': application.id}) }}" ><span class="glyphicon glyphicon-time"></span> Nightly builds</a>
                                 </li>
                                 <li {% if targettab is defined %}class="active" {% endif %}>
                                     <a href="{{ path('netvlies_publish_target_targets', {'application': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
@@ -64,9 +71,6 @@
 
                         {% endif %}
 
-                        <li {% if environmentstab is defined %}class="active" {% endif %}>
-                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Environments</a>
-                        </li>
 
                     </ul>
                     <ul class="nav navbar-nav-color navbar-right">

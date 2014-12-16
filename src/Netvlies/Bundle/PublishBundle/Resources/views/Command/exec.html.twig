@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <h3>Executing command
+    <h3>Executing deployment
         {% if command.target is not empty %}
             on ({{ command.target.environment.type }}) {{ command.target.environment.hostname }}
         {% endif %}
@@ -42,7 +42,7 @@
     <div id="term"></div>
 
     <div>
-        <h4>Command</h4>
+        <h4>Deployment command</h4>
         <pre>{{ command.command | replace({' && ': '<br>', ' &&': '<br>', '&& ': '<br>', '&&': '<br>'}) | raw }}</pre>
     </div>
 

@@ -31,7 +31,7 @@ $(function () {
         // ****************** Application filter
         $("#appselect").select2(
             {
-                placeholder: 'Type in here to find your application'
+                placeholder: 'Applications'
             }
         );
 
@@ -43,7 +43,7 @@ $(function () {
         // ******************* Branch/Tag filter
         $(".bigrevisionselect").select2(
             {
-                placeholder: 'Type in here to find your revision'
+                placeholder: 'Revisions'
             }
         );
 

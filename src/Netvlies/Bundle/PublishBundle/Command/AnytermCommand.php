@@ -30,7 +30,6 @@ class AnytermCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $status = $input->getArgument('action');
         switch($status){
             case 'start':

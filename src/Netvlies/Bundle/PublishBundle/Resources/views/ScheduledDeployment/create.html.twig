@@ -3,22 +3,22 @@
 
 {% block content %}
 
-    <h3>Add host</h3>
+    <h3>Create nightly build</h3>
     <hr />
 
-    <form action="" method="POST" class="form-horizontal">
+    <form action="" method="POST" class="form-horizontal" novalidate="novalidate">
 
-        {{ form_errors(form) }}
+        {{ form_widget(form._token) }}
+
         {{ form_widget(form) }}
 
         <br/>
 
         <div class="pull-right">
-            <a href="{{ path('netvlies_publish_environment_list') }}" class="btn btn-warning">Cancel</a>
+            <a href="{{ path('netvlies_publish_default_index') }}" class="btn btn-warning">Cancel</a>
             <input type="submit" value="Save" class="btn btn-default"/>
         </div>
 
     </form>
-
 
 {% endblock %}

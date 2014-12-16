@@ -10,13 +10,9 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 
-use Doctrine\ORM\EntityRepository;
-
-class EnvironmentCreateType extends AbstractType
+class EnvironmentCreateType extends HorizontalAbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

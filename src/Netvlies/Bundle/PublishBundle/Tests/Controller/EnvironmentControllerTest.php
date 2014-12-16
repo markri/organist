@@ -20,12 +20,12 @@ class EnvironmentControllerTest extends WebTestCase
     /**
      * Also contains redirect to dashboard which is asserted
      */
-    public function testCreate()
+    public function testCreateEnvironment()
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/environment/create');
 
-        $this->assertTrue($crawler->filter('html:contains("Add environment")')->count() > 0);
+        $this->assertTrue($crawler->filter('html:contains("Add host")')->count() > 0);
 
         $form= $crawler->selectButton('Save')->form();
 
@@ -40,7 +40,7 @@ class EnvironmentControllerTest extends WebTestCase
     }
 
 
-    public function testEdit()
+    public function testEditEnvironment()
     {
         // Load fixture with one app present
         $this->loadFixtures(array(
@@ -61,7 +61,7 @@ class EnvironmentControllerTest extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("newhostname")')->count() > 0);
     }
 
-    public function testDelete()
+    public function testDeleteEnvironment()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadEnvironment'

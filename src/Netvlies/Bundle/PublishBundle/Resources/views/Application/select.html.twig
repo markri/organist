@@ -1,7 +1,7 @@
     <select id="appselect" style="width: 180px;">
         <option></option>
         <option value="{{ path('netvlies_publish_application_create') }}">Add new application</option>
-        <option value="{{ path('netvlies_publish_environment_create') }}">Add new environment</option>
+        <option value="{{ path('netvlies_publish_environment_create') }}">Add new host</option>
 
         {% for app in apps %}
             {% if loop.first %}

@@ -40,8 +40,6 @@
             {% endif %}
             {{ form_label(form, label, {'label_attr': label_attr}) }}
 
-
-
             {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
             {% if horizontal %}
                 <div class="col-lg-10">
