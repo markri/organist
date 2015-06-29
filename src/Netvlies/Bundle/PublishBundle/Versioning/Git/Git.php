@@ -130,8 +130,10 @@ class Git implements VersioningInterface
                 continue;
             }
 
+            $msg = $log->getMessage()->toString();
+
             $commit = new Commit();
-            $commit->setMessage($log->getMessage());
+            $commit->setMessage($msg);
             $commit->setReference($log->getSha());
             $commit->setAuthor($log->getAuthor()->getName());
             $commit->setDateTime($log->getDatetimeCommitter());

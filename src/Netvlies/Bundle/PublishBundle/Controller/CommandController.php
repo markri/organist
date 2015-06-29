@@ -273,6 +273,7 @@ class CommandController extends Controller
 
 
     /**
+     * @todo Currently giving wron info
      * @Route("/command/loadchangeset/{target}/{revision}")
      * @Template()
      * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target

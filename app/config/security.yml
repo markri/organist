@@ -20,7 +20,7 @@ security:
             pattern: ^/
             oauth:
                 resource_owners:
-                    google:             "/login/check-google"
+                    google:        /login/check-google
                 login_path:        /connect/google
                 failure_path:      /connect-fail
                 oauth_user_provider:

@@ -9,10 +9,13 @@
 
         <table class="table">
         {% for commit in messages  %}
+            {% if commit.message is defined %}
             <tr>
-                <td>{{ commit.author }}</td>
+                <td class="col-lg-1">{{ commit.dateTime|date('d-m') }}</td>
+                <td class="col-lg-2">{{ commit.author }}</td>
                 <td>{{ commit.message }}</td>
             </tr>
+            {% endif %}
         {% endfor %}
         </table>
     {% endif %}

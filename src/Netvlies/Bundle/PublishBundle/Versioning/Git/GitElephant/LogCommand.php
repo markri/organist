@@ -79,14 +79,11 @@ class LogCommand extends BaseCommand
         $this->clearAll();
 
         $this->addCommandName(self::GIT_LOG);
-        $this->addCommandArgument('-s');
-        $this->addCommandArgument('--all');
         $this->addCommandArgument('--pretty=raw');
         $this->addCommandArgument('--no-color');
-        $this->addCommandSubject(sprintf('%s..%s', $to, $from));
+        $this->addCommandSubject(sprintf('%s..%s', $from, $to));
 
         return $this->getCommand();
-        //return sprintf('git --no-pager log --pretty=oneline %s..%s', $from, $to);
     }
 
 }
