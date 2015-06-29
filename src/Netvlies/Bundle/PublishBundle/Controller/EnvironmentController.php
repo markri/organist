@@ -49,11 +49,8 @@ class EnvironmentController extends Controller
             }
         }
 
-        $formView = $form->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'form' => $formView
+            'form' => $form->createView()
         );
     }
 
@@ -87,11 +84,8 @@ class EnvironmentController extends Controller
             }
         }
 
-        $formView = $form->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'form' => $formView,
+            'form' => $form->createView(),
         );
     }
 

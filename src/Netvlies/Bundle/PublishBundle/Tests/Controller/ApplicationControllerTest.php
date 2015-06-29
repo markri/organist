@@ -20,7 +20,7 @@ class ApplicationControllerTest extends WebTestCase
     /**
      * Also contains redirect to dashboard which is asserted
      */
-    public function testCreate()
+    public function testCreateApplication()
     {
         $this->loadFixtures(array());
         $client = static::createClient();
@@ -44,7 +44,7 @@ class ApplicationControllerTest extends WebTestCase
     }
 
 
-    public function testEdit()
+    public function testEditApplication()
     {
         // Load fixture with one app present
         $this->loadFixtures(array(
@@ -65,7 +65,7 @@ class ApplicationControllerTest extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("newtestname")')->count() > 0);
     }
 
-    public function testDelete()
+    public function testDeleteApplication()
     {
         $this->loadFixtures(array(
             'Netvlies\Bundle\PublishBundle\Tests\Fixtures\LoadApplication'

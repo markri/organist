@@ -13,6 +13,7 @@ namespace Netvlies\Bundle\PublishBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
@@ -21,7 +22,7 @@ class DefaultController extends Controller
      * @Route("/")
      * @Template
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();

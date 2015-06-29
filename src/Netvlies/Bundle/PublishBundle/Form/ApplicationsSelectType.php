@@ -18,14 +18,12 @@ class ApplicationsSelectType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
         $builder
             ->add('application', 'entity', array(
                 'class' => 'Netvlies\Bundle\PublishBundle\Entity\Application',
                 'property' => 'keyName'
             )
         );
-
     }
 
 

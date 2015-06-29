@@ -10,16 +10,11 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
-use PhpOption\Option;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Event\DataEvent;
-use Netvlies\Bundle\PublishBundle\Entity\TargetRepository;
-use Netvlies\Bundle\PublishBundle\Entity\Rollback;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class FormApplicationRollbackType extends AbstractType
+class ApplicationDeployType extends HorizontalAbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -30,24 +25,25 @@ class FormApplicationRollbackType extends AbstractType
             ->add('target', 'target_choicelist', array(
                 'label' => 'Target *',
                 'app' => $app,
-                'attr' => array('data-help'=>'This works just like ctrl-z. (It will undo last succesfull deployment).'),
+                'required' => true
+            ))
+            ->add('revision', 'reference_choicelist', array(
+                'label' => 'Reference *',
+                'app' => $app,
                 'required' => true
             ));
-
     }
 
     public function setDefaultOptions(OptionsResolverInterface $options)
     {
-        $options->setDefaults(
-            array(
-                'app' => null
-            )
-        );
+        $options->setDefaults(array(
+           'app' => null,
+        ));
     }
 
     public function getName()
     {
-        return 'netvlies_publishbundle_applicationrollback';
+        return 'netvlies_publishbundle_applicationdeploy';
     }
 
 }

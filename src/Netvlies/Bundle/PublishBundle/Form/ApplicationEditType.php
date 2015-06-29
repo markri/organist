@@ -10,10 +10,9 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class FormApplicationEditType extends AbstractType
+class ApplicationEditType extends HorizontalAbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

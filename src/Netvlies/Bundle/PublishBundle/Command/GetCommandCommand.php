@@ -34,7 +34,6 @@ class GetCommandCommand extends ContainerAwareCommand
     {
         $id = $input->getOption('id');
 
-
         /**
          * @var EntityManager $em
          */

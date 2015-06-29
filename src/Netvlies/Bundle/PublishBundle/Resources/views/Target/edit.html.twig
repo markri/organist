@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h3>Edit target for {{application.name}}</h3>
+    <h3>Edit target for {{target.application.name}}</h3>
     <hr />
 
     <div class="alert alert-info">
@@ -18,7 +18,7 @@
         {{ form_widget(form) }}
 
         <div class="pull-right">
-            <a href="{{ path('netvlies_publish_target_targets', {'application': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <a href="{{ path('netvlies_publish_target_targets', {'application': target.application.id}) }}" class="btn btn-warning">Cancel</a>
             <input type="submit" value="Save" class="btn btn-default"/>
         </div>
     </form>

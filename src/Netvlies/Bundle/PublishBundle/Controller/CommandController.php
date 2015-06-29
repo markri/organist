@@ -21,10 +21,10 @@ use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
 use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
-use Netvlies\Bundle\PublishBundle\Form\FormApplicationDeployType;
-use Netvlies\Bundle\PublishBundle\Form\FormApplicationRollbackType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Netvlies\Bundle\PublishBundle\Form\ApplicationDeployType;
+use Netvlies\Bundle\PublishBundle\Form\ApplicationRollbackType;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -58,8 +58,8 @@ class CommandController extends Controller
         $rollbackCommand->setApplication($application);
         $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
 
-        $deployForm = $this->createForm(new FormApplicationDeployType(), $deployCommand, array('app'=>$application));
-        $rollbackForm = $this->createForm(new FormApplicationRollbackType(), $rollbackCommand, array('app'=>$application));
+        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app'=>$application));
+        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app'=>$application));
 
         $request = $this->getRequest();
 
@@ -89,14 +89,9 @@ class CommandController extends Controller
             }
         }
 
-        // This is to let layout know some extra attribute on which layout logic will be based for form building
-        $rollbackView = $rollbackForm->createView();
-        $rollbackView->vars['attr']['data-horizontal'] = true;
-
         return array(
             'deployForm' => $deployForm->createView(),
-            'rollbackForm' => $rollbackView,
-            'application' => $application,
+            'rollbackForm' => $rollbackForm->createView(),
             'headRevision' => $headRevision
         );
     }
@@ -203,8 +198,7 @@ class CommandController extends Controller
         }
 
         return array(
-            'command' => $commandlog,
-            'application' => $application
+            'command' => $commandlog
         );
     }
 
@@ -216,8 +210,7 @@ class CommandController extends Controller
     public function viewLogAction(Application $application, CommandLog $commandlog)
     {
         return array(
-            'log' => $commandlog,
-            'application' => $application
+            'log' => $commandlog
         );
     }
 
@@ -230,8 +223,7 @@ class CommandController extends Controller
     public function listLogsAction(Application $application)
     {
         return array(
-            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application),
-            'application' => $application
+            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application)
         );
     }
 
@@ -300,5 +292,4 @@ class CommandController extends Controller
             'messages' => $messages
         );
     }
-
 }

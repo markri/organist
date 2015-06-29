@@ -9,7 +9,6 @@
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -33,7 +32,6 @@ class OneToManyType extends AbstractType{
         $view->vars['layoutmacro'] = $options['layoutmacro'];
         parent::buildView($view, $form, $options);
     }
-
 
     /**
      * Returns the name of this type.

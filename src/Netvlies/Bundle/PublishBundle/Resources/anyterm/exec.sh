@@ -24,6 +24,7 @@ echo `date` >> $logfile
 echo "" >> $logfile
 
 # execute script
+# todo check script command for recording instead of using tee
 $script 2>&1 | tee -a $logfile
 exitcode=${PIPESTATUS[0]}
 
@@ -39,13 +40,13 @@ echo ""
 # check if script was succesfull
 if [ $exitcode != '0' ]
 then
-	echo -e "\e[37m\e[41m Command $command returned with wrong exitcode. Please review settings and/or try again \e[0m"
+	echo -e "\e[37m\e[41m Deployment $command returned with wrong exitcode. Please review settings and/or try again \e[0m"
 else
 	if [ $diff != '0' ]
 	then
-		echo -e "\e[37m\e[42m Command $command was succesfully executed in $diff seconds \e[0m"
+		echo -e "\e[37m\e[42m Deployment $command was succesfully executed in $diff seconds \e[0m"
 	else
-		echo -e "\e[37m\e[42m Command $command was succesfully executed in almost zero seconds \e[0m"
+		echo -e "\e[37m\e[42m Deployment $command was succesfully executed in almost zero seconds \e[0m"
 	fi
 fi
 

@@ -23,6 +23,11 @@ services:
         tags:
             - { name: form.type, alias: reference_choicelist }
 
+    netvlies_publish.form.branch_selector:
+        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\BranchChoiceList
+        arguments: [ @service_container ]
+        tags:
+            - { name: form.type, alias: branch_choicelist }
 
     netvlies_publish.form.versioning_selector:
         class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\VersioningChoiceList

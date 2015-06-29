@@ -14,6 +14,7 @@ use Netvlies\Bundle\PublishBundle\Action\CheckoutCommand;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,7 +24,7 @@ use Netvlies\Bundle\PublishBundle\Entity\CommandLogRepository;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 
 use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
-use Netvlies\Bundle\PublishBundle\Form\FormApplicationEditType;
+use Netvlies\Bundle\PublishBundle\Form\ApplicationEditType;
 
 class ApplicationController extends Controller
 {
@@ -76,11 +77,8 @@ class ApplicationController extends Controller
             }
         }
 
-        $formView = $form->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'form' => $formView
+            'form' => $form->createView()
         );
     }
 
@@ -93,7 +91,7 @@ class ApplicationController extends Controller
      * @param Application $application
      * @return array
      */
-    public function dashboardAction(Application $application)
+    public function dashboardAction(Request $request, Application $application)
     {
         /**
          * @var CommandLogRepository
@@ -102,7 +100,6 @@ class ApplicationController extends Controller
         $logs = $logRepo->getLogsForApplication($application, 5);
 
         return array(
-            'application' => $application,
             'logs' => $logs
         );
     }
@@ -117,7 +114,7 @@ class ApplicationController extends Controller
      */
     public function editAction(Application $application)
     {
-        $form = $this->createForm(new FormApplicationEditType(), $application);
+        $form = $this->createForm(new ApplicationEditType(), $application);
         $request = $this->getRequest();
 
         $originalUserFiles = clone $application->getUserFiles();
@@ -150,13 +147,8 @@ class ApplicationController extends Controller
             }
         }
 
-        // This is to let layout know some extra attribute on which layout logic will be based for form building
-        $formView = $form->createView();
-        $formView->vars['attr']['data-horizontal'] = true;
-
         return array(
-            'form' => $formView,
-            'application' => $application
+            'form' => $form->createView()
         );
     }
 

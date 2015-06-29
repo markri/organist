@@ -11,9 +11,8 @@
 namespace Netvlies\Bundle\PublishBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\AbstractType;
 
-class ApplicationCreateType extends AbstractType
+class ApplicationCreateType extends HorizontalAbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
