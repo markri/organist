@@ -1,4 +1,3 @@
-{% set application = applicationcontext() %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,16 +7,14 @@
         <meta name="author" content="markri">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{% block oms_title %}Organist deployment tool{% endblock %}</title>
+        <title>Organist deployment tool</title>
 
         <link href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.css') }}" rel="stylesheet"/>
-
-        <!-- Bootstrap -->
+        <link href="{{ asset('bundles/netvliespublish/css/select2.css') }}" rel="stylesheet"/>
         <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
 
         {% block javascripts %}
-
             {% if status_bitbucket %}
                 <script type="text/javascript" src="https://statuspage-production.s3.amazonaws.com/se-v2.js"></script>
             {% endif %}
@@ -38,118 +35,61 @@
 
     {% block body %}
 
-        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ path('netvlies_publish_default_index') }}">Organist</a>
-                </div>
-                <div class="navbar-collapse navbar-ex1-collapse">
-                    <ul class="nav navbar-nav">
+        {{ renderMenu() }}
 
-                        <li {% if environmentstab is defined %}class="active" {% endif %}>
-                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-cloud"></span> Hosts</a>
-                        </li>
-                        <li>
-                            <form class="navbar-form" role="search">
-                                <div class="form-group">
-                                    {% if application is not empty%}
-                                        {{applicationselect(application.id)|raw}}
-                                    {% else %}
-                                        {{applicationselect()|raw}}
-                                    {% endif %}
-                                </div>
-                            </form>
-                        </li>
-                        {% if application is not empty %}
-                            <li {% if dashboardtab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_application_dashboard', {'application': application.id}) }}" ><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a>
-                            </li>
-                            {% if application.id is checkedout %}
-                                <li {% if commandtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_command_commandpanel', {'application': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Deployment</a>
-                                </li>
-                                <li {% if targettab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_target_targets', {'application': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
-                                </li>
-                            {% else %}
-                                <li {% if commandtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('netvlies_publish_application_checkoutrepository', {'application': application.id }) }}"><span class="glyphicon glyphicon-transfer"></span> Checkout repository</a>
-                                </li>
-                            {% endif %}
-                            <li {% if settingstab is defined %}class="active" {% endif %}>
-                                <a href="{{ path('netvlies_publish_application_edit', {'application': application.id }) }}" ><span class="glyphicon glyphicon-cog"></span> Settings</a>
-                            </li>
+        <div class="container-fluid">
+            <div class="col-md-12">
+                {% block messages %}
 
-                        {% endif %}
+                    {% for flash in app.session.flashbag.get('error') %}
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>Oops!</strong> {{ flash|raw }}
+                        </div>
+                    {% endfor %}
 
+                    {% for flash in app.session.flashbag.get('success') %}
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>Yay!</strong> {{ flash|raw }}
+                        </div>
+                    {% endfor %}
 
-                    </ul>
-                    <ul class="nav navbar-nav-color navbar-right">
-                        {% if status_bitbucket %}
-                            <li>
-                                <a href="http://status.bitbucket.org/" id="bitbucketlink"><span class="glyphicon glyphicon-cloud-download" id="bitbucketstatus"></span></a>
-                            </li>
-                        {% endif %}
-                        {% if status_github %}
-                            <li>
-                                <a href="https://status.github.com/" id="githublink"><span class="glyphicon glyphicon-cloud-download" id="githubstatus"></span></a>
-                            </li>
-                        {% endif %}
-                    </ul>
+                    {% for flash in app.session.flashbag.get('warning') %}
+                        <div class="alert alert-warning">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <strong>Warning!</strong> {{ flash|raw }}
+                        </div>
+                    {% endfor %}
+
+                    {% for flash in app.session.flashbag.all %}
+                        <div class="alert alert-info">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {% for message in flash %}
+                                <strong>Info:</strong> {{ message |raw }}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                {% endblock %}
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
-        </nav>
 
-        <div class="container">
-            {% block messages %}
-
-                {% for flash in app.session.flashbag.get('error') %}
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Oops!</strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
-
-                {% for flash in app.session.flashbag.get('success') %}
-                    <div class="alert alert-success">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Yay!</strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
-
-                {% for flash in app.session.flashbag.get('warning') %}
-                    <div class="alert alert-warning">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>Warning!</strong> {{ flash|raw }}
-                    </div>
-                {% endfor %}
-
-                {% for flash in app.session.flashbag.all %}
-                    <div class="alert alert-info">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        {% for message in flash %}
-                            <strong>Info:</strong> {{ message |raw }}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-
-            {% endblock %}
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            </div>
         </div>
-
-
     {% endblock %}
 
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.js') }}"></script>
-    <script src="{{ asset('bundles/netvliespublish/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('bundles/netvliespublish/js/jquery.liveFilter.js') }}"></script>
-    <script src="{{ asset('bundles/netvliespublish/js/organist.js') }}"></script>
+    {% block footer_javascripts %}
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.js') }}"></script>
+        <script src="{{ asset('bundles/netvliespublish/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('bundles/netvliespublish/js/jquery.liveFilter.js') }}"></script>
+        <script src="{{ asset('bundles/netvliespublish/js/organist.js') }}"></script>
+    {% endblock %}
 </body>
 </html>

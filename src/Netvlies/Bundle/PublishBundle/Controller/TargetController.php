@@ -25,13 +25,18 @@ use Netvlies\Bundle\PublishBundle\Form\TargetEditType;
 use Netvlies\Bundle\PublishBundle\Form\TargetStep1Type;
 use Netvlies\Bundle\PublishBundle\Form\TargetStep2Type;
 
+/**
+ * Class TargetController
+ * @package Netvlies\Bundle\PublishBundle\Controller
+ * @Route("/target")
+ */
 class TargetController extends Controller
 {
 
     /**
      * Will return a list of all targets for this application
      *
-     * @Route("/application/{application}/targets")
+     * @Route("/{application}/targetlist")
      * @Template()
      */
     public function targetsAction(Application $application)
@@ -40,12 +45,13 @@ class TargetController extends Controller
         $targets = $em->getRepository('NetvliesPublishBundle:Target')->getOrderedByDTAP($application);
 
         return array(
+            'application' => $application,
             'targets' => $targets
         );
     }
 
     /**
-     * @Route("/application/{application}/target/{target}")
+     * @Route("/{target}")
      * @Template()
      * @param Target $target
      */
@@ -66,7 +72,7 @@ class TargetController extends Controller
 
 
     /**
-     * @Route("/application/{application}/target/new/step1")
+     * @Route("/{application}/new/step1")
      * @Template()
      */
     public function createStep1Action(Application $application)
@@ -97,12 +103,13 @@ class TargetController extends Controller
 
         return array(
             'form' => $formStep1->createView(),
+            'application' => $application
         );
     }
 
 
     /**
-     * @Route("/application/{application}/target/new/step2")
+     * @Route("/{application}/target/new/step2")
      * @Template()
      */
     public function createStep2Action(Application $application)
@@ -212,12 +219,13 @@ class TargetController extends Controller
 
         return array(
             'form' => $formStep2->createView(),
+            'application' => $application
         );
     }
 
 
     /**
-     * @Route("/target/edit/{target}")
+     * @Route("/edit/{target}")
      * @Template()
      * @param Target $target
      * @return Response
@@ -258,7 +266,7 @@ class TargetController extends Controller
 
 
     /**
-     * @Route("/target/delete/{target}")
+     * @Route("/delete/{target}")
      */
     public function deleteAction(Target $target)
     {
@@ -271,28 +279,4 @@ class TargetController extends Controller
         $this->get('session')->getFlashBag()->add('warning', sprintf('Target %s is deleted', $label));
         return $this->redirect($this->generateUrl('netvlies_publish_target_targets', array('application' => $app->getId())));
     }
-
-
-//    /**
-//     * @Route("/target/init/{target}")
-//     * @param Target $target
-//     * @return Response
-//     */
-//    public function initAction(Target $target)
-//    {
-//        /**
-//         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-//         */
-//        $versioningService = $this->get($target->getApplication()->getScmService());
-//
-//        $initCommand = new InitCommand();
-//        $initCommand->setApplication($target->getApplication());
-//        $initCommand->setTarget($target);
-//        $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
-//
-//        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-//            'command'  => $initCommand
-//        ));
-//    }
-
 }

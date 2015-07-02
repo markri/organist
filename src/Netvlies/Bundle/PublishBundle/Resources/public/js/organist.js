@@ -14,10 +14,10 @@ $(function () {
 
                         if (status == 'none') {
                             label = ' Bitbucket: ok!';
-                            cssclass = 'btn btn-success';
+                            cssclass = 'btn-success';
                         } else {
                             label = ' Bitbucket: oops!';
-                            cssclass = 'btn btn-danger';
+                            cssclass = 'btn-danger';
                         }
 
                         $("#bitbucketstatus").after(label);
@@ -40,10 +40,10 @@ $(function () {
 
                         if (ghstatus == 'good') {
                             label = ' Github: ok!';
-                            cssclass = 'btn btn-success';
+                            cssclass = 'btn-success';
                         } else {
                             label = ' Github: oops!'+ghstatus;
-                            cssclass = 'btn btn-danger';
+                            cssclass = 'btn-danger';
                         }
 
                         $("#githubstatus").after(label);

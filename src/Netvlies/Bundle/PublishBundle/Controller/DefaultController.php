@@ -23,7 +23,7 @@ class DefaultController extends Controller
      * @Route("/")
      * @Template
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();

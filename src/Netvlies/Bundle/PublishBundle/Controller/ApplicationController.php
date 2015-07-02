@@ -26,11 +26,16 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationCreateType;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationEditType;
 
+/**
+ * Class ApplicationController
+ * @package Netvlies\Bundle\PublishBundle\Controller
+ * @Route("/application")
+ */
 class ApplicationController extends Controller
 {
 
     /**
-     * @Route("/application/create")
+     * @Route("/create")
      * @Template()
      */
     public function createAction()
@@ -86,12 +91,12 @@ class ApplicationController extends Controller
     /**
      * Dashboard view
      *
-     * @Route("/application/{application}/dashboard")
+     * @Route("/{application}/dashboard")
      * @Template()
      * @param Application $application
      * @return array
      */
-    public function dashboardAction(Request $request, Application $application)
+    public function dashboardAction(Application $application)
     {
         /**
          * @var CommandLogRepository
@@ -100,14 +105,15 @@ class ApplicationController extends Controller
         $logs = $logRepo->getLogsForApplication($application, 5);
 
         return array(
-            'logs' => $logs
+            'logs' => $logs,
+            'application' => $application
         );
     }
 
 
 
     /**
-     * @Route("/application/{application}/settings")
+     * @Route("/{application}/settings")
      * @Template()
      * @param Application $application
      * @return array
@@ -148,12 +154,13 @@ class ApplicationController extends Controller
         }
 
         return array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'application' => $application
         );
     }
 
     /**
-     * @Route("/application/delete/{application}")
+     * @Route("/delete/{application}")
      * @param $application Application
      * @return RedirectResponse
      */
@@ -171,7 +178,7 @@ class ApplicationController extends Controller
     /**
      * This action is used as subaction to load all available applications into its template.
      *
-     * @Route("/application/list/widget")
+     * @Route("/list/widget")
      * @Template()
      * @return array
      */
@@ -185,7 +192,7 @@ class ApplicationController extends Controller
 
 
     /**
-     * @Route("/application/{application}/checkoutrepository")
+     * @Route("/{application}/checkoutrepository")
      * @param Application $application
      * @return Response
      */
@@ -210,7 +217,7 @@ class ApplicationController extends Controller
     }
 
     /**
-     * @Route("/application/{application}/updaterepository")
+     * @Route("/{application}/updaterepository")
      * @param Application $application
      * @return RedirectResponse
      */

@@ -1,4 +1,3 @@
-{% set commandtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 
 {% block content %}
@@ -49,7 +48,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id, 'application': application.id}) }}">View log</a>
+                    <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id}) }}">View log</a>
                 </td>
             </tr>
         {% endfor %}

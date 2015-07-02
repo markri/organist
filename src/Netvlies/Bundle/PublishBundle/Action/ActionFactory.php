@@ -22,6 +22,7 @@ class ActionFactory
     public function getDeployCommand()
     {
         $class = $this->namespace . '\DeployCommand';
+        $this->checkClass($class);
         return new $class;
     }
 
@@ -29,6 +30,7 @@ class ActionFactory
     public function getInitCommand()
     {
         $class = $this->namespace . '\InitCommand';
+        $this->checkClass($class);
         return new $class;
     }
 
@@ -36,6 +38,13 @@ class ActionFactory
     public function getRollbackCommand()
     {
         $class = $this->namespace . '\RollbackCommand';
+        $this->checkClass($class);
         return new $class;
+    }
+
+    private function checkClass($class) {
+        if (!class_exists($class)) {
+            throw new \Exception(sprintf('Class %s doesnt exist. Do you have a correct deployment strategy for your application?', $class));
+        }
     }
 }

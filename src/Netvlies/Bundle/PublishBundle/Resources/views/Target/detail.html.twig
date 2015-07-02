@@ -1,6 +1,4 @@
-{% set dashboardtab = false %}
 {% extends 'NetvliesPublishBundle::layout.html.twig'  %}
-
 
 {% block content %}
 
@@ -11,7 +9,6 @@
     <dl class="dl-horizontal">
         <dt>Deployment count</dt> <dd>{{ countLogs }}</dd>
         <dt>Last deployment</dt> <dd>{{ lastLog.dateTimeStart|date('Y-m-d H:i:s')}}</dd>
-        {#<dt>Deployers</dt> <dd>{{application.scmService}}</dd>#}
     </dl>
 
 
@@ -64,7 +61,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id, 'application': target.application.id}) }}">View log</a>
+                            <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id}) }}">View log</a>
                         </td>
                     </tr>
                 {% endfor %}

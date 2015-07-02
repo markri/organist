@@ -69,9 +69,40 @@ netvlies_publish:
     repositorypath: %repository_path%
     anyterm_user: deploy   # this local user is used for connecting to remote hosts for deployment and git user
     anyterm_exec_port: 7779 # anyterm port
+#    strategies:
+#        capistrano2:
+#            label: Capistrano 2
+#            rvm: ruby-1.8.7-head
+#            default_commands:
+#                deploy:
+#                    label: Deploy
+#                    class: Netvlies\Bundle\PublishBundle\Action\Capistrano2\DeployCommand
+#                    target: true
+#                    revision: true
+#                rollback:
+#                    label: Rollback
+#                    class: Netvlies\Bundle\PublishBundle\Action\Capistrano2\RollbackCommand
+#                    target: true
+#                setup:
+#                    label: Setup
+#                    class: Netvlies\Bundle\PublishBundle\Action\Capistrano2\InitCommand
+#                    target: true
+#        capistrano3:
+#            label: Capistrano 3
+#            rvm: ruby-2.2.3
+#            default_commands:
+#                deploy:
+#                rollback:
+#                setup:
+#        phing:
+#            label: Phing
+#            default_commands:
+#                deploy:
+#                rollback:
+#                setup:
     externalstatus:
         bitbucket: true
-        github: true
+        github: false
     versioningservices:
         git:
             forward_key: /home/deploy/.ssh/id_rsa_bitbucket

@@ -14,6 +14,7 @@ use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Router;
 use Twig_Extension;
@@ -36,7 +37,7 @@ class PublishExtensions extends Twig_Extension
         return array(
             new \Twig_SimpleFunction('applicationselect', array($this, 'getApplicationSelect'), array('id')),
             new \Twig_SimpleFunction('usercontentoverlap', array($this, 'getUserContentOverlap'), array('id')),
-            new \Twig_SimpleFunction('applicationcontext', array($this, 'getApplicationContext'), array()),
+            new \Twig_SimpleFunction('renderMenu', array($this, 'renderMenu'), array('is_safe' => array('html'))),
         );
     }
 
@@ -71,30 +72,50 @@ class PublishExtensions extends Twig_Extension
      *
      * @return Application
      */
-    public function getApplicationContext()
+    public function renderMenu()
     {
         /**
          * @var Request $request
          */
         $request = $this->container->get('request');
-        $pathinfo = $request->getPathInfo();
+//        $pathinfo = $request->getPathInfo();
+//
+//        /**
+//         * @var Router $router
+//         */
+//        $router = $this->container->get('router');
+//
+//        /**
+//         * @var Route $route
+//         */
+//        $routeParams = $router->match($pathinfo);
+//
+//        var_dump($routeParams);
+        $logger = $this->container->get('logger');
+        $ctlResolver = new ControllerResolver($logger);
+        $ctl = $ctlResolver->getController($request);
+        $arguments = $ctlResolver->getArguments($request, $ctl);
 
-        /**
-         * @var Router $router
-         */
-        $router = $this->container->get('router');
+        $menuTab = (str_replace('Controller', '', array_pop(explode('\\', get_class($ctl[0])))));
+        $application = null;
 
-        /**
-         * @var Route $route
-         */
-        $routeParams = $router->match($pathinfo);
+        foreach ($arguments as $argument) {
+            if ($argument instanceof Application) {
+                $application = $argument;
+                break;
+            }
 
-        if (isset($routeParams['application'])){
-            $em = $this->container->get('doctrine.orm.entity_manager');
-            return $em->getRepository('NetvliesPublishBundle:Application')->findOneById($routeParams['application']);
+            if (method_exists($argument, 'getApplication')) {
+                $application = $argument->getApplication();
+                break;
+            }
         }
 
-        return null;
+        return $this->container->get('templating')->render('NetvliesPublishBundle::menu.html.twig', array(
+            'application' => $application,
+            'menuTab' => $menuTab
+        ));
+
     }
 
     public function getApplicationTypeLabel($keyname)
@@ -137,7 +158,7 @@ class PublishExtensions extends Twig_Extension
     /**
      * @return string
      */
-    public function getApplicationSelect($id=null)
+    public function getApplicationSelect($id = null)
     {
         $em = $this->container->get('doctrine.orm.entity_manager');
         $apps = $em->getRepository('NetvliesPublishBundle:Application')->getAll();

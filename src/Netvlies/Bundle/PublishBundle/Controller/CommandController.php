@@ -28,11 +28,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+/**
+ * Class CommandController
+ * @package Netvlies\Bundle\PublishBundle\Controller
+ */
 class CommandController extends Controller
 {
 
     /**
-     * @Route("/application/{application}/commands")
+     * @Route("/command/{application}/list")
      * @Template()
      * @param Application $application
      */
@@ -106,6 +110,7 @@ class CommandController extends Controller
         }
 
         return array(
+            'application' => $application,
             'deployForm' => $deployForm->createView(),
             'rollbackForm' => $rollbackForm->createView(),
             'setupForm' => $setupForm->createView(),
@@ -179,6 +184,10 @@ class CommandController extends Controller
     }
 
 
+    /**
+     * @param CommandApplicationInterface $command
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function execApplicationCommandAction(CommandApplicationInterface $command)
     {
         $commandLog = new CommandLog();
@@ -216,6 +225,8 @@ class CommandController extends Controller
      * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
+     * @todo refactor this to other route so menu can be rendered properly
+     *
      * @Route("/console/exec/{commandlog}")
      * @Template()
      * @param CommandLog $commandlog
@@ -236,10 +247,10 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/{application}/viewlog/{commandlog}")
+     * @Route("/command/viewlog/{commandlog}")
      * @Template()
      */
-    public function viewLogAction(Application $application, CommandLog $commandlog)
+    public function viewLogAction(CommandLog $commandlog)
     {
         return array(
             'log' => $commandlog
@@ -248,7 +259,7 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/logs/{application}")
+     * @Route("/command/{application}/logs")
      * @Template()
      * @param Application $application
      */
@@ -261,7 +272,7 @@ class CommandController extends Controller
 
 
     /**
-     * @Route("/console/reexecute/{commandlog}")
+     * @Route("/command/reexecute/{commandlog}")
      * @param CommandLog $commandlog
      * @return Response
      */
@@ -297,7 +308,6 @@ class CommandController extends Controller
 
 
     /**
-     * @todo Currently giving wron info
      * @Route("/command/loadchangeset/{target}/{revision}")
      * @Template()
      * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target
