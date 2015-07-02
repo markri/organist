@@ -36,6 +36,7 @@ class ApplicationControllerTest extends WebTestCase
         $form['application_create[applicationType]'] = 'symfony23';
         $form['application_create[scmService]'] = 'git';
         $form['application_create[scmUrl]'] = 'testUrl';
+        $form['application_create[deploymentStrategy]'] = 'Capistrano2';
 
         $client->submit($form);
         $crawler = $client->followRedirect();

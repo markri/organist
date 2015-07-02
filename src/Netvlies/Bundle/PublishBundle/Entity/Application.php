@@ -97,13 +97,13 @@ class Application
 
    /**
     * @var
-    * @ORM\Column(name="build_status1", type="string", length=255)
+    * @ORM\Column(name="build_status1", type="string", length=255, nullable=true)
     */
     protected $buildStatusBadge1;
 
     /**
      * @var
-     * @ORM\Column(name="build_status2", type="string", length=255)
+     * @ORM\Column(name="build_status2", type="string", length=255, nullable=true)
      */
     protected $buildStatusBadge2;
 

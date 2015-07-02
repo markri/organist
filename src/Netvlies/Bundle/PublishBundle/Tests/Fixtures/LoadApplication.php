@@ -31,6 +31,7 @@ class LoadApplication implements FixtureInterface
         $app->setName('testname');
         $app->setScmService('git');
         $app->setScmUrl('https://github.com/organist/puppet.git');
+        $app->setDeploymentStrategy('Capistrano2');
 
         $manager->persist($app);
         $manager->flush();

@@ -78,25 +78,13 @@ class PublishExtensions extends Twig_Extension
          * @var Request $request
          */
         $request = $this->container->get('request');
-//        $pathinfo = $request->getPathInfo();
-//
-//        /**
-//         * @var Router $router
-//         */
-//        $router = $this->container->get('router');
-//
-//        /**
-//         * @var Route $route
-//         */
-//        $routeParams = $router->match($pathinfo);
-//
-//        var_dump($routeParams);
         $logger = $this->container->get('logger');
         $ctlResolver = new ControllerResolver($logger);
         $ctl = $ctlResolver->getController($request);
         $arguments = $ctlResolver->getArguments($request, $ctl);
 
-        $menuTab = (str_replace('Controller', '', array_pop(explode('\\', get_class($ctl[0])))));
+        $ctlPath = (explode('\\', get_class($ctl[0])));
+        $menuTab = (str_replace('Controller', '', array_pop($ctlPath)));
         $application = null;
 
         foreach ($arguments as $argument) {
@@ -115,7 +103,6 @@ class PublishExtensions extends Twig_Extension
             'application' => $application,
             'menuTab' => $menuTab
         ));
-
     }
 
     public function getApplicationTypeLabel($keyname)
