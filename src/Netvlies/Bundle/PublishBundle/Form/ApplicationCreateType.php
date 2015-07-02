@@ -43,6 +43,15 @@ class ApplicationCreateType extends HorizontalAbstractType
                 'label'=>'Versioning URL *',
                 'attr' => array('data-help' => 'e.g. git@bitbucket.org:netvlies/my_project.git'),
                 'required'=>true )
+            )
+            ->add('deploymentStrategy', 'choice', array(
+                    'label' => 'Deployment strategy',
+                    'required' => true,
+                    'choices' => array(
+                        'Capistrano2' => 'Capistrano 2',
+                        'Capistrano3' => 'Capistrano 3'
+                    )
+                )
             );
     }
 

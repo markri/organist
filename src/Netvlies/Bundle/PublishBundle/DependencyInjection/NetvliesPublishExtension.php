@@ -38,8 +38,12 @@ class NetvliesPublishExtension extends Extension
         $versioningTypes = array_keys($config['versioningservices']);
         $container->setParameter('netvlies_publish.versioningtypes', $versioningTypes);
 
-        foreach($config['versioningservices'] as $name=>$versioningConfig){
+        foreach ($config['versioningservices'] as $name => $versioningConfig) {
             $container->setParameter('netvlies_publish.versioning.'.$name.'.config', $versioningConfig);
+        }
+
+        foreach($config['externalstatus'] as $key => $value) {
+            $container->setParameter('netvlies_publish.' . $key , $value);
         }
 
         $container->setParameter('netvlies_publish.applicationtypes', $config['applicationtypes']);

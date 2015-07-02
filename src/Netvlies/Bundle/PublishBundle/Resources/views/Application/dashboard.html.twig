@@ -1,7 +1,5 @@
 {% set dashboardtab = true %}
 {% extends 'NetvliesPublishBundle::layout.html.twig'  %}
-{% block oms_project_name %}{{application.name}}{% endblock %}
-
 
 {% block messages %}
     {{ parent() }}
@@ -36,6 +34,14 @@
         <dt>Repository url</dt> <dd>{{application.scmUrl}}</dd>
         <dt>Applicationtype</dt> <dd>{{application.applicationtype|apptypelabel}}</dd>
     </dl>
+
+    {% if application.buildStatusBadge1 %}
+        <img src="{{ application.buildStatusBadge1 }}" border="0">
+    {% endif %}
+
+    {% if application.buildStatusBadge2 %}
+        <img src="{{ application.buildStatusBadge2 }}" border="0">
+    {% endif %}
     <br><br>
 
     {% if application.targets | length > 0%}
@@ -58,9 +64,9 @@
             <td>
                 {% for target in application.targets if target.environment.type == type and target.inactive is empty %}
                     {% if not loop.first %}
-                    <hr>
+                        <hr>
                     {%endif%}
-                    <a href="{{ path('netvlies_publish_target_edit', { 'target': target.id}) }}">{{target.label}}</a><br>
+                    <a href="{{ path('netvlies_publish_target_detail', { 'application': application.id, 'target': target.id}) }}">{{target.label}}</a><br>
                     {%if target.lastDeployedTag is not empty%}
                         {{ target.lastDeployedTag }}<br>
                     {%elseif target.lastDeployedBranch is not empty%}

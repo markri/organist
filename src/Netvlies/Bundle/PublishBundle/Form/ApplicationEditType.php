@@ -24,6 +24,23 @@ class ApplicationEditType extends HorizontalAbstractType
                 'label' => 'Customer / Groupname',
                 'required' => false)
             )
+            ->add('buildStatusBadge1', 'text', array(
+                'label' => 'Build badge 1',
+                'required' => false)
+            )
+            ->add('buildStatusBadge2', 'text', array(
+                'label' => 'Build badge 2',
+                'required' => false)
+            )
+            ->add('deploymentStrategy', 'choice', array(
+                'label' => 'Deployment strategy',
+                'required' => true,
+                'choices' => array(
+                        'Capistrano2' => 'Capistrano 2',
+                        'Capistrano3' => 'Capistrano 3'
+                    )
+                )
+            )
             ->add('userFiles', 'onetomany', array(
                 'label' => 'Shared files and directories',
                 'type' => new UserFileType(),

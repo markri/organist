@@ -82,11 +82,6 @@ class Application
      */
     protected $targets;
 
-    /**
-     * @var object $scheduledDeployments
-     * @ORM\OneToMany(targetEntity="ScheduledDeployment", mappedBy="application")
-     */
-    protected $scheduledDeployments;
 
     /**
      * @var string $applicationType
@@ -100,6 +95,23 @@ class Application
      */
     protected $status = 1;
 
+   /**
+    * @var
+    * @ORM\Column(name="build_status1", type="string", length=255)
+    */
+    protected $buildStatusBadge1;
+
+    /**
+     * @var
+     * @ORM\Column(name="build_status2", type="string", length=255)
+     */
+    protected $buildStatusBadge2;
+
+    /**
+     * @var
+     * @ORM\Column(name="deployment_strategy", type="string", length=255)
+     */
+    protected $deploymentStrategy;
 
     /**
      * Get id
@@ -245,23 +257,6 @@ class Application
     }
 
     /**
-     * @param object $scheduledDeployments
-     */
-    public function setScheduledDeployments($scheduledDeployments)
-    {
-        $this->scheduledDeployments = $scheduledDeployments;
-    }
-
-    /**
-     * @return object
-     */
-    public function getScheduledDeployments()
-    {
-        return $this->scheduledDeployments;
-    }
-
-
-    /**
      * @param string $applicationType
      */
     public function setApplicationType($applicationType)
@@ -293,4 +288,51 @@ class Application
         return $this->status;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getBuildStatusBadge1()
+    {
+        return $this->buildStatusBadge1;
+    }
+
+    /**
+     * @param mixed $buildStatusBadge1
+     */
+    public function setBuildStatusBadge1($buildStatusBadge1)
+    {
+        $this->buildStatusBadge1 = $buildStatusBadge1;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBuildStatusBadge2()
+    {
+        return $this->buildStatusBadge2;
+    }
+
+    /**
+     * @param mixed $buildStatusBadge2
+     */
+    public function setBuildStatusBadge2($buildStatusBadge2)
+    {
+        $this->buildStatusBadge2 = $buildStatusBadge2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeploymentStrategy()
+    {
+        return $this->deploymentStrategy;
+    }
+
+    /**
+     * @param mixed $deploymentStrategy
+     */
+    public function setDeploymentStrategy($deploymentStrategy)
+    {
+        $this->deploymentStrategy = $deploymentStrategy;
+    }
 }

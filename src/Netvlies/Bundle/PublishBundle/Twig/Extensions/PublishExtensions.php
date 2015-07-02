@@ -12,6 +12,7 @@ namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Router;
@@ -21,9 +22,13 @@ class PublishExtensions extends Twig_Extension
 {
     protected $container;
 
-    public function setContainer($container)
+    public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
+
+        $twig = $container->get('twig');
+        $twig->addGlobal('status_bitbucket', $container->getParameter('netvlies_publish.bitbucket'));
+        $twig->addGlobal('status_github', $container->getParameter('netvlies_publish.github'));
     }
 
     public function getFunctions()

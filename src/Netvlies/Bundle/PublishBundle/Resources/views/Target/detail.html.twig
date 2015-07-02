@@ -1,0 +1,80 @@
+{% set dashboardtab = false %}
+{% extends 'NetvliesPublishBundle::layout.html.twig'  %}
+
+
+{% block content %}
+
+    <h3>Target {{target.label}}</h3>
+    <hr />
+
+    <h4>Details</h4>
+    <dl class="dl-horizontal">
+        <dt>Deployment count</dt> <dd>{{ countLogs }}</dd>
+        <dt>Last deployment</dt> <dd>{{ lastLog.dateTimeStart|date('Y-m-d H:i:s')}}</dd>
+        {#<dt>Deployers</dt> <dd>{{application.scmService}}</dd>#}
+    </dl>
+
+
+    <a href="{{ path('netvlies_publish_target_edit', {'target': target.id}) }}" class="btn btn-default">Edit</a>
+    <br><br><br>
+
+
+    {% if logs|length == 0 %}
+        <div class="alert alert-warning">
+            Hmmmm, no logs yet, you probably want to <a href="{{ path('netvlies_publish_target_createstep1', {'application': application.id}) }}" class="alert-link">add a target</a> and start deploying so we can create some logs!
+        </div>
+    {% else %}
+        <h4>Last logs for this target</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Command type</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Log</th>
+                </tr>
+                </thead>
+                {% for log in logs %}
+                    <tr
+
+                            {% if log.exitcode is null %}
+                                class="warning"
+                            {% elseif log.exitcode == 0 %}
+                                class="success"
+                            {% else %}
+                                class="danger"
+                            {% endif %}
+                            >
+                        <td>
+                            {{ log.datetimestart.format('d-m-Y H:i') }}
+                        </td>
+                        <td>{{ log.commandLabel }}</td>
+                        <td>
+                            {{ log.user }}
+                        </td>
+                        <td>
+                            {% if log.exitcode is null %}
+                                <img src="{{ asset('bundles/netvliespublish/img/ajax-loader.gif') }}">
+                            {% elseif log.exitcode == 0 %}
+                                success
+                            {% else %}
+                                failed
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('netvlies_publish_command_viewlog', {'commandlog': log.id, 'application': target.application.id}) }}">View log</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="5" align="right">&nbsp;</td>
+                    <td><a href="{{ path('netvlies_publish_command_listlogs', {'application': target.application.id}) }}">View all logs</a></td>
+                </tr>
+            </table>
+        </div>
+        <div class="visible-xs"><span class="label label-info">Info</span> Table can be scrolled horizontally</div>
+    {% endif %}
+
+{% endblock %}

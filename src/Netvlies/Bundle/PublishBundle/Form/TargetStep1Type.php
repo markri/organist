@@ -24,7 +24,7 @@ class TargetStep1Type extends HorizontalAbstractType
             ))
             ->add('username', 'text', array(
                 'label'=>'Username *',
-                'attr' => array('data-help'=> 'in which homedir it will be deployed, just username. User will be used on SSH connection'),
+                'attr' => array('data-help'=> 'this username will be used on SSH connection'),
                 'required'=>true,
             ));
     }

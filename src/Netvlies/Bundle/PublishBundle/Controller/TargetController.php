@@ -45,6 +45,27 @@ class TargetController extends Controller
     }
 
     /**
+     * @Route("/application/{application}/target/{target}")
+     * @Template()
+     * @param Target $target
+     */
+    public function detailAction(Target $target)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $logs = $em->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($target->getApplication(), 50);
+        $countLogs = $em->getRepository('NetvliesPublishBundle:CommandLog')->countLogsForTarget($target);
+        $lastLog = $em->getRepository('NetvliesPublishBundle:CommandLog')->getLastDeployment($target);
+
+        return array(
+            'countLogs' => $countLogs,
+            'lastLog' => $lastLog,
+            'target' => $target,
+            'logs' => $logs
+        );
+    }
+
+
+    /**
      * @Route("/application/{application}/target/new/step1")
      * @Template()
      */
@@ -114,7 +135,6 @@ class TargetController extends Controller
             // @todo sure about this predefined stuff?
             switch($env->getType()){
                 case 'D':
-
                     $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$application->getKeyName();
 
                     $target->setApproot($appRoot);
@@ -253,26 +273,26 @@ class TargetController extends Controller
     }
 
 
-    /**
-     * @Route("/target/init/{target}")
-     * @param Target $target
-     * @return Response
-     */
-    public function initAction(Target $target)
-    {
-        /**
-         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-         */
-        $versioningService = $this->get($target->getApplication()->getScmService());
-
-        $initCommand = new InitCommand();
-        $initCommand->setApplication($target->getApplication());
-        $initCommand->setTarget($target);
-        $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
-
-        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-            'command'  => $initCommand
-        ));
-    }
+//    /**
+//     * @Route("/target/init/{target}")
+//     * @param Target $target
+//     * @return Response
+//     */
+//    public function initAction(Target $target)
+//    {
+//        /**
+//         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
+//         */
+//        $versioningService = $this->get($target->getApplication()->getScmService());
+//
+//        $initCommand = new InitCommand();
+//        $initCommand->setApplication($target->getApplication());
+//        $initCommand->setTarget($target);
+//        $initCommand->setRepositoryPath($versioningService->getRepositoryPath($target->getApplication()));
+//
+//        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+//            'command'  => $initCommand
+//        ));
+//    }
 
 }

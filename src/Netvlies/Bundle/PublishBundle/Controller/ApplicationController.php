@@ -86,7 +86,7 @@ class ApplicationController extends Controller
     /**
      * Dashboard view
      *
-     * @Route("/application/dashboard/{application}")
+     * @Route("/application/{application}/dashboard")
      * @Template()
      * @param Application $application
      * @return array
@@ -107,7 +107,7 @@ class ApplicationController extends Controller
 
 
     /**
-     * @Route("/application/settings/{application}")
+     * @Route("/application/{application}/settings")
      * @Template()
      * @param Application $application
      * @return array

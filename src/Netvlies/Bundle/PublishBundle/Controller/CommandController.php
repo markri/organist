@@ -10,8 +10,10 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Action\ActionFactory;
 use Netvlies\Bundle\PublishBundle\Action\CommandApplicationInterface;
 use Netvlies\Bundle\PublishBundle\Action\CommandTargetInterface;
+use Netvlies\Bundle\PublishBundle\Form\ApplicationSetupType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
@@ -19,8 +21,6 @@ use Doctrine\ORM\EntityManager;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
-use Netvlies\Bundle\PublishBundle\Action\DeployCommand;
-use Netvlies\Bundle\PublishBundle\Action\RollbackCommand;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationDeployType;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationRollbackType;
 
@@ -49,17 +49,22 @@ class CommandController extends Controller
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
-        $deployCommand = new DeployCommand();
+        $actionFactory = new ActionFactory($application->getDeploymentStrategy());
+
+        $deployCommand = $actionFactory->getDeployCommand();
         $deployCommand->setApplication($application);
         $deployCommand->setVersioningService($versioningService);
 
-
-        $rollbackCommand = new RollbackCommand();
+        $rollbackCommand = $actionFactory->getRollbackCommand();
         $rollbackCommand->setApplication($application);
         $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
 
-        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app'=>$application));
-        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app'=>$application));
+        $setupCommand = $actionFactory->getInitCommand();
+        $setupCommand->setApplication($application);
+
+        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
+        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
+        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
 
         $request = $this->getRequest();
 
@@ -87,11 +92,23 @@ class CommandController extends Controller
                     ));
                 }
             }
+
+            if ($request->request->has($setupForm->getName())){
+                $setupForm->handleRequest($request);
+
+                if($setupForm->isValid()){
+
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                        'command'  => $setupCommand
+                    ));
+                }
+            }
         }
 
         return array(
             'deployForm' => $deployForm->createView(),
             'rollbackForm' => $rollbackForm->createView(),
+            'setupForm' => $setupForm->createView(),
             'headRevision' => $headRevision
         );
     }
@@ -114,10 +131,25 @@ class CommandController extends Controller
 
         // Anyterm strips all env vars before executing exec.sh under user deploy
         // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
-        $script = 'export HOME='.$_SERVER['HOME'].' && ';
+        $script = 'export HOME=' . $_SERVER['HOME'] . ' && ';
 
         // Change dir to app repository
         $script .='cd '. $repoPath ." && ";
+
+        //@todo extract following hard sets into configurations for different deployment strategies with different type of settings
+        switch ($command->getApplication()->getDeploymentStrategy()) {
+            case 'capistrano2':
+                $script .='source /usr/local/rvm/scripts/rvm && ';
+                $script .='rvm use ruby-1.8.7-head && ';
+                break;
+            case 'capistrano3':
+                $script .='source /usr/local/rvm/scripts/rvm && ';
+                $script .='rvm use ruby-2.2.1 && ';
+                break;
+            default:
+                break;
+        }
+
         $script .=$command->getCommand();
 
         $commandLog->setCommandLabel($command->getLabel());

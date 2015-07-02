@@ -2,6 +2,7 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 {% form_theme deployForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 {% form_theme rollbackForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+{% form_theme setupForm 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
 
 {% block content %}
     <h3>{{application.name}}</h3>
@@ -59,8 +60,28 @@
     <form id="#rollback_form" name="rollback_form" method="POST" class="form-horizontal">
         {{ form_errors(rollbackForm) }}
         {{ form_widget(rollbackForm) }}
-        <br>
-        <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Rollback</button>
+
+        <div class="form-group">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">
+                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Rollback</button>
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+
+    <h4>Setup</h4>
+    <form id="#setup_form" name="setup_form" method="POST" class="form-horizontal">
+        {{ form_errors(setupForm) }}
+        {{ form_widget(setupForm) }}
+        <div class="form-group">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">
+                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Setup</button>
+            </div>
+        </div>
     </form>
 
 {% endblock %}

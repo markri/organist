@@ -43,6 +43,36 @@ class CommandLogRepository extends EntityRepository
         return $query->getResult();
     }
 
+
+    public function countLogsForTarget(Target $target)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery('
+            SELECT COUNT(c) FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
+            WHERE c.target = :target
+        ')->setParameter('target', $target);
+
+        return $query->getSingleScalarResult();
+    }
+
+
+    public function getLastDeployment(Target $target)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery('
+            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
+            WHERE c.target = :target
+            ORDER BY c.id DESC
+        ')
+        ->setParameter('target', $target);
+
+        $query->setMaxResults(1);
+
+        return $query->getSingleResult();
+    }
+
     public function getFavouriteApplications($user='anonymous', $limit=5)
     {
         $entityManager = $this->getEntityManager();

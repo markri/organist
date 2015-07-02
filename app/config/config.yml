@@ -68,7 +68,10 @@ swiftmailer:
 netvlies_publish:
     repositorypath: %repository_path%
     anyterm_user: deploy   # this local user is used for connecting to remote hosts for deployment and git user
-    anyterm_exec_port: 7778 # anyterm port
+    anyterm_exec_port: 7779 # anyterm port
+    externalstatus:
+        bitbucket: true
+        github: true
     versioningservices:
         git:
             forward_key: /home/deploy/.ssh/id_rsa_bitbucket

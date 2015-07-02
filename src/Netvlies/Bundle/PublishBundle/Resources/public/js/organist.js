@@ -10,19 +10,44 @@ $(function () {
                     success : function(data) {
                         var status = data.status.indicator;
                         var label = '';
-                        var level = 'btn btn-success'
+                        var cssclass = '';
 
                         if (status == 'none') {
                             label = ' Bitbucket: ok!';
-                            level = '#5cb85c';
-
+                            cssclass = 'btn btn-success';
                         } else {
                             label = ' Bitbucket: oops!';
-                            level = '#d9534f'
+                            cssclass = 'btn btn-danger';
                         }
 
                         $("#bitbucketstatus").after(label);
-                        $("#bitbucketlink").css('background-color', level);
+                        $("#bitbucketlink").addClass(cssclass);
+                    }
+                });
+            }
+        );
+
+        /** Github status **/
+        $("#githubstatus").ready(
+            function(){
+                $.ajax({
+                    url: window.organist.settings.githubstatus,
+                    success: function (data, status, jqxhr) {
+                        var response = $.parseJSON(JSON.stringify(data));
+                        var ghstatus = response.status;
+                        var label = '';
+                        var cssclass = '';
+
+                        if (ghstatus == 'good') {
+                            label = ' Github: ok!';
+                            cssclass = 'btn btn-success';
+                        } else {
+                            label = ' Github: oops!'+ghstatus;
+                            cssclass = 'btn btn-danger';
+                        }
+
+                        $("#githubstatus").after(label);
+                        $("#githublink").addClass(cssclass);
                     }
                 });
             }

@@ -8,31 +8,36 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Action\Capistrano2;
 
+use Netvlies\Bundle\PublishBundle\Action\BaseUpdateCommand;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
+use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-class RollbackCommand extends BaseUpdateCommand
+class DeployCommand extends BaseUpdateCommand
 {
     /**
      * @var Application $application
      */
     protected $application;
 
-
     /**
      * @var Target $target
      */
     protected $target;
 
+    /**
+     * @var string $revision
+     */
+    protected $revision;
 
     /**
-     * @var string $repositoryPath
+     * @var VersioningInterface $versioningService
      */
-    protected $repositoryPath;
+    protected $versioningService;
 
     /**
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $application
@@ -51,11 +56,19 @@ class RollbackCommand extends BaseUpdateCommand
     }
 
     /**
+     * @param string $revision
+     */
+    public function setRevision($revision)
+    {
+        $this->revision = $revision;
+    }
+
+    /**
      * @return string
      */
     public function getRevision()
     {
-        return '';
+        return $this->revision;
     }
 
     /**
@@ -74,6 +87,13 @@ class RollbackCommand extends BaseUpdateCommand
         return $this->target;
     }
 
+    /**
+     * @param VersioningInterface $versioningService
+     */
+    public function setVersioningService(VersioningInterface $versioningService)
+    {
+        $this->versioningService = $versioningService;
+    }
 
 
     public function getCommand()
@@ -82,6 +102,9 @@ class RollbackCommand extends BaseUpdateCommand
         $files = array();
         $dirs = array();
         $vhostAliases = array();
+
+        $keyForwardOpen = '';
+        $keyForwardClose = '';
 
         foreach($userFiles as $userFile){
             /**
@@ -96,7 +119,6 @@ class RollbackCommand extends BaseUpdateCommand
             }
         }
 
-
         foreach($this->target->getDomainAliases() as $alias){
             /**
              * @var DomainAlias $alias
@@ -104,19 +126,31 @@ class RollbackCommand extends BaseUpdateCommand
             $vhostAliases[] = $alias->getAlias();
         }
 
+        if($this->versioningService->getPrivateKey()){
+            // Forward optional keys for versioning. Set SSH-agent timeout for 2 hours to keep process list clear
+            $keyForwardOpen ='eval `ssh-agent -t 7200` && ';
+            $keyForwardOpen.='`ssh-add '.$this->versioningService->getPrivateKey().'` && ';
+
+            // And kill them as well
+            $keyForwardClose =' && ssh-agent -k > /dev/null 2>&1 && ';
+            $keyForwardClose.='unset SSH_AGENT_PID && ';
+            $keyForwardClose.='unset SSH_AUTH_SOCK';
+        }
+
         $updateVersionScript = $this->getUpdateVersionScript();
 
-
-        //@todo there is dtap and otap, otap is still there for BC
+        //@todo there is dtap and otap, otap is still there for BC, remove otap and add this in library
         return trim(preg_replace('/\s\s+/', ' ', "
-            cap ".$this->target->getEnvironment()->getType()." deploy:rollback
+            $keyForwardOpen
+            git checkout '".$this->revision."' &&
+            cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
             -Sapptype='".$this->application->getApplicationType()."'
             -Sappkey='".$this->application->getKeyName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
-            -Srepositorypath='".$this->repositoryPath."'
+            -Srepositorypath='".$this->getRepositoryPath()."'
             -Ssudouser='deploy'
-            -Srevision='".$this->getRevision()."'
+            -Srevision='".$this->revision."'
             -Susername='".$this->target->getUsername()."'
             -Smysqldb='".$this->target->getMysqldb()."'
             -Smysqluser='".$this->target->getMysqluser()."'
@@ -132,26 +166,19 @@ class RollbackCommand extends BaseUpdateCommand
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'
-            -Svhostaliases='".implode(',', $vhostAliases)."'".
-           $updateVersionScript
-           )
-        );
+            -Svhostaliases='".implode(',', $vhostAliases)."'
+            $updateVersionScript
+            $keyForwardClose
+            "));
     }
+
 
     /**
      * @return string
      */
     public function getRepositoryPath()
     {
-        return $this->repositoryPath;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function setRepositoryPath($repositoryPath)
-    {
-        $this->repositoryPath = $repositoryPath;
+        return $this->versioningService->getRepositoryPath($this->getApplication());
     }
 
     /**
@@ -160,8 +187,6 @@ class RollbackCommand extends BaseUpdateCommand
      */
     public function getLabel()
     {
-        return 'Capistrano rollback';
+        return 'Capistrano deployment';
     }
-
-
 }

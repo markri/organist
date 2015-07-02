@@ -15,7 +15,21 @@
 
         <!-- Bootstrap -->
         <link href="{{ asset('bundles/netvliespublish/css/bootstrap.css') }}" rel="stylesheet" media="screen">
-        <script type="text/javascript" src="https://statuspage-production.s3.amazonaws.com/se-v2.js"></script>
+
+        {% block javascripts %}
+
+            {% if status_bitbucket %}
+                <script type="text/javascript" src="https://statuspage-production.s3.amazonaws.com/se-v2.js"></script>
+            {% endif %}
+
+            <script type="text/javascript">
+                if (window.organist === undefined) { window.organist = {}; }
+                window.organist.settings = {
+                    githubstatus: "{{ path('default_githubstatus') }}"
+                }
+            </script>
+        {% endblock %}
+
     {% endblock %}
 
 </head>
@@ -54,9 +68,6 @@
                                 <li {% if commandtab is defined %}class="active" {% endif %}>
                                     <a href="{{ path('netvlies_publish_command_commandpanel', {'application': application.id}) }}" ><span class="glyphicon glyphicon-transfer"></span> Deployment</a>
                                 </li>
-                                <li {% if scheduledtab is defined %}class="active" {% endif %}>
-                                    <a href="{{ path('organist_scheduled_list', {'application': application.id}) }}" ><span class="glyphicon glyphicon-time"></span> Nightly builds</a>
-                                </li>
                                 <li {% if targettab is defined %}class="active" {% endif %}>
                                     <a href="{{ path('netvlies_publish_target_targets', {'application': application.id }) }}"><span class="glyphicon glyphicon-screenshot"></span> Targets</a>
                                 </li>
@@ -74,9 +85,16 @@
 
                     </ul>
                     <ul class="nav navbar-nav-color navbar-right">
-                        <li>
-                            <a href="http://status.bitbucket.org/" id="bitbucketlink"><span class="glyphicon glyphicon-cloud-download" id="bitbucketstatus"></span></a>
-                        </li>
+                        {% if status_bitbucket %}
+                            <li>
+                                <a href="http://status.bitbucket.org/" id="bitbucketlink"><span class="glyphicon glyphicon-cloud-download" id="bitbucketstatus"></span></a>
+                            </li>
+                        {% endif %}
+                        {% if status_github %}
+                            <li>
+                                <a href="https://status.github.com/" id="githublink"><span class="glyphicon glyphicon-cloud-download" id="githubstatus"></span></a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

@@ -13,6 +13,7 @@ namespace Netvlies\Bundle\PublishBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
@@ -50,6 +51,15 @@ class DefaultController extends Controller
     public function notAuthorizedAction()
     {
         return array();
+    }
+
+
+    /**
+     * @Route("/githubstatus", name="default_githubstatus")
+     */
+    public function githubStatus()
+    {
+        return new JsonResponse(json_decode(file_get_contents('https://status.github.com/api/status.json')));
     }
 
 }

@@ -8,12 +8,12 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Action\Capistrano2;
 
+use Netvlies\Bundle\PublishBundle\Action\CommandTargetInterface;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
-use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
 class InitCommand implements CommandTargetInterface
 {
