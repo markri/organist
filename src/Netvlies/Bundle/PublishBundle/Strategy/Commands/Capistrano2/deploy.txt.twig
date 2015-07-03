@@ -1,0 +1,33 @@
+{% if versioning.privateKey is not empty %}
+    eval `ssh-agent -t 7200` && \
+    `ssh-add '.$this->versioningService->getPrivateKey().'` && \
+{% endif %} \
+git checkout '{{ revision }}' && \
+cap {{ target.environment.type }} deploy:update \
+-Sproject='{{ application.name }}' \
+-Sapptype='{{ application.applicationType }}' \
+-Sappkey='{{ application.keyname }}' \
+-Sgitrepo='{{ application.scmUrl }}' \
+-Srepositorypath='{{ versioning.repositoryPath(application) }}' \
+-Srevision='{{ revision }}' \
+-Susername='{{ target.username }}' \
+-Smysqldb='{{ target.mysqldb }}' \
+-Smysqluser='{{ target.mysqluser }}' \
+-Smysqlpw='{{ target.mysqlpw }}' \
+-Swebroot='{{ target.webroot }}' \
+-Sapproot='{{ target.approot }}' \
+-Scaproot='{{ target.caproot }}' \
+-Sprimarydomain='{{ target.primaryDomain }}' \
+-Shostname='{{ target.environment.hostname }}' \
+-Ssshport='{{ target.environment.port }}' \
+-Sdtap='{{ target.environment.type }}' \
+-Suserfiles='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+-Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+-Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' \
+&& \
+{{ getUpdateVersionScript() }} && \
+{% if versioning.privateKey is not empty %} \
+    && ssh-agent -k > /dev/null 2>&1 && \
+    unset SSH_AGENT_PID && \
+    unset SSH_AUTH_SOCK
+{% endif %}

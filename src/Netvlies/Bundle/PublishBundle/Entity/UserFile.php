@@ -21,6 +21,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class UserFile
 {
+
+    const TYPE_FILE = 'F';
+
+    const TYPE_DIRECTORY = 'D';
+
     /**
      * @var integer $id
      *

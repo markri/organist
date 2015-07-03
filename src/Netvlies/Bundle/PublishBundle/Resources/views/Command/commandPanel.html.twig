@@ -16,6 +16,10 @@
         <dt></dt><dd><br><a href="{{ path('netvlies_publish_application_updaterepository', {'application': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
     </dl>
 
+    {#{% for cmd in application.commands %}#}
+        {##}
+    {#{% endif %}#}
+
     <h4>Deploy</h4>
     <form id="#deploy_form" name="deploy_form" method="POST" class="form-horizontal">
         {{ form_errors(deployForm) }}

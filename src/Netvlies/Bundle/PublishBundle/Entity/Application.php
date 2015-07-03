@@ -114,6 +114,12 @@ class Application
     protected $deploymentStrategy;
 
     /**
+     * @var
+     * @ORM\OneToMany(targetEntity="Command", mappedBy="application")
+     */
+    protected $commands;
+
+    /**
      * Get id
      *
      * @return integer
@@ -174,6 +180,44 @@ class Application
     public function getUserFiles()
     {
         return $this->userFiles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUserFilesFiles()
+    {
+        $files = array();
+
+        foreach ($this->userFiles as $userFile) {
+            /**
+             * @var UserFile $userFile
+             */
+            if ($userFile->getType() == UserFile::TYPE_FILE) {
+                $files[] = $userFile;
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUserFilesDirectories()
+    {
+        $directories = array();
+
+        foreach ($this->userFiles as $userFile) {
+            /**
+             * @var UserFile $userFile
+             */
+            if ($userFile->getType() == UserFile::TYPE_DIRECTORY) {
+                $directories[] = $userFile;
+            }
+        }
+
+        return $directories;
     }
 
     /**
@@ -334,5 +378,13 @@ class Application
     public function setDeploymentStrategy($deploymentStrategy)
     {
         $this->deploymentStrategy = $deploymentStrategy;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommands()
+    {
+        return $this->commands;
     }
 }
