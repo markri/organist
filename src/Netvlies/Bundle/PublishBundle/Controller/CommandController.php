@@ -266,7 +266,8 @@ class CommandController extends Controller
     public function listLogsAction(Application $application)
     {
         return array(
-            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application)
+            'logs' => $this->getDoctrine()->getRepository('NetvliesPublishBundle:CommandLog')->getLogsForApplication($application),
+            'application' => $application
         );
     }
 

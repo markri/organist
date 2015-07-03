@@ -35,7 +35,7 @@ class CommandControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/1/commands');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_command_commandpanel', array('application' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("Commit message")')->count() > 0);
 
@@ -51,7 +51,7 @@ class CommandControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/1/commands');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_command_commandpanel', array('application' => 1)));
 
         $form= $crawler->selectButton('Deploy')->form();
         $form['netvlies_publishbundle_applicationdeploy[revision]'] = GitRepo::$lastCommit;
@@ -74,7 +74,7 @@ class CommandControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/console/logs/1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_command_listlogs', array('application' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("All logs for")')->count() > 0);
     }
@@ -90,7 +90,7 @@ class CommandControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/console/1/viewlog/1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_command_viewlog', array('commandlog' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("Summary")')->count() > 0);
     }

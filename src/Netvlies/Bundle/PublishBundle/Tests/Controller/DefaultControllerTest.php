@@ -18,7 +18,7 @@ class DefaultControllerTest extends WebTestCase
     public function testIndex()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_default_index'));
         $this->assertTrue($crawler->filter('html:contains("Top applications")')->count() > 0);
     }
 
@@ -26,7 +26,7 @@ class DefaultControllerTest extends WebTestCase
     public function testNotAuthorized()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/connect-fail');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_default_notauthorized'));
         $this->assertTrue($crawler->filter('html:contains("not authorized")')->count() > 0);
     }
 

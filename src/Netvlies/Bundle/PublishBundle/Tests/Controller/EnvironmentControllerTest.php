@@ -23,9 +23,9 @@ class EnvironmentControllerTest extends WebTestCase
     public function testCreateEnvironment()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/environment/create');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_environment_create'));
 
-        $this->assertTrue($crawler->filter('html:contains("Add host")')->count() > 0);
+        $this->assertTrue($crawler->filter('html:contains("Add server")')->count() > 0);
 
         $form= $crawler->selectButton('Save')->form();
 
@@ -48,7 +48,7 @@ class EnvironmentControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/environment/edit/1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_environment_edit', array('environment' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("either IP or DNS")')->count() > 0 );
 
@@ -68,9 +68,10 @@ class EnvironmentControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $client->request('GET', '/environment/delete/1');
+        $client->request('GET', $this->getUrl('netvlies_publish_environment_delete', array('environment' => 1)));
         $crawler = $client->followRedirect();
-        $this->assertTrue($crawler->filter('html:contains("Oops, no environments available")')->count() > 0);
+
+        $this->assertTrue($crawler->filter('html:contains("Oops, no servers available")')->count() > 0);
     }
 
 }

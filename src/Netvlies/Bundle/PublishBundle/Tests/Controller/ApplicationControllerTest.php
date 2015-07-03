@@ -24,7 +24,7 @@ class ApplicationControllerTest extends WebTestCase
     {
         $this->loadFixtures(array());
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/create');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_application_create'));
 
         $this->assertTrue($crawler->filter('html:contains("Versioning service")')->count() > 0);
 
@@ -53,7 +53,7 @@ class ApplicationControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/settings/1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_application_edit', array('application' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("Shared files and directories")')->count() > 0 );
 
@@ -73,14 +73,7 @@ class ApplicationControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-
-        $crawler = $client->request('GET', '/application/settings/1');
-
-//        javascript confirm. URL is not in href so call link directly
-//        $link = $crawler->selectLink('Delete application')->link();
-//        $client->click($link);
-
-        $crawler = $client->request('GET', '/application/delete/1');
+        $client->request('GET', $this->getUrl('netvlies_publish_application_delete', array('application' => 1)));
 
         $crawler = $client->followRedirect();
         $this->assertTrue($crawler->filter('html:contains("Oops! There are no applications present")')->count() > 0);
@@ -103,7 +96,7 @@ class ApplicationControllerTest extends WebTestCase
         // Run test
         $client = static::createClient();
         $client->followRedirects(false);
-        $crawler = $client->request('GET', '/application/1/checkoutrepository');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_application_checkoutrepository', array('application' => 1)));;
 
         $this->assertTrue($crawler->filter('html:contains("Redirecting to /console/exec/1")')->count() > 0 );
 
@@ -141,7 +134,7 @@ class ApplicationControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $client->request('GET', '/application/1/updaterepository');
+        $client->request('GET', $this->getUrl('netvlies_publish_application_updaterepository', array('application' => 1)));
 
         $crawler = $client->followRedirect();
 

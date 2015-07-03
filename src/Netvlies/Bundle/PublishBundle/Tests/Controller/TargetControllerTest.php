@@ -37,9 +37,9 @@ class TargetControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/1/targets');
-
-        $this->assertTrue($crawler->filter('html:contains("remote setup")')->count() > 0);
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_target_targets', array('application' => 1)));
+        
+        $this->assertTrue($crawler->filter('html:contains("testtarget")')->count() > 0);
     }
 
     public function testCreateTarget()
@@ -50,12 +50,12 @@ class TargetControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/application/1/target/new/step1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_target_createstep1', array('application' => 1)));
         $this->assertTrue($crawler->filter('html:contains("Adding target for")')->count() > 0);
 
         $form= $crawler->selectButton('Next')->form();
 
-        // @todo for every type DTAP
+        // @todo for every type in DTAP
         $form['netvlies_publishbundle_target_step1[environment]'] = '1';
         $form['netvlies_publishbundle_target_step1[username]'] = 'user';
         $client->submit($form);
@@ -79,7 +79,7 @@ class TargetControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $crawler = $client->request('GET', '/target/edit/1');
+        $crawler = $client->request('GET', $this->getUrl('netvlies_publish_target_edit', array('target' => 1)));
         $form = $crawler->selectButton('Save')->form();
 
         $form['netvlies_publishbundle_targetedittype[label]'] = 'testedit';
@@ -99,7 +99,7 @@ class TargetControllerTest extends WebTestCase
         ));
 
         $client = static::createClient();
-        $client->request('GET', '/target/delete/1');
+        $client->request('GET', $this->getUrl('netvlies_publish_target_delete', array('target' => 1)));
         $crawler = $client->followRedirect();
 
         $this->assertTrue($crawler->filter('html:contains("Target testtarget is deleted")')->count() > 0);
