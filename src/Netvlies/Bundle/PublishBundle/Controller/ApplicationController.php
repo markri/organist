@@ -10,7 +10,8 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Action\CheckoutCommand;
+use Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\CheckoutCommand;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,10 +54,14 @@ class ApplicationController extends Controller
 
             if($form->isValid()){
                 $em = $this->container->get('doctrine.orm.entity_manager');
-                $appTypes = $this->container->getParameter('netvlies_publish.applicationtypes');
 
-                if(isset($appTypes[$application->getApplicationType()]['userfiles'])){
-                    foreach($appTypes[$application->getApplicationType()]['userfiles'] as $sharedFile){
+                /**
+                 * @var ApplicationType $appTypeService
+                 */
+                $appTypeService = $this->container->get($application->getApplicationType());
+
+                if ($userFiles = $appTypeService->getUserfiles()) {
+                    foreach($userFiles as $sharedFile){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);
                         $userFile->setPath($sharedFile);
@@ -64,8 +69,8 @@ class ApplicationController extends Controller
                         $application->addUserFile($userFile);
                     }
                 }
-                if(isset($appTypes[$application->getApplicationType()]['userdirs'])){
-                    foreach($appTypes[$application->getApplicationType()]['userdirs'] as $sharedDir){
+                if($userDirs = $appTypeService->getUserdirs()){
+                    foreach($userDirs as $sharedDir){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);
                         $userFile->setPath($sharedDir);

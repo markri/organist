@@ -6,7 +6,7 @@
  * @copyright For the full copyright and license information, please view the LICENSE file
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands;
 
 
 abstract class BaseUpdateCommand implements CommandTargetInterface

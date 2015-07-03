@@ -10,6 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle;
 
+use Netvlies\Bundle\PublishBundle\DependencyInjection\Compiler\VersioningCompilerPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -18,6 +19,7 @@ class NetvliesPublishBundle extends Bundle
 
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new VersioningCompilerPass());
         parent::build($container);
     }
 

@@ -8,13 +8,18 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action\Capistrano2;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano3;
 
-use Netvlies\Bundle\PublishBundle\Action\BaseUpdateCommand;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\BaseUpdateCommand;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 
+/**
+ * Class RollbackCommand
+ * @package Netvlies\Bundle\PublishBundle\Action\Capistrano3
+ * @todo fix Capistrano 3 command
+ */
 class RollbackCommand extends BaseUpdateCommand
 {
     /**

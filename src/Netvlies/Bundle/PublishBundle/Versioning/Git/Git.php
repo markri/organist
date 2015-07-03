@@ -40,9 +40,13 @@ class Git implements VersioningInterface
      */
     protected $repository;
 
-    public function __construct($baseRepositoryPath, $config)
+
+    /**
+     * @param $baseRepositoryPath
+     * @param string $privateKey
+     */
+    public function __construct($baseRepositoryPath, $privateKey = '')
     {
-        $privateKey = array_key_exists('forward_key', $config) ? $config['forward_key'] : '';
         $this->baseRepositoryPath = $baseRepositoryPath;
         $this->privateKey = $privateKey;
     }
@@ -54,7 +58,7 @@ class Git implements VersioningInterface
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return boolean
      */
-    function updateRepository(Application $app)
+    public function updateRepository(Application $app)
     {
         $repo = $this->getRepository($app);
         // sync tags with origin
@@ -92,7 +96,7 @@ class Git implements VersioningInterface
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return boolean
      */
-    function checkoutRepository(Application $app)
+    public function checkoutRepository(Application $app)
     {
         $repoPath = $this->getRepositoryPath($app);
         exec('mkdir -p '.escapeshellarg($repoPath));
@@ -116,7 +120,7 @@ class Git implements VersioningInterface
      * @param $toRef
      * @return array
      */
-    function getChangesets(Application $app, $fromRef, $toRef)
+    public function getChangesets(Application $app, $fromRef, $toRef)
     {
         $repo = $this->getRepository($app);
         $outputLines = $repo->getCaller()->execute(LogCommand::getInstance()->getCommitMessagesBetween($fromRef, $toRef))->getOutputLines();
@@ -149,7 +153,7 @@ class Git implements VersioningInterface
      * @param $app
      * @return array
      */
-    function getBranchesAndTags(Application $app)
+    public function getBranchesAndTags(Application $app)
     {
         return array_merge($this->getBranches($app), $this->getTags($app));
     }
@@ -162,7 +166,7 @@ class Git implements VersioningInterface
      * @param Application $app
      * @return array
      */
-    function getBranches(Application $app)
+    public function getBranches(Application $app)
     {
         $repo = $this->getRepository($app);
         $repo->checkout('master'); // Switch to master, because when we're in detached state after deployment, output will be useless for git elephant
@@ -196,7 +200,7 @@ class Git implements VersioningInterface
      * @param Application $app
      * @return array
      */
-    function getTags(Application $app)
+    public function getTags(Application $app)
     {
         $repo = $this->getRepository($app);
         $repo->checkout('master'); // Switch to master, because when we're in detached state, output will be useless for git elephant
@@ -222,7 +226,7 @@ class Git implements VersioningInterface
      * @param Application $app
      * @return CommitInterface
      */
-    function getHeadRevision(Application $app)
+    public function getHeadRevision(Application $app)
     {
         $repo = $this->getRepository($app);
 
@@ -246,7 +250,7 @@ class Git implements VersioningInterface
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $app
      * @return mixed
      */
-    function getRepositoryPath(Application $app)
+    public function getRepositoryPath(Application $app)
     {
         return $this->baseRepositoryPath. DIRECTORY_SEPARATOR . $app->getKeyName();
     }
@@ -265,7 +269,7 @@ class Git implements VersioningInterface
      *
      * @return string
      */
-    function getPrivateKey()
+    public function getPrivateKey()
     {
         return $this->privateKey;
     }

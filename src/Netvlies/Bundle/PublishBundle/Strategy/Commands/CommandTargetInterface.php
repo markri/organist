@@ -8,12 +8,12 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 
-interface CommandApplicationInterface
+interface CommandTargetInterface
 {
 
     /**
@@ -29,6 +29,26 @@ interface CommandApplicationInterface
      * @return Application
      */
     public function getApplication();
+
+
+    /**
+     * Target is required, so must return instance of entity Target
+     * @return Target
+     */
+    public function getTarget();
+
+
+    /**
+     * Optional revision that is to be used
+     * @return string
+     */
+    public function getRevision();
+
+    /**
+     * Required
+     * @return string
+     */
+    public function getRepositoryPath();
 
 
     /**

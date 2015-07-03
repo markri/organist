@@ -12,9 +12,9 @@ namespace Netvlies\Bundle\PublishBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\DependencyInjection\Dumper\GraphvizDumper;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -23,32 +23,84 @@ use Symfony\Component\DependencyInjection\Dumper\GraphvizDumper;
  */
 class NetvliesPublishExtension extends Extension
 {
+
+    /**
+     * @var ContainerBuilder
+     */
+    private $containerBuilder;
+
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $this->containerBuilder = $container;
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        // Some bundle parameters
         $container->setParameter('netvlies_publish.anyterm_user', $config['anyterm_user']);
         $container->setParameter('netvlies_publish.anyterm_exec_port', $config['anyterm_exec_port']);
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
+        $container->setParameter('netvlies_publish.bitbucket' , $config['externalstatus']['bitbucket']);
+        $container->setParameter('netvlies_publish.github' , $config['externalstatus']['github']);
 
-        $versioningTypes = array_keys($config['versioningservices']);
-        $container->setParameter('netvlies_publish.versioningtypes', $versioningTypes);
+        $this->processApplicationTypes($config['applicationtypes']);
 
-        foreach ($config['versioningservices'] as $name => $versioningConfig) {
-            $container->setParameter('netvlies_publish.versioning.'.$name.'.config', $versioningConfig);
-        }
-
-        foreach($config['externalstatus'] as $key => $value) {
-            $container->setParameter('netvlies_publish.' . $key , $value);
-        }
-
-        $container->setParameter('netvlies_publish.applicationtypes', $config['applicationtypes']);
+        $this->processStrategies($config['strategies']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+    }
+
+    /**
+     * @param $applicationTypes
+     */
+    private function processApplicationTypes($applicationTypes)
+    {
+        $applicationTypeServices = array();
+        $applicationTypeLabels = array();
+
+        foreach ($applicationTypes as $key => $params) {
+
+            $definition = new Definition('Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType');
+            $definition->addMethodCall('setKeyname', array($key));
+            $definition->addMethodCall('setLabel', array($params['label']));
+            $definition->addMethodCall('setUserdirs', array($params['userdirs']));
+            $definition->addMethodCall('setUserfiles', array($params['userfiles']));
+
+            $containerKey = 'netvlies_publish.type.' . $key;
+
+            $this->containerBuilder->setDefinition($containerKey, $definition);
+
+            $applicationTypeServices[] = $key;
+            $applicationTypeLabels[$containerKey] = $params['label'];
+        }
+
+        $this->containerBuilder->setParameter('netvlies_publish.applicationTypeKeyLabels', $applicationTypeLabels);
+    }
+
+
+    private function processStrategies($strategies)
+    {
+        $strategyServices = array();
+        $strategyLabels = array();
+
+        foreach ($strategies as $key => $params) {
+            $definition = new Definition('Netvlies\Bundle\PublishBundle\Strategy\Strategy');
+            $definition->addMethodCall('setLabel', array($params['label']));
+            $definition->addMethodCall('setKeyname', array($key));
+            $definition->addMethodCall('setRvm', array($params['rvm']));
+            $definition->addMethodCall('createDefaultCommands', array($params['default_commands']));
+
+            $containerKey = 'netvlies_publish.strategy.' . $key;
+
+            $this->containerBuilder->setDefinition($containerKey, $definition);
+
+            $strategyServices[] = $key;
+            $strategyLabels[$containerKey] = $params['label'];
+        }
+
+        $this->containerBuilder->setParameter('netvlies_publish.strategyKeyLabels', $strategyLabels);
     }
 }

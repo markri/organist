@@ -38,7 +38,7 @@ class TargetControllerTest extends WebTestCase
 
         $client = static::createClient();
         $crawler = $client->request('GET', $this->getUrl('netvlies_publish_target_targets', array('application' => 1)));
-        
+
         $this->assertTrue($crawler->filter('html:contains("testtarget")')->count() > 0);
     }
 

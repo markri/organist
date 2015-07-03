@@ -9,7 +9,7 @@
  *
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
@@ -57,7 +57,7 @@ class CheckoutCommand implements CommandApplicationInterface
      */
     public function getCommand()
     {
-        $appRoot = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+        $appRoot = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
         return sprintf('cd %s && app/console organist:checkout --key="%s" --env=%s', $appRoot, $this->getApplication()->getKeyName(), $this->environment);
     }
 

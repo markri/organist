@@ -6,7 +6,7 @@
  * @copyright For the full copyright and license information, please view the LICENSE file
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands;
 
 
 class ActionFactory
@@ -16,7 +16,7 @@ class ActionFactory
 
     public function __construct($deploymentStrategy)
     {
-        $this->namespace = sprintf('Netvlies\Bundle\PublishBundle\Action\%s', ucfirst($deploymentStrategy));
+        $this->namespace = sprintf('Netvlies\Bundle\PublishBundle\Strategy\Commands\%s', ucfirst($deploymentStrategy));
     }
 
     public function getDeployCommand()

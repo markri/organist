@@ -15,18 +15,17 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class VersioningChoiceList extends AbstractType
 {
+    private $versioningChoices;
 
-    private $branches;
-
-    public function __construct($branches)
+    public function __construct($versioningTypes)
     {
-        $this->branches = $branches;
+        $this->versioningChoices = $versioningTypes;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $options)
     {
         $options->setDefaults(array(
-            'choices' => array_combine($this->branches, $this->branches)
+            'choices' => $this->versioningChoices
         ));
     }
 

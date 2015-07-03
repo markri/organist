@@ -38,7 +38,6 @@ class CommandControllerTest extends WebTestCase
         $crawler = $client->request('GET', $this->getUrl('netvlies_publish_command_commandpanel', array('application' => 1)));
 
         $this->assertTrue($crawler->filter('html:contains("Commit message")')->count() > 0);
-
     }
 
 

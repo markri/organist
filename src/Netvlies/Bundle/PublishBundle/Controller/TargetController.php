@@ -139,7 +139,7 @@ class TargetController extends Controller
             $homedir = '/home';
 
             // Init default values in target
-            // @todo sure about this predefined stuff?
+            // @todo move this to config
             switch($env->getType()){
                 case 'D':
                     $appRoot = $homedir.'/'.$target->getUsername().'/vhosts/'.$application->getKeyName();

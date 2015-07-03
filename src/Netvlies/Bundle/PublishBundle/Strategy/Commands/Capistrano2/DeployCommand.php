@@ -8,21 +8,15 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action\Capistrano3;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2;
 
-use Netvlies\Bundle\PublishBundle\Action\BaseUpdateCommand;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\BaseUpdateCommand;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\DomainAlias;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 
-/**
- * Class DeployCommand
- * @package Netvlies\Bundle\PublishBundle\Action\Capistrano3
- *
- * @todo fix Capistrano 3 command
- */
 class DeployCommand extends BaseUpdateCommand
 {
     /**

@@ -8,19 +8,14 @@
  * @author: markri <mdekrijger@netvlies.nl>
  */
 
-namespace Netvlies\Bundle\PublishBundle\Action\Capistrano3;
+namespace Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2;
 
-use Netvlies\Bundle\PublishBundle\Action\CommandTargetInterface;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\BaseUpdateCommand;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 
-/**
- * Class InitCommand
- * @package Netvlies\Bundle\PublishBundle\Action\Capistrano3
- * @todo fix Capistrano 3 command
- */
-class InitCommand implements CommandTargetInterface
+class RollbackCommand extends BaseUpdateCommand
 {
     /**
      * @var Application $application
@@ -32,12 +27,6 @@ class InitCommand implements CommandTargetInterface
      * @var Target $target
      */
     protected $target;
-
-
-    /**
-     * @var string $revision
-     */
-    protected $revision;
 
 
     /**
@@ -62,19 +51,11 @@ class InitCommand implements CommandTargetInterface
     }
 
     /**
-     * @param string $revision
-     */
-    public function setRevision($revision)
-    {
-        $this->revision = $revision;
-    }
-
-    /**
      * @return string
      */
     public function getRevision()
     {
-        return $this->revision;
+        return '';
     }
 
     /**
@@ -115,6 +96,7 @@ class InitCommand implements CommandTargetInterface
             }
         }
 
+
         foreach($this->target->getDomainAliases() as $alias){
             /**
              * @var DomainAlias $alias
@@ -122,17 +104,19 @@ class InitCommand implements CommandTargetInterface
             $vhostAliases[] = $alias->getAlias();
         }
 
+        $updateVersionScript = $this->getUpdateVersionScript();
+
+
         //@todo there is dtap and otap, otap is still there for BC
         return trim(preg_replace('/\s\s+/', ' ', "
-            git checkout master &&
-            cap ".$this->target->getEnvironment()->getType()." deploy:setup
+            cap ".$this->target->getEnvironment()->getType()." deploy:rollback
             -Sproject='".$this->application->getName()."'
             -Sapptype='".$this->application->getApplicationType()."'
             -Sappkey='".$this->application->getKeyName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
             -Srepositorypath='".$this->repositoryPath."'
             -Ssudouser='deploy'
-            -Srevision='".$this->revision."'
+            -Srevision='".$this->getRevision()."'
             -Susername='".$this->target->getUsername()."'
             -Smysqldb='".$this->target->getMysqldb()."'
             -Smysqluser='".$this->target->getMysqluser()."'
@@ -148,8 +132,10 @@ class InitCommand implements CommandTargetInterface
             -Sdtap='".$this->target->getEnvironment()->getType()."'
             -Suserfiles='".implode(',', $files)."'
             -Suserdirs='".implode(',', $dirs)."'
-            -Svhostaliases='".implode(',', $vhostAliases)."'"
-        ));
+            -Svhostaliases='".implode(',', $vhostAliases)."'".
+           $updateVersionScript
+           )
+        );
     }
 
     /**
@@ -174,7 +160,7 @@ class InitCommand implements CommandTargetInterface
      */
     public function getLabel()
     {
-        return 'Capistrano setup';
+        return 'Capistrano rollback';
     }
 
 

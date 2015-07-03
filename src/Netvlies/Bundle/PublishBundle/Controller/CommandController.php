@@ -10,10 +10,11 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Action\ActionFactory;
-use Netvlies\Bundle\PublishBundle\Action\CommandApplicationInterface;
-use Netvlies\Bundle\PublishBundle\Action\CommandTargetInterface;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\ActionFactory;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandApplicationInterface;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTargetInterface;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationSetupType;
+use Netvlies\Bundle\PublishBundle\Strategy\Strategy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
@@ -53,7 +54,12 @@ class CommandController extends Controller
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
-        $actionFactory = new ActionFactory($application->getDeploymentStrategy());
+        /**
+         * @var Strategy $strategy
+         */
+        $strategy = $this->container->get($application->getDeploymentStrategy());
+
+        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
 
         $deployCommand = $actionFactory->getDeployCommand();
         $deployCommand->setApplication($application);

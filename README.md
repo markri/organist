@@ -58,6 +58,12 @@ netvlies_publish:
 Organist is licensed under the MIT licence. View the LICENSE file
 
 
+## Upgrade from older versions ##
+
+Update to correct scmService in Application entity
+Update to correct application type in Application entity
+Update to correct deployment strategy in Application entity
+
 ## Todo ##
 
  - Add flexible parameter settings (per target/application/environment)

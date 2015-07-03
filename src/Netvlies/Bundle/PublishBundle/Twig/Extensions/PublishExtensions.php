@@ -10,17 +10,20 @@
 
 namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
+use Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Router;
 use Twig_Extension;
 
 class PublishExtensions extends Twig_Extension
 {
+    /**
+     * @var ContainerInterface
+     */
     protected $container;
 
     public function setContainer(ContainerInterface $container)
@@ -107,13 +110,15 @@ class PublishExtensions extends Twig_Extension
 
     public function getApplicationTypeLabel($keyname)
     {
-        $appTypes = $this->container->getParameter('netvlies_publish.applicationtypes');
-
-        if(isset($appTypes[$keyname]) && isset($appTypes[$keyname]['label'])){
-            return $appTypes[$keyname]['label'];
+        if ($this->container->has($keyname)) {
+            /**
+             * @var ApplicationType $applicationType
+             */
+            $applicationType = $this->container->get($keyname);
+            return $applicationType->getLabel();
         }
 
-        return $keyname;
+        return ucfirst($keyname);
     }
 
     /**

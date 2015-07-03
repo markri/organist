@@ -13,22 +13,21 @@ namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ApplicationTypeChoiceList extends AbstractType
+class StrategyType extends AbstractType
 {
-    private $appTypes;
+    private $strategies;
 
-    public function __construct($appTypeServices)
+    public function __construct($strategies)
     {
-        $this->appTypes = $appTypeServices;
+        $this->strategies = $strategies;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $options)
     {
         $options->setDefaults(array(
-            'choices' => $this->appTypes,
+            'choices' => $this->strategies,
         ));
     }
-
 
     public function getParent()
     {
@@ -37,6 +36,6 @@ class ApplicationTypeChoiceList extends AbstractType
 
     public function getName()
     {
-        return 'applicationtype_choicelist';
+        return 'strategy_choicelist';
     }
 }
