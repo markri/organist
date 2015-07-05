@@ -55,7 +55,19 @@ services:
         tags:
             - { name: twig.extension }
 
-
     netvlies_publish.userprovider:
         class: Netvlies\Bundle\PublishBundle\Security\UserProvider
         arguments: [ %oauth_mail_regex% ]
+
+    netvlies_publish.commandformfactory:
+        class: Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandFormFactory
+        calls:
+            - [ setFormFactory, [@form.factory]]
+
+    netvlies_publish.twig.loader:
+        class: Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTwigLoader
+        arguments: [@doctrine.orm.entity_manager]
+
+    netvlies_publish.twig.environment:
+        class: Twig_Environment
+        arguments: [@netvlies_publish.twig.loader]

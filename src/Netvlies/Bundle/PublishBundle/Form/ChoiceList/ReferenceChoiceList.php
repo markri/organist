@@ -13,6 +13,9 @@ namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
 
@@ -90,5 +93,25 @@ class ReferenceChoiceList extends AbstractType
     public function getName()
     {
         return 'reference_choicelist';
+    }
+
+    /**
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        /**
+         * @var SimpleChoiceList $choiceList
+         */
+        $choiceList = $options['choice_list'];
+
+        if (count($choiceList->getChoices()) > 10) {
+            $view->vars['attr']['class'] = 'bigrevisionselect';
+            $view->vars['attr']['style'] = 'width: 100%';
+        } else {
+            $view->vars['attr']['class'] = 'form-control';
+        }
     }
 }

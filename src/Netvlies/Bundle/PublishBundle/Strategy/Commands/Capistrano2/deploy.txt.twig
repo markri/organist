@@ -25,7 +25,7 @@ cap {{ target.environment.type }} deploy:update \
 -Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
 -Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' \
 && \
-{{ getUpdateVersionScript() }} && \
+{#{{ getUpdateVersionScript() }} && \#}
 {% if versioning.privateKey is not empty %} \
     && ssh-agent -k > /dev/null 2>&1 && \
     unset SSH_AGENT_PID && \

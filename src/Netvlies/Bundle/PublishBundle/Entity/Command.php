@@ -28,8 +28,13 @@ class Command
     private $id;
 
     /**
+     * @ORM\Column(name="label", type="string", length=255)
+     */
+    private $label;
+
+    /**
      * @var Application $target
-     * @ORM\ManyToOne(targetEntity="Application")
+     * @ORM\ManyToOne(targetEntity="Application", inversedBy="commands")
      */
     private $application;
 
@@ -38,6 +43,11 @@ class Command
      * @ORM\Column(name="template", type="text")
      */
     private $template;
+
+    /**
+     * @ORM\Column(name="form_config", type="text")
+     */
+    private $formConfig;
 
     /**
      * @param \Netvlies\Bundle\PublishBundle\Entity\Application $application
@@ -77,5 +87,37 @@ class Command
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * @param mixed $formConfig
+     */
+    public function setFormConfig($formConfig)
+    {
+        $this->formConfig = $formConfig;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFormConfig()
+    {
+        return $this->formConfig;
+    }
+
+    /**
+     * @param mixed $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 } 

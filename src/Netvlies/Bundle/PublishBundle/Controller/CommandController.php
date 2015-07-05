@@ -10,12 +10,15 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
+use Netvlies\Bundle\PublishBundle\Entity\Command;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\ActionFactory;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandApplicationInterface;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTargetInterface;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationSetupType;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTwigLoader;
 use Netvlies\Bundle\PublishBundle\Strategy\Strategy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
 
@@ -36,12 +39,81 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class CommandController extends Controller
 {
 
+    public function createCommandAction(Application $application)
+    {
+
+    }
+
+
     /**
      * @Route("/command/{application}/list")
      * @Template()
      * @param Application $application
      */
-    public function commandPanelAction(Application $application)
+    public function commandPanelAction(Request $request, Application $application)
+    {
+        /**
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
+         */
+        $versioningService = $this->get($application->getScmService());
+        $headRevision = $versioningService->getHeadRevision($application);
+
+        $commands = $application->getCommands();
+        $commandFormFactory = $this->container->get('netvlies_publish.commandformfactory');
+        $forms = array();
+
+        foreach ($commands as $command) {
+            /**
+             * @var Command $command
+             */
+
+            $form = $commandFormFactory->createForm($command);
+
+            if ($request->getMethod() == 'POST' && $request->request->has($form->getName())) {
+
+                $form->handleRequest($request);
+
+                if ($form->isValid()) {
+
+                    if ($form->get('preview')->isClicked()) {
+
+                        $twig = $this->container->get('netvlies_publish.twig.environment');
+                        $data = $form->getData();
+                        $data['application'] = $application;
+                        $data['versioning'] = $this->container->get($application->getScmService());
+
+                        $cmd = $twig->render($command->getId(), $data);
+
+                        return new Response($cmd);
+
+                    } else {
+                        //@todo
+                        exit;
+                        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                            'command'  => $command
+                        ));
+                    }
+                }
+            }
+
+            $forms[] = $form->createView();
+        }
+
+        return array(
+            'headRevision' => $headRevision,
+            'application' => $application,
+            'forms' => $forms
+        );
+    }
+
+
+
+    /**
+     * @Route("/command/{application}/oldlist")
+     * @Template()
+     * @param Application $application
+     */
+    public function commandPanelOldAction(Application $application)
     {
         /**
          * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
