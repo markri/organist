@@ -1,8 +1,18 @@
-{% if versioning.privateKey is not empty %}
-    eval `ssh-agent -t 7200` && \
-    `ssh-add '.$this->versioningService->getPrivateKey().'` && \
+{#export HOME={{ homedir }} && \#} {# Try to remove this parameter#} \
+\ {# Select appropiate ruby version #}
+{% if strategy.rvm is not empty %} \
+source /usr/local/rvm/scripts/rvm && \
+rvm use {{ strategy.rvm }} && \
 {% endif %} \
+cd {{ versioning.getRepositoryPath(application) }} && \
+\ {# Start optional SSH agent #}
+{% if versioning.privateKey is not empty %} \
+eval `ssh-agent -t 7200` && \
+`ssh-add {{versioning.privateKey}}` && \
+{% endif %} \
+\ {# Bring repository in desired state #}
 git checkout '{{ revision }}' && \
+\ {# Capistrano deploy #}
 cap {{ target.environment.type }} deploy:update \
 -Sproject='{{ application.name }}' \
 -Sapptype='{{ application.applicationType }}' \
@@ -23,11 +33,15 @@ cap {{ target.environment.type }} deploy:update \
 -Sdtap='{{ target.environment.type }}' \
 -Suserfiles='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
 -Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
--Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' \
-&& \
-{#{{ getUpdateVersionScript() }} && \#}
+-Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' && \
+\ {# Update version script#}
+echo "Finished updating process. Retrieving current version ..." && \
+cd {{ approot }} && \
+app/console organist:updateversion --id={{ target.id }} && \
+echo "" && \
+\ {# Kill SSH agent #}
 {% if versioning.privateKey is not empty %} \
-    && ssh-agent -k > /dev/null 2>&1 && \
-    unset SSH_AGENT_PID && \
-    unset SSH_AUTH_SOCK
-{% endif %}
+ssh-agent -k > /dev/null 2>&1 && \
+unset SSH_AGENT_PID && \
+unset SSH_AUTH_SOCK \
+{% endif %} \
