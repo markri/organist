@@ -42,14 +42,14 @@ class CommandLog
     private $type;
 
     /**
-     * @var DateTime $datetimeStart
+     * @var \DateTime $datetimeStart
      * @ORM\Column(name="datetimestart", type="datetime")
      */
     private $datetimeStart;
 
 
     /**
-     * @var DateTime $datetimeEnd
+     * @var \DateTime $datetimeEnd
      * @ORM\Column(name="datetimeend", type="datetime", nullable=true)
      */
     private $datetimeEnd;
