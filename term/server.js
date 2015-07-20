@@ -176,13 +176,20 @@ function executeCommand(term, commandId){
         database : 'organist'
     });
 
-    connection.query('SELECT * FROM commandLog WHERE id = ' + commandId, function(err, rows) {
+    connection.query('SELECT * FROM CommandLog WHERE id = ' + commandId, function(err, rows) {
 
-        command = rows[0].command;
-
-        if (!err) {
-            term.write(command);
+        if (err) {
+            console.log(err);
+            return;
         }
+
+        if (rows.length == 0) {
+            console.write('Given command id doesnt exist in database');
+            return;
+        }
+
+        term.write(rows[0].command);
+
     });
 
     //connection.end();
