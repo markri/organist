@@ -64,6 +64,11 @@ Update to correct scmService in Application entity
 Update to correct application type in Application entity
 Update to correct deployment strategy in Application entity
 
+        UPDATE Application SET scmService = CONCAT('netvlies_publish.versioning', scmService);
+        UPDATE Application SET applicationType = CONCAT('netvlies_publish.type.', applicationType);
+        UPDATE Application SET deployment_strategy = CONCAT('netvlies_publish.strategy.capistrano2');
+
+
 ## Todo ##
 
  - Add flexible parameter settings (per target/application/environment)
