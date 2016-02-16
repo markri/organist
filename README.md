@@ -1,8 +1,6 @@
 # Organist #
 
-[![Build Status](https://travis-ci.org/organist/organist.png?branch=master)](https://travis-ci.org/organist/organist)
-
-Organist is an open source tool which helps you manage and execute deployments. It's built on top of Symfony2 and Capistrano/Capifony. [More @ http://organist.github.io](http://organist.github.io)
+Organist is an open source tool which helps you manage and execute deployments. It's built on top of Symfony2 and Capistrano/Capifony. [More @ http://organist.github.io](http://organist.github.io). I built it for Netvlies (netvlies.nl) to deploy application through through a DTAP stack. Main goal is to centralize security by not having passwords in git, but only in Organist and inject them during deployment.
 
 
 ## Setup ##
