@@ -70,46 +70,46 @@ netvlies_publish:
     repositorypath: %repository_path%
     anyterm_user: deploy   # this local user is used for connecting to remote hosts for deployment and git user
     anyterm_exec_port: 7779 # anyterm port
-#    strategies:
-#        capistrano2:
-#            label: Capistrano 2
-#            rvm: ruby-1.8.7-head
-#            commands:
-#                deploy:
-#                    default: true
-#                    label: Deploy
-#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\deploy.txt.twig
-#                    parameters:
-#                        target:
-#                            type: target_choicelist
-#                            options:
-#                                label: Target
-#                                required: true
-#                        reference:
-#                            type: reference_choicelist
-#                            options:
-#                                label: Reference
-#                                required: true
-#                rollback:
-#                    default: true
-#                    label: Rollback
-#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\rollback.txt.twig
-#                    parameters:
-#                        target:
-#                            type: target_choicelist
-#                            options:
-#                                label: Target
-#                                required: true
-#                setup:
-#                    default: true
-#                    label: Setup
-#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\init.txt.twig
-#                    parameters:
-#                        target:
-#                            type: target_choicelist
-#                            options:
-#                                label: Target
-#                                required: true
+    strategies:
+        capistrano2:
+            label: Capistrano 2
+            rvm: ruby-1.8.7-head
+            commands:
+                deploy:
+                    default: true
+                    label: Deploy
+                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\deploy.txt.twig
+                    parameters:
+                        target:
+                            type: target_choicelist
+                            options:
+                                label: Target
+                                required: true
+                        reference:
+                            type: reference_choicelist
+                            options:
+                                label: Reference
+                                required: true
+                rollback:
+                    default: true
+                    label: Rollback
+                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\rollback.txt.twig
+                    parameters:
+                        target:
+                            type: target_choicelist
+                            options:
+                                label: Target
+                                required: true
+                setup:
+                    default: true
+                    label: Setup
+                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\init.txt.twig
+                    parameters:
+                        target:
+                            type: target_choicelist
+                            options:
+                                label: Target
+                                required: true
 #        capistrano3:
 #            label: Capistrano 3
 #            rvm: ruby-2.2.3

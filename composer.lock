@@ -4,33 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d9fd4aea3a4fb33265e507f92b7fff7c",
-    "content-hash": "302b6299db66d2f4cf8ac15c4344545e",
+    "hash": "eed62e82969e00e74ad258beba40e1e6",
+    "content-hash": "59274ac2162f760c371a06cec6f8685f",
     "packages": [
         {
             "name": "cypresslab/gitelephant",
-            "version": "v1.0.9",
+            "version": "v1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matteosister/GitElephant.git",
-                "reference": "9244f1239878395a72f3322a1c13e259cb6e62dc"
+                "reference": "85c97a762e0193b01f64d1ee9084a239b4eaf1bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matteosister/GitElephant/zipball/9244f1239878395a72f3322a1c13e259cb6e62dc",
-                "reference": "9244f1239878395a72f3322a1c13e259cb6e62dc",
+                "url": "https://api.github.com/repos/matteosister/GitElephant/zipball/85c97a762e0193b01f64d1ee9084a239b4eaf1bd",
+                "reference": "85c97a762e0193b01f64d1ee9084a239b4eaf1bd",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "phpcollection/phpcollection": "~0.4",
-                "symfony/filesystem": "~2.0",
-                "symfony/finder": "~2.0",
-                "symfony/process": "~2.0"
+                "symfony/filesystem": "~2.0|~3.0",
+                "symfony/finder": "~2.0|~3.0",
+                "symfony/process": "~2.0|~3.0"
             },
             "require-dev": {
                 "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "4.1.*",
+                "phpunit/phpunit": "~4.2",
                 "sami/sami": "dev-master"
             },
             "type": "library",
@@ -46,9 +46,7 @@
             "authors": [
                 {
                     "name": "Matteo Giachino",
-                    "email": "matteog@gmail.com",
-                    "homepage": "https://github.com/matteosister/CypressTreeBundle/tree/develop",
-                    "role": "Developer"
+                    "email": "matteog@gmail.com"
                 }
             ],
             "description": "An abstraction layer for git written in PHP 5.3",
@@ -56,7 +54,7 @@
             "keywords": [
                 "git"
             ],
-            "time": "2014-06-26 20:57:36"
+            "time": "2016-01-03 09:24:52"
         },
         {
             "name": "doctrine/annotations",

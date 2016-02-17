@@ -10,6 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Versioning\Git;
 
+use GitElephant\GitBinary;
 use GitElephant\Objects\TreeBranch;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use GitElephant\Repository;
@@ -279,7 +280,8 @@ class Git implements VersioningInterface
     {
         if(empty($this->repository)){
             $repoPath = $this->getRepositoryPath($app);
-            $this->repository = new Repository($repoPath);
+            $gitBinary = new GitBinary('/usr/bin/git');
+            $this->repository = new Repository($repoPath, $gitBinary);
         }
 
         return $this->repository;
