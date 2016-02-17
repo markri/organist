@@ -15,6 +15,7 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     repository_path:  /home/deploy/organist/web/repos
+    private_key: /home/organist/.ssh/private_key
 
     dev_oauth_id: id
     dev_oauth_secret: secret

@@ -72,9 +72,8 @@ services:
         class: Twig_Environment
         arguments: [@netvlies_publish.twig.loader]
 
-
     git:
         class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
-        arguments: [%repository_path%]
+        arguments: [%repository_path%, %private_key%]
         tags:
           - {name: netvlies_publish.versioning, alias: git}

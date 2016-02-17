@@ -73,38 +73,38 @@ $(function () {
         );
 
         // ****************** Load changeset
-        $("#netvlies_publishbundle_applicationdeploy_target").change(
-            function(){
-                loadChangeList();
-            }
-        );
-
-        $("#netvlies_publishbundle_applicationdeploy_revision").change(
-            function(){
-                loadChangeList();
-            }
-        );
-
-        function loadChangeList(){
-            var target = $("#netvlies_publishbundle_applicationdeploy_target").val();
-            var revision = $("#netvlies_publishbundle_applicationdeploy_revision").val();
-
-            if(!target || !revision){
-                return;
-            }
-
-            var app_dev = '';
-            if($('#loadchangeset').data('env') == 'dev'){
-                app_dev = '/app_dev.php'
-            }
-            $('#loadchangeset').html('<div class="col-lg-2"></div><div class="col-lg-10"><img src="/bundles/netvliespublish/img/ajax-loader.gif"> Loading changeset</div>')
-
-            $.ajax({
-                url: app_dev+"/command/loadchangeset/"+target+"/"+revision
-            }).done(function(changeset) {
-                $('#loadchangeset').html(changeset);
-            });
-        }
+        //$("#netvlies_publishbundle_applicationdeploy_target").change(
+        //    function(){
+        //        loadChangeList();
+        //    }
+        //);
+        //
+        //$("#netvlies_publishbundle_applicationdeploy_revision").change(
+        //    function(){
+        //        loadChangeList();
+        //    }
+        //);
+        //
+        //function loadChangeList(){
+        //    var target = $("#netvlies_publishbundle_applicationdeploy_target").val();
+        //    var revision = $("#netvlies_publishbundle_applicationdeploy_revision").val();
+        //
+        //    if(!target || !revision){
+        //        return;
+        //    }
+        //
+        //    var app_dev = '';
+        //    if($('#loadchangeset').data('env') == 'dev'){
+        //        app_dev = '/app_dev.php'
+        //    }
+        //    $('#loadchangeset').html('<div class="col-lg-2"></div><div class="col-lg-10"><img src="/bundles/netvliespublish/img/ajax-loader.gif"> Loading changeset</div>')
+        //
+        //    $.ajax({
+        //        url: app_dev+"/command/loadchangeset/"+target+"/"+revision
+        //    }).done(function(changeset) {
+        //        $('#loadchangeset').html(changeset);
+        //    });
+        //}
 
 
         $('div.onetomanycontainer').each(function(index)
