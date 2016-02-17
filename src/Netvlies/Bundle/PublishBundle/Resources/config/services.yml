@@ -71,3 +71,9 @@ services:
     netvlies_publish.twig.environment:
         class: Twig_Environment
         arguments: [@netvlies_publish.twig.loader]
+
+
+    git:
+        class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
+        tags:
+          - {name: netvlies_publish.versioning}

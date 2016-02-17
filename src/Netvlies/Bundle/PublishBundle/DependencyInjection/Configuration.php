@@ -66,8 +66,6 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->variableNode('options')->end()
                                             ->end()
-//                                            ->children()
-//                                            ->end()
                                         ->end()
                                     ->end()
                                 ->end()

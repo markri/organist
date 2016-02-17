@@ -124,6 +124,9 @@ netvlies_publish:
     externalstatus:
         bitbucket: true
         github: false
+#    versioningservices:
+#        git:
+#            forward_key: /home/deploy/.ssh/id_rsa_bitbucket
     applicationtypes:
         symfony20:
             label: Symfony 2.0

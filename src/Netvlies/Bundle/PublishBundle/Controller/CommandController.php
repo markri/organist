@@ -11,6 +11,7 @@
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
 use Netvlies\Bundle\PublishBundle\Entity\Command;
+use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandApplicationInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,292 +32,292 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class CommandController extends Controller
 {
 
-    /**
-     * @Route("/command/{application}/list")
-     * @Template()
-     * @param Application $application
-     */
-    public function commandPanelAction(Request $request, Application $application)
-    {
-        /**
-         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-         */
-        $versioningService = $this->get($application->getScmService());
-        $headRevision = $versioningService->getHeadRevision($application);
-
-        $commands = $application->getCommands();
-        $commandFormFactory = $this->container->get('netvlies_publish.commandformfactory');
-        $forms = array();
-
-        foreach ($commands as $command) {
-            /**
-             * @var Command $command
-             */
-
-            $form = $commandFormFactory->createForm($command);
-
-            if ($request->getMethod() == 'POST' && $request->request->has($form->getName())) {
-
-                $form->handleRequest($request);
-
-                if ($form->isValid()) {
-
-                    // Render command
-                    $twig = $this->container->get('netvlies_publish.twig.environment');
-                    $data = $form->getData();
-                    $data['application'] = $application;
-                    $data['versioning'] = $this->container->get($application->getScmService());
-                    $data['approot'] =  $this->get('kernel')->getRootDir();
-                    $data['strategy'] = $this->container->get($application->getDeploymentStrategy());
-
-                    $cmd = $twig->render($command->getId(), $data);
-
-
-                    // Determine follow up action
-                    if ($form->get('preview')->isClicked()) {
-                        return new Response($cmd);
-                    } else {
-
-
-                        // Create commandlog
-                        $target = null;
-
-                        foreach($data as $value) {
-                            if ($value instanceof Target) {
-                                $target = $value;
-                            }
-                        }
-
-                        $commandLog = new CommandLog();
-                        $commandLog->setCommandLabel($command->getLabel());
-                        $commandLog->setCommand($cmd);
-                        $commandLog->setDatetimeStart(new \DateTime());
-
-                        if ($target) {
-                            $commandLog->setHost($target->getEnvironment()->getHostname());
-                            $commandLog->setTarget($target);
-                            $commandLog->setType($target->getEnvironment()->getType());
-                        }
-
-                        if($this->get('security.context')->getToken()->getUser()!='anon.'){
-                            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
-                        }
-                        else{
-                            $userName = 'anonymous';
-                        }
-
-                        $commandLog->setUser($userName);
-
-                        $em = $this->getDoctrine()->getManager();
-                        $em->persist($command);
-                        $em->flush();
-
-                        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
-                    }
-                }
-            }
-
-            $forms[] = $form->createView();
-        }
-
-        return array(
-            'headRevision' => $headRevision,
-            'application' => $application,
-            'forms' => $forms
-        );
-    }
-
-
-
 //    /**
-//     * @Route("/command/{application}/oldlist")
+//     * @Route("/command/{application}/list")
 //     * @Template()
 //     * @param Application $application
 //     */
-//    public function commandPanelOldAction(Application $application)
+//    public function commandPanelAction(Request $request, Application $application)
 //    {
 //        /**
 //         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
 //         */
 //        $versioningService = $this->get($application->getScmService());
-//        $repoPath = $versioningService->getRepositoryPath($application);
 //        $headRevision = $versioningService->getHeadRevision($application);
 //
-//        if(!file_exists($repoPath)){
-//            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
-//        }
+//        $commands = $application->getCommands();
+//        $commandFormFactory = $this->container->get('netvlies_publish.commandformfactory');
+//        $forms = array();
 //
-//        /**
-//         * @var Strategy $strategy
-//         */
-//        $strategy = $this->container->get($application->getDeploymentStrategy());
+//        foreach ($commands as $command) {
+//            /**
+//             * @var Command $command
+//             */
 //
-//        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
+//            $form = $commandFormFactory->createForm($command);
 //
-//        $deployCommand = $actionFactory->getDeployCommand();
-//        $deployCommand->setApplication($application);
-//        $deployCommand->setVersioningService($versioningService);
+//            if ($request->getMethod() == 'POST' && $request->request->has($form->getName())) {
 //
-//        $rollbackCommand = $actionFactory->getRollbackCommand();
-//        $rollbackCommand->setApplication($application);
-//        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
+//                $form->handleRequest($request);
 //
-//        $setupCommand = $actionFactory->getInitCommand();
-//        $setupCommand->setApplication($application);
+//                if ($form->isValid()) {
 //
-//        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
-//        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
-//        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
+//                    // Render command
+//                    $twig = $this->container->get('netvlies_publish.twig.environment');
+//                    $data = $form->getData();
+//                    $data['application'] = $application;
+//                    $data['versioning'] = $this->container->get($application->getScmService());
+//                    $data['approot'] =  $this->get('kernel')->getRootDir();
+//                    $data['strategy'] = $this->container->get($application->getDeploymentStrategy());
 //
-//        $request = $this->getRequest();
+//                    $cmd = $twig->render($command->getId(), $data);
 //
-//        if($request->getMethod() == 'POST'){
 //
-//            if ($request->request->has($deployForm->getName())){
+//                    // Determine follow up action
+//                    if ($form->get('preview')->isClicked()) {
+//                        return new Response($cmd);
+//                    } else {
 //
-//                $deployForm->handleRequest($request);
 //
-//                if($deployForm->isValid()){
+//                        // Create commandlog
+//                        $target = null;
 //
-//                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-//                        'command'  => $deployCommand
-//                    ));
+//                        foreach($data as $value) {
+//                            if ($value instanceof Target) {
+//                                $target = $value;
+//                            }
+//                        }
+//
+//                        $commandLog = new CommandLog();
+//                        $commandLog->setCommandLabel($command->getLabel());
+//                        $commandLog->setCommand($cmd);
+//                        $commandLog->setDatetimeStart(new \DateTime());
+//
+//                        if ($target) {
+//                            $commandLog->setHost($target->getEnvironment()->getHostname());
+//                            $commandLog->setTarget($target);
+//                            $commandLog->setType($target->getEnvironment()->getType());
+//                        }
+//
+//                        if($this->get('security.context')->getToken()->getUser()!='anon.'){
+//                            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+//                        }
+//                        else{
+//                            $userName = 'anonymous';
+//                        }
+//
+//                        $commandLog->setUser($userName);
+//
+//                        $em = $this->getDoctrine()->getManager();
+//                        $em->persist($command);
+//                        $em->flush();
+//
+//                        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
+//                    }
 //                }
 //            }
 //
-//            if ($request->request->has($rollbackForm->getName())){
-//                $rollbackForm->handleRequest($request);
-//
-//                if($rollbackForm->isValid()){
-//
-//                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-//                        'command'  => $rollbackCommand
-//                    ));
-//                }
-//            }
-//
-//            if ($request->request->has($setupForm->getName())){
-//                $setupForm->handleRequest($request);
-//
-//                if($setupForm->isValid()){
-//
-//                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-//                        'command'  => $setupCommand
-//                    ));
-//                }
-//            }
+//            $forms[] = $form->createView();
 //        }
 //
 //        return array(
+//            'headRevision' => $headRevision,
 //            'application' => $application,
-//            'deployForm' => $deployForm->createView(),
-//            'rollbackForm' => $rollbackForm->createView(),
-//            'setupForm' => $setupForm->createView(),
-//            'headRevision' => $headRevision
+//            'forms' => $forms
 //        );
 //    }
 
-//    /**
-//     * @param CommandTargetInterface $command
-//     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-//     * @throws \Exception
-//     * @return Response
-//     */
-//    public function execTargetCommandAction(CommandTargetInterface $command)
-//    {
-//        $commandLog = new CommandLog();
-//        $versioningService = $this->container->get($command->getApplication()->getScmService());
-//        $repoPath = $versioningService->getRepositoryPath($command->getApplication());
-//
-//        if(!file_exists($repoPath)){
-//            throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
-//        }
-//
-//        // Anyterm strips all env vars before executing exec.sh under user deploy
-//        // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
-//        $script = 'export HOME=' . $_SERVER['HOME'] . ' && ';
-//
-//        // Change dir to app repository
-//        $script .='cd '. $repoPath ." && ";
-//
-//        //@todo extract following hard sets into configurations for different deployment strategies with different type of settings
-//        switch ($command->getApplication()->getDeploymentStrategy()) {
-//            case 'capistrano2':
-//                $script .='source /usr/local/rvm/scripts/rvm && ';
-//                $script .='rvm use ruby-1.8.7-head && ';
-//                break;
-//            case 'capistrano3':
-//                $script .='source /usr/local/rvm/scripts/rvm && ';
-//                $script .='rvm use ruby-2.2.1 && ';
-//                break;
-//            default:
-//                break;
-//        }
-//
-//        $script .=$command->getCommand();
-//
-//        $commandLog->setCommandLabel($command->getLabel());
-//        $commandLog->setCommand($script);
-//        $commandLog->setDatetimeStart(new \DateTime());
-//        $commandLog->setHost($command->getTarget()->getEnvironment()->getHostname());
-//        $commandLog->setTarget($command->getTarget());
-//        $commandLog->setType($command->getTarget()->getEnvironment()->getType());
-//
-//        if($this->get('security.context')->getToken()->getUser()!='anon.'){
-//            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
-//        }
-//        else{
-//            $userName = 'anonymous';
-//        }
-//
-//        $commandLog->setUser($userName);
-//
-//        /**
-//         * @var EntityManager $em
-//         */
-//        $em  = $this->getDoctrine()->getManager();
-//        $em->persist($commandLog);
-//        $em->flush();
-//
-//        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
-//    }
-//
-//
-//    /**
-//     * @param CommandApplicationInterface $command
-//     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-//     */
-//    public function execApplicationCommandAction(CommandApplicationInterface $command)
-//    {
-//        $commandLog = new CommandLog();
-//
-//        $script = '';
-//        $script .=$command->getCommand();
-//
-//        $commandLog->setApplication($command->getApplication());
-//        $commandLog->setCommandLabel($command->getLabel());
-//        $commandLog->setCommand($script);
-//        $commandLog->setDatetimeStart(new \DateTime());
-//        $commandLog->setHost('localhost');
-//
-//        if($this->get('security.context')->getToken()->getUser()!='anon.'){
-//            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
-//        }
-//        else{
-//            $userName = 'anonymous';
-//        }
-//
-//        $commandLog->setUser($userName);
-//
-//        /**
-//         * @var EntityManager $em
-//         */
-//        $em  = $this->getDoctrine()->getManager();
-//        $em->persist($commandLog);
-//        $em->flush();
-//
-//        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
-//    }
+
+
+    /**
+     * @Route("/command/{application}/list")
+     * @Template()
+     * @param Application $application
+     */
+    public function commandPanelAction(Application $application)
+    {
+        /**
+         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
+         */
+        $versioningService = $this->get($application->getScmService());
+        $repoPath = $versioningService->getRepositoryPath($application);
+        $headRevision = $versioningService->getHeadRevision($application);
+
+        if(!file_exists($repoPath)){
+            return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
+        }
+
+        /**
+         * @var Strategy $strategy
+         */
+        $strategy = $this->container->get($application->getDeploymentStrategy());
+
+        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
+
+        $deployCommand = $actionFactory->getDeployCommand();
+        $deployCommand->setApplication($application);
+        $deployCommand->setVersioningService($versioningService);
+
+        $rollbackCommand = $actionFactory->getRollbackCommand();
+        $rollbackCommand->setApplication($application);
+        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
+
+        $setupCommand = $actionFactory->getInitCommand();
+        $setupCommand->setApplication($application);
+
+        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
+        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
+        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
+
+        $request = $this->getRequest();
+
+        if($request->getMethod() == 'POST'){
+
+            if ($request->request->has($deployForm->getName())){
+
+                $deployForm->handleRequest($request);
+
+                if($deployForm->isValid()){
+
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                        'command'  => $deployCommand
+                    ));
+                }
+            }
+
+            if ($request->request->has($rollbackForm->getName())){
+                $rollbackForm->handleRequest($request);
+
+                if($rollbackForm->isValid()){
+
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                        'command'  => $rollbackCommand
+                    ));
+                }
+            }
+
+            if ($request->request->has($setupForm->getName())){
+                $setupForm->handleRequest($request);
+
+                if($setupForm->isValid()){
+
+                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                        'command'  => $setupCommand
+                    ));
+                }
+            }
+        }
+
+        return array(
+            'application' => $application,
+            'deployForm' => $deployForm->createView(),
+            'rollbackForm' => $rollbackForm->createView(),
+            'setupForm' => $setupForm->createView(),
+            'headRevision' => $headRevision
+        );
+    }
+
+    /**
+     * @param CommandTargetInterface $command
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
+     * @return Response
+     */
+    public function execTargetCommandAction(CommandTargetInterface $command)
+    {
+        $commandLog = new CommandLog();
+        $versioningService = $this->container->get($command->getApplication()->getScmService());
+        $repoPath = $versioningService->getRepositoryPath($command->getApplication());
+
+        if(!file_exists($repoPath)){
+            throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
+        }
+
+        // Anyterm strips all env vars before executing exec.sh under user deploy
+        // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
+        $script = 'export HOME=' . $_SERVER['HOME'] . ' && ';
+
+        // Change dir to app repository
+        $script .='cd '. $repoPath ." && ";
+
+        //@todo extract following hard sets into configurations for different deployment strategies with different type of settings
+        switch ($command->getApplication()->getDeploymentStrategy()) {
+            case 'capistrano2':
+                $script .='source /usr/local/rvm/scripts/rvm && ';
+                $script .='rvm use ruby-1.8.7-head && ';
+                break;
+            case 'capistrano3':
+                $script .='source /usr/local/rvm/scripts/rvm && ';
+                $script .='rvm use ruby-2.2.1 && ';
+                break;
+            default:
+                break;
+        }
+
+        $script .=$command->getCommand();
+
+        $commandLog->setCommandLabel($command->getLabel());
+        $commandLog->setCommand($script);
+        $commandLog->setDatetimeStart(new \DateTime());
+        $commandLog->setHost($command->getTarget()->getEnvironment()->getHostname());
+        $commandLog->setTarget($command->getTarget());
+        $commandLog->setType($command->getTarget()->getEnvironment()->getType());
+
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        else{
+            $userName = 'anonymous';
+        }
+
+        $commandLog->setUser($userName);
+
+        /**
+         * @var EntityManager $em
+         */
+        $em  = $this->getDoctrine()->getManager();
+        $em->persist($commandLog);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
+    }
+
+
+    /**
+     * @param CommandApplicationInterface $command
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function execApplicationCommandAction(CommandApplicationInterface $command)
+    {
+        $commandLog = new CommandLog();
+
+        $script = '';
+        $script .=$command->getCommand();
+
+        $commandLog->setApplication($command->getApplication());
+        $commandLog->setCommandLabel($command->getLabel());
+        $commandLog->setCommand($script);
+        $commandLog->setDatetimeStart(new \DateTime());
+        $commandLog->setHost('localhost');
+
+        if($this->get('security.context')->getToken()->getUser()!='anon.'){
+            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
+        }
+        else{
+            $userName = 'anonymous';
+        }
+
+        $commandLog->setUser($userName);
+
+        /**
+         * @var EntityManager $em
+         */
+        $em  = $this->getDoctrine()->getManager();
+        $em->persist($commandLog);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
+    }
 
 
     /**
