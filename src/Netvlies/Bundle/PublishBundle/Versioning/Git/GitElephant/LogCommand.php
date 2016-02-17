@@ -12,16 +12,15 @@ namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
 
 use GitElephant\Command\LogCommand as BaseCommand;
 use GitElephant\Objects\Commit as BaseCommit;
+use \GitElephant\Repository;
 
 class LogCommand extends BaseCommand
 {
 
-    /**
-     * @return BranchCommand
-     */
-    static public function getInstance()
+
+    public static function getInstance(Repository $repo = null)
     {
-        return new self();
+        return new static($repo);
     }
 
     /**

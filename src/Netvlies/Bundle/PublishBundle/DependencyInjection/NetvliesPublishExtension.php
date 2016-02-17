@@ -91,7 +91,7 @@ class NetvliesPublishExtension extends Extension
             $definition->addMethodCall('setLabel', array($params['label']));
             $definition->addMethodCall('setKeyname', array($key));
             $definition->addMethodCall('setRvm', array($params['rvm']));
-            $definition->addMethodCall('createDefaultCommands', array($params['default_commands']));
+            //$definition->addMethodCall('createDefaultCommands', array($params['default_commands']));
 
             $containerKey = 'netvlies_publish.strategy.' . $key;
 
