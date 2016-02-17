@@ -20,7 +20,7 @@ class LogCommand extends BaseCommand
 
     public static function getInstance(Repository $repo = null)
     {
-        return new static($repo);
+        return new self($repo);
     }
 
     /**

@@ -11,6 +11,7 @@
 namespace Netvlies\Bundle\PublishBundle\Versioning\Git\GitElephant;
 
 use GitElephant\Command\BranchCommand as BaseCommand;
+use GitElephant\Repository;
 
 class BranchCommand extends BaseCommand
 {
@@ -18,9 +19,9 @@ class BranchCommand extends BaseCommand
     /**
      * @return BranchCommand
      */
-    static public function getInstance()
+    public static function getInstance(Repository $repo = null)
     {
-        return new self();
+        return new self($repo);
     }
 
     /**
