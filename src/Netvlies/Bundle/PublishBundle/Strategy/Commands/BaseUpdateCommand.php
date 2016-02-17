@@ -27,7 +27,7 @@ abstract class BaseUpdateCommand implements CommandTargetInterface
      */
     protected function getUpdateVersionScript()
     {
-        $appRoot = dirname(dirname(dirname(dirname(dirname(__DIR__)))));
+        $appRoot = dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))));
 
         return sprintf('
             && echo "Finished updating process. Retrieving current version ..."
