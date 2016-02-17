@@ -75,5 +75,6 @@ services:
 
     git:
         class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
+        arguments: [%repository_path%]
         tags:
           - {name: netvlies_publish.versioning}
