@@ -24,7 +24,7 @@
 
     <h3>{{application.name}}</h3>
     <hr />
-    
+
     <h4>Details</h4>
     <dl class="dl-horizontal">
         <dt>Customer</dt> <dd>{{application.customer}}</dd>
@@ -98,6 +98,7 @@
             <tr>
                 <th>Date</th>
                 <th>Command type</th>
+                <th>Commit</th>
                 <th>Target</th>
                 <th>User</th>
                 <th>Status</th>
@@ -119,6 +120,13 @@
                         {{ log.datetimestart.format('d-m-Y H:i') }}
                     </td>
                     <td>{{ log.commandLabel }}</td>
+                    <td>
+                        {% if log.commitUrl %}
+                            <a href="{{ log.commitUrl }}" target="_blank">{{ log.commitHash }}</a>
+                        {% else %}
+                            {{ log.commitHash }}
+                        {% endif %}
+                    </td>
                     <td>
                         {% if log.target is not null %}
                             {{ log.target.label }}
@@ -144,7 +152,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" align="right">&nbsp;</td>
+                <td colspan="6" align="right">&nbsp;</td>
                 <td><a href="{{ path('netvlies_publish_command_listlogs', {'application': application.id}) }}">View all logs</a></td>
             </tr>
         </table>

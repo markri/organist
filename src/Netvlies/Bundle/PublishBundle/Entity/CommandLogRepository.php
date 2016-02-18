@@ -20,9 +20,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class CommandLogRepository extends EntityRepository
 {
-
     /**
-     * @param Target $target
+     * @param $application
+     * @param null $limit
      * @return mixed
      */
     public function getLogsForApplication($application, $limit=null)
@@ -44,6 +44,10 @@ class CommandLogRepository extends EntityRepository
     }
 
 
+    /**
+     * @param Target $target
+     * @return mixed
+     */
     public function countLogsForTarget(Target $target)
     {
         $entityManager = $this->getEntityManager();
@@ -56,7 +60,12 @@ class CommandLogRepository extends EntityRepository
         return $query->getSingleScalarResult();
     }
 
-
+    /**
+     * @param Target $target
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getLastDeployment(Target $target)
     {
         $entityManager = $this->getEntityManager();
@@ -73,6 +82,31 @@ class CommandLogRepository extends EntityRepository
         return $query->getSingleResult();
     }
 
+    /**
+     * @return mixed
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getLatestDeployments()
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery('
+            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
+            ORDER BY c.id DESC
+        ');
+
+        $query->setMaxResults(5);
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param string $user
+     * @param int $limit
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function getFavouriteApplications($user='anonymous', $limit=5)
     {
         $entityManager = $this->getEntityManager();

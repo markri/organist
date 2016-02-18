@@ -32,14 +32,16 @@ class DefaultController extends Controller
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
         }
         else{
-            $userName = 'anonymous';
+            $userName = 'sjopet';
         }
 
         $favouriteApps = $em->getRepository('NetvliesPublishBundle:CommandLog')->getFavouriteApplications($userName);
+        $latest = $em->getRepository('NetvliesPublishBundle:CommandLog')->getLatestDeployments();
 
         return array(
             'apps' => $apps,
-            'favourites' => $favouriteApps
+            'favourites' => $favouriteApps,
+            'logs' => $latest
         );
     }
 

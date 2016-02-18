@@ -122,6 +122,45 @@ class CommandLog
     }
 
     /**
+     * @return string
+     */
+    public function getCommitHash()
+    {
+        if (strpos($this->command, 'Srevision=') !== false) {
+            preg_match("/Srevision='([^']+)'/", $this->command, $matches);
+            if (isset($matches[1])) {
+                return $matches[1];
+            }
+        }
+
+        return 'Unknown';
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommitUrl()
+    {
+        /*
+         * From: git@bitbucket.org:netvlies/fit-for-free-sportcity.git
+         * To: https://bitbucket.org/netvlies/fit-for-free-sportcity/commits/5a2104d6e341ea980a4dfcf8e195c51dd7791708
+         */
+
+        $hash = $this->getCommitHash();
+        if ($hash !== 'Unknown') {
+            $url = $this->getApplication()->getScmUrl();
+            $url = str_replace(':', '/', $url);
+            $url = str_replace('git@', '', $url);
+            $url = str_replace('.git', '', $url);
+            $url = sprintf('https://%s/commits/%s', $url, $hash);
+
+            return $url;
+        }
+
+        return false;
+    }
+
+    /**
      * @param \DateTime $datetimeStart
      */
     public function setDatetimeStart($datetimeStart)
