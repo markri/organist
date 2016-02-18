@@ -9,34 +9,17 @@
     </h3>
     <hr>
 
-    <script type="text/javascript" src="/console/exec/anyterm.js">
-    </script>
+    <script src="http://organist.o3.nvsotap.nl:8080/socket.io/socket.io.js"></script>
+    <script src="http://organist.o3.nvsotap.nl:8080/term.js"></script>
+    <script src="http://organist.o3.nvsotap.nl:8080/cmd_{{ command.id }}"></script>
 
-    <script type="text/javascript">
-      // To create the terminal, just call create_term.  The paramters are:
-      //  - The id of a <div> element that will become the terminal.
-      //  - The title.  %h and %v expand to the hostname and Anyterm version.
-      //  - The number of rows and columns.
-      //  - An optional parameter which is substituted for %p in the command string.
-      //  - An optional character set.
-      //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
+    <div id="term" class="col-lg-12">
 
-      window.onload=function() {create_term("term","Console %h",22,150,"{{ command.id }}","",100);};
+    </div>
 
-      // When the user closes the terminal, by default they'll see a blank page.
-      // Generally you'll want to be more friendly than that.  If you set the
-      // variable on_close_goto_url to a URL, they'll be sent to that page after
-      // closing.  You could send them back to your home page, or something.
-      var on_close_goto_url = "";
+    <hr>
 
-    </script>
-
-    <link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
-
-
-    <div id="term"></div>
-
-    <div>
+    <div class="col-lg-12">
         <h4>Deployment command</h4>
         <pre>{{ command.command | replace({' && ': '<br>', ' &&': '<br>', '&& ': '<br>', '&&': '<br>'}) | raw }}</pre>
     </div>

@@ -5,21 +5,45 @@ Organist is an open source tool which helps you manage and execute deployments. 
 
 ## Setup ##
 
-This is the bare Organist application including the Symfony 2.3 framework. Unless you want to change/add customizations
-to Organist, you may want to [start here to read instructions howto build up the box](https://github.com/organist/packer).
-Which will build a fully functional box (this is due to some system dependencies like Anyterm)
+Currently Organist is distributed within a Symfony 2.3 stack. Setup is done by
+     
+     git clone https://github.com/markri/organist.git
+     composer install
+     
+Organist works out of the box with Capistrano 2/3. You will need RVM to install both. Set up rvm @ https://rvm.io, install
+ruby 1.8.7 if you want to use Capistrano 2. Install current ruby for Capistrano 3.
+ 
+For Capistrano 2:
 
-## Manual Setup ##
+    rvm install 1.8.7
+    rvm use 1.8.7
+    gem install bundler
+    cd setup/Capistrano2
+    bundle install
+    
+For Capistrano 3 (Ruby version might be higher):
+    
+    rvm install 2.2.4
+    rvm use 2.2.4
+    gem install bundler
+    cd setup/Capistrano3
+    bundle install    
 
-If you want to use it without packer and puppet than these are the rough instructions for setting up:
 
- - Clone this repository
- - Use composer to install vendors
- - Install the Anyterm service
+Once you're done setting up your environment for deploying, you'll need to start the terminal daemon. This is started with
+following command (please change variables according to your setup):
 
-You still need to install [anyterm](http://anyterm.org/). And have your packages right. You can review this in the
-[puppetscripts](https://github.com/organist/puppet). An exact guide can't be given due to the many dependant configuration
-parameters and system dependencies used in Organist.
+    npm_package_config_port=8080 \
+    npm_package_config_dbhost=localhost \
+    npm_package_config_dbname=organist \
+    npm_package_config_dbuser=root \
+    npm_package_config_dbpassword=vagrant \
+    npm_package_config_table=CommandLog \
+    npm_package_config_idField=id  \
+    npm_package_config_commandField=command \
+    npm_package_config_logField=log \
+    bin/forever start node_modules/organist-term/server.js
+
 
 
 ## Configure ##

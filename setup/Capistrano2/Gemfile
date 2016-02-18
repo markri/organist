@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'capistrano', '~>2.15'
+gem 'capistrano_rsync_with_remote_cache', '~>2.4'
+gem 'capifony', '~>2.8.6'
+gem 'highline', '1.6.9'
+gem 'net-ssh',  '2.9.2'
