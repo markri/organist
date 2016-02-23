@@ -327,10 +327,6 @@ class CommandController extends Controller
 
 
     /**
-     * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
-     * This action should never be called without having used the prepareCommand (which will prepare a log entry)
-     *
-     * @todo refactor this to other route so menu can be rendered properly
      *
      * @Route("/console/exec/{commandlog}")
      * @Template()
@@ -338,6 +334,8 @@ class CommandController extends Controller
      */
     public function execAction(CommandLog $commandlog)
     {
+        $console_url = $this->getRequest()->getSchemeAndHttpHost();
+
         $application = $commandlog->getApplication();
 
         if($commandlog->getDatetimeEnd()){
@@ -346,7 +344,9 @@ class CommandController extends Controller
         }
 
         return array(
-            'command' => $commandlog
+            'console_url' => $console_url,
+            'console_port' => $this->container->getParameter('netvlies_publish.console_port'),
+            'command' => $commandlog,
         );
     }
 

@@ -9,9 +9,9 @@
     </h3>
     <hr>
 
-    <script src="http://organist.o3.nvsotap.nl:8080/socket.io/socket.io.js"></script>
-    <script src="http://organist.o3.nvsotap.nl:8080/term.js"></script>
-    <script src="http://organist.o3.nvsotap.nl:8080/cmd_{{ command.id }}"></script>
+    <script src="{{ console_url }}:{{ console_port }}/socket.io/socket.io.js"></script>
+    <script src="{{ console_url }}:{{ console_port }}/term.js"></script>
+    <script src="{{ console_url }}:{{ console_port }}/cmd_{{ command.id }}"></script>
 
     <div id="term" class="col-lg-12">
 
