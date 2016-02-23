@@ -3,31 +3,47 @@
 
     <h3>Servers</h3>
     <hr>
-    <div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead>
-            <th>Type</th>
-            <th>Host</th>
-            <th>Actions</th>
-        </thead>
-    {% for environment in environments %}
-        <tr>
-            <td>{{ environment.type }}</td>
-            <td>{{ environment.hostname }}</td>
-            <td>
-                <a href="{{path('netvlies_publish_environment_edit', {'environment': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
-                {% if environment.targets | length == 0 %}
-                 | <a onclick="confirm('Are you sure you want to delete this server?')? window.location = '{{path('netvlies_publish_environment_delete', {'environment': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
-                {% endif %}
-            </td>
-        </tr>
-    {% else %}
-            <tr><td colspan="3">Oops, no servers available</td></tr>
-    {% endfor %}
-    </table>
+    <div class="table-responsive" id="livefilter">
+        <input class="filter" type="text" value="" />
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <th>Type</th>
+                <th>Host</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                {% for environment in environments %}
+                    <tr>
+                        <td>{{ environment.type }}</td>
+                        <td>{{ environment.hostname }}</td>
+                        <td>
+                            <a href="{{path('netvlies_publish_environment_edit', {'environment': environment.id})}}"><span class="glyphicon glyphicon-pencil"></span> edit</a>
+                            {% if environment.targets | length == 0 %}
+                             | <a onclick="confirm('Are you sure you want to delete this server?')? window.location = '{{path('netvlies_publish_environment_delete', {'environment': environment.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                        <tr><td colspan="3">Oops, no servers available</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <a href="{{ path('netvlies_publish_environment_create') }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add server</a>
 {% endblock %}
 
+{% block footer_javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#livefilter').liveFilter(
+                {
+                    defaultText: 'Filter ...',
+                }
+            );
+        });
+    </script>
+{% endblock %}
 
