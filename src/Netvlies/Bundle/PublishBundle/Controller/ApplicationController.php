@@ -106,12 +106,18 @@ class ApplicationController extends Controller
         /**
          * @var CommandLogRepository
          */
-        $logRepo = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:CommandLog');
-        $logs = $logRepo->getLogsForApplication($application, 5);
+        $logRepo        = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:CommandLog');
+        $logs           = $logRepo->getLogsForApplication($application, 5);
+        $firstDeploy    = $logRepo->getFirstDeployment($application);
+        $deployCount    = $logRepo->getTimesDeployed($application);
+        $deployers      = $logRepo->getDeployers($application);
 
         return array(
-            'logs' => $logs,
-            'application' => $application
+            'logs'          => $logs,
+            'application'   => $application,
+            'first_deploy'  => $firstDeploy,
+            'deploy_count'  => $deployCount,
+            'deployers'     => $deployers,
         );
     }
 

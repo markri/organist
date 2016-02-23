@@ -102,6 +102,53 @@ class CommandLogRepository extends EntityRepository
     }
 
     /**
+     * @param $application
+     * @return mixed
+     */
+    public function getFirstDeployment($application)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery('
+            SELECT c FROM Netvlies\Bundle\PublishBundle\Entity\CommandLog c
+            WHERE c.application = :app
+            ORDER BY c.id ASC
+        ')->setParameter('app', $application);
+
+        $query->setMaxResults(1);
+
+        return $query->getSingleResult();
+    }
+
+    /**
+     * @param $application
+     * @return mixed
+     */
+    public function getTimesDeployed($application)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->where('c.application = :app')
+            ->setParameter('app', $application)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param $application
+     * @return mixed
+     */
+    public function getDeployers($application)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('distinct(c.user)')
+            ->where('c.application = :app')
+            ->setParameter('app', $application)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @param string $user
      * @param int $limit
      * @return array

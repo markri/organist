@@ -34,6 +34,17 @@
         <dt>Applicationtype</dt> <dd>{{application.applicationtype.title }}</dd>
     </dl>
 
+    <dl class="dl-horizontal">
+        <dt>First Deployed At</dt> <dd>{{ first_deploy.datetimestart.format('d-m-Y') }}</dd>
+        <dt>Times Deployed</dt> <dd>{{ deploy_count }}</dd>
+        <dt>Deployers</dt>
+        <dd>
+            {% for item in deployers %}
+                {{ item.user }}<br/>
+            {% endfor %}
+        </dd>
+    </dl>
+
     {% if application.buildStatusBadge1 %}
         <img src="{{ application.buildStatusBadge1 }}" border="0">
     {% endif %}
@@ -64,16 +75,26 @@
                 {% for target in application.targets if target.environment.type == type and target.inactive is empty %}
                     {% if not loop.first %}
                         <hr>
-                    {%endif%}
+                    {% endif %}
+
                     <a href="{{ path('netvlies_publish_target_detail', { 'target': target.id}) }}">{{target.label}}</a><br>
-                    {%if target.lastDeployedTag is not empty%}
-                        {{ target.lastDeployedTag }}<br>
-                    {%elseif target.lastDeployedBranch is not empty%}
-                        {{ target.lastDeployedBranch }}<br>
-                        ({{ target.lastDeployedRevision }})<br>
+
+                    {% if target.lastDeployedRevision is not empty %}
+                        <a href="{{ application.getCommitUrl(target.lastDeployedRevision) }}" target="_blank">{{ target.lastDeployedRevision }}</a> ({{ target.lastDeployedBranch }})
                     {% else %}
                         Not yet deployed<br>
-                    {%endif%}
+                    {% endif %}
+
+
+                    {#{% if target.lastDeployedTag is not empty %}#}
+                        {#{{ target.lastDeployedTag }}<br>#}
+                    {#{% elseif target.lastDeployedBranch is not empty %}#}
+                        {#{{ target.lastDeployedBranch }}<br>#}
+                        {#({{ target.lastDeployedRevision }})<br>#}
+                    {#{% else %}#}
+                        {#Not yet deployed<br>#}
+                    {#{% endif %}#}
+
                 {% else %}
                     -
                 {% endfor %}
@@ -117,7 +138,8 @@
                     {% endif %}
                     >
                     <td>
-                        {{ log.datetimestart.format('d-m-Y H:i') }}
+                        {#{{ log.datetimestart.format('d-m-Y H:i') }}#}
+                        {{ log.datetimestart|timediff }}
                     </td>
                     <td>{{ log.commandLabel }}</td>
                     <td>

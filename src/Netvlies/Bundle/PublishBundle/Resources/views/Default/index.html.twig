@@ -5,12 +5,14 @@
     <hr>
 
     <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Top Applications</h3>
+        </div>
         <div class="panel-body">
 
             {% if apps|length > 0 %}
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
-                        <thead><th>Top Applications</th></thead>
                         {% for app in favourites %}
                             <tr>
                                 <td><a href="{{ path('netvlies_publish_application_dashboard', {'application': app.id }) }}">{{ app.name }}</a></td>
@@ -19,7 +21,7 @@
                     </table>
                 </div>
             {% else %}
-                Oops! There are no applications present. Try adding one with button below
+                Oops! There are no applications present. Try adding one with the button below.
                 <br>
                 <br>
                 <a href="{{path('netvlies_publish_application_create')}}" class="btn btn-default">Add new application</a>
@@ -29,17 +31,32 @@
     </div>
 
     <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Top deployers</h3>
+        </div>
+        <div class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item">Sjoerd - 34</li>
+                <li class="list-group-item">Harry - 6</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Latest Deployments</h3>
+        </div>
         <div class="panel-body">
 
             {% if logs|length > 0 %}
-                <p><b>Latest Deployments</b></p>
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Command type</th>
+                                <th>Application</th>
                                 <th>Commit</th>
                                 <th>Target</th>
                                 <th>User</th>
@@ -59,9 +76,13 @@
                                 {% endif %}
                                 >
                                 <td>
-                                    {{ log.datetimestart.format('d-m-Y H:i') }}
+                                    {#{{ log.datetimestart.format('d-m-Y H:i') }}#}
+                                    {{ log.datetimestart|timediff }}
                                 </td>
                                 <td>{{ log.commandLabel }}</td>
+                                <td>
+                                    <a href="{{ path('netvlies_publish_application_dashboard', {'application': log.application.id }) }}">{{ log.application.name }}</a>
+                                </td>
                                 <td>
                                     {% if log.commitUrl %}
                                         <a href="{{ log.commitUrl }}" target="_blank">{{ log.commitHash }}</a>
