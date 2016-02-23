@@ -70,9 +70,11 @@
 {% block form_errors %}
 {% spaceless %}
     {% if errors|length > 0 %}
-        {% for error in errors %}
-            {{ error.message }}
-        {% endfor %}
+        <div class="alert alert-danger">
+            {% for error in errors %}
+                {{ error.message }}<br/>
+            {% endfor %}
+        </div>
     {% endif %}
 {% endspaceless %}
 {% endblock %}

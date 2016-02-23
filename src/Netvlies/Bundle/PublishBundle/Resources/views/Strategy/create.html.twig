@@ -1,0 +1,26 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+
+{% block content %}
+
+    <h3>Create strategy</h3>
+    <hr />
+
+    <form action="" method="POST" class="form-horizontal">
+
+        {{ form_errors(form) }}
+        {{ form_widget(form._token) }}
+        {{ form_row(form.title) }}
+        {{ form_rest(form) }}
+
+        <br/>
+
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_default_index') }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+
+    </form>
+
+
+{% endblock %}
