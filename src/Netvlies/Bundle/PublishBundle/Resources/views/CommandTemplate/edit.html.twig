@@ -1,0 +1,32 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% form_theme form 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+
+{% block content %}
+
+    <h3>Edit command template</h3>
+    <hr />
+
+    <form action="" method="POST" class="form-horizontal" novalidate>
+
+        {{ form_errors(form) }}
+        {{ form_widget(form._token) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.strategy) }}
+        {{ form_row(form.template) }}
+        {{ form_rest(form) }}
+
+        <br/>
+
+        <div class="pull-right">
+            <a href="{{ path('netvlies_publish_default_index') }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block footer_javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/netvliespublish/js/ace/ace.js') }}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}

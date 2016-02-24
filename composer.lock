@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c73e8233fb373ab5a61bfeca440fb533",
-    "content-hash": "de213348f95aa5e06edb552da4910c8a",
+    "hash": "0b99a801f49f16c562212ea869685489",
+    "content-hash": "f16b52471868345bff60e4f994ba7a79",
     "packages": [
         {
             "name": "cypresslab/gitelephant",
@@ -2080,7 +2080,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/2c95f380e7b3cc356e76373c0e4cdbbc4d1a323f",
+                "url": "https://api.github.com/repos/liip/LiipFunctionalTestBundle/zipball/8c4cd9f8bc646032f31f44e0c4c88476a8f5b1d9",
                 "reference": "2c95f380e7b3cc356e76373c0e4cdbbc4d1a323f",
                 "shasum": ""
             },

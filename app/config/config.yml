@@ -15,8 +15,7 @@ framework:
     templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
     default_locale:  %locale%
     session:
-        handler_id: session.handler.native_file
-        save_path: '%kernel.root_dir%/sessions'
+        save_path: /tmp #temporary thing to have it working in dev env
 
 # Twig Configuration
 twig:

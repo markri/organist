@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Response;
 
 class StrategyController extends Controller
 {
@@ -60,6 +61,7 @@ class StrategyController extends Controller
                         'success',
                         sprintf('Strategy %s is succesfully created', $strategy->getTitle())
                     );
+
                     return $this->redirect($this->generateUrl('netvlies_publish_strategy_list'));
 
                 } catch (\Exception $e) {
@@ -71,7 +73,35 @@ class StrategyController extends Controller
         return array(
             'form' => $form->createView()
         );
+    }
 
+
+    /**
+     * @param Strategy $strategy
+     * @Route("/strategy/templates/{strategy}")
+     * @Template()
+     */
+    public function templatesAction(Strategy $strategy)
+    {
+        return array(
+            'strategy' => $strategy
+        );
+    }
+
+    /**
+     * @Route("/strategy/delete/{strategy}")
+     * @return Response
+     */
+    public function deleteAction(Strategy $strategy)
+    {
+        $em  = $this->getDoctrine()->getManager();
+        $label = $strategy->getTitle();
+        $em->remove($strategy);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('warning', sprintf('Strategy %s is deleted', $label));
+
+        return $this->redirect($this->generateUrl('netvlies_publish_strategy_list' ));
     }
 
 }
