@@ -33,7 +33,7 @@ class ApplicationControllerTest extends WebTestCase
         $form['application_create[name]'] = 'testname';
         $form['application_create[customer]'] = 'testcustomer';
         $form['application_create[keyname]'] = 'testkeyname';
-        $form['application_create[applicationType]'] = 'netvlies_publish.type.symfony23';
+        $form['application_create[applicationType]'] = '1';
         $form['application_create[scmService]'] = 'netvlies_publish.versioning.git';
         $form['application_create[scmUrl]'] = 'testUrl';
         $form['application_create[deploymentStrategy]'] = 'netvlies_publish.strategy.capistrano2';

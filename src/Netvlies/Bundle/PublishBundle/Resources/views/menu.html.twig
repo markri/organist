@@ -17,10 +17,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li {% if environmentstab is defined %}class="active" {% endif %}>
-                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-tasks"></span> Manage servers</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('netvlies_publish_application_create') }}"><span class="glyphicon glyphicon-modal-window"></span> New application</a>
+                            <a href="{{ path('netvlies_publish_environment_list') }}" ><span class="glyphicon glyphicon-tasks"></span> Servers</a>
                         </li>
                         <li>
                             <a href="{{ path('netvlies_publish_strategy_list') }}"><span class="glyphicon glyphicon-flash"></span> Strategies</a>
@@ -28,9 +25,12 @@
                         <li>
                             <a href="{{ path('netvlies_publish_commandtemplate_list') }}"><span class="glyphicon glyphicon-transfer"></span> Command templates</a>
                         </li>
-                        {#<li>#}
-                            {#<a href="{{ path('netvlies_publish_application_create') }}"><span class="glyphicon glyphicon-tower"></span> Application types</a>#}
-                        {#</li>#}
+                        <li>
+                            <a href="{{ path('netvlies_publish_applicationtype_list') }}"><span class="glyphicon glyphicon-tower"></span> Application types</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('netvlies_publish_application_create') }}"><span class="glyphicon glyphicon-modal-window"></span> Create application</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

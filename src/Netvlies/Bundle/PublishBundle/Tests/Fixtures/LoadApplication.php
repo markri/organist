@@ -25,7 +25,7 @@ class LoadApplication implements FixtureInterface
     function load(ObjectManager $manager)
     {
         $app = new Application();
-        $app->setApplicationType('netvlies_publish.type.symfony23');
+        $app->setApplicationType($appType);
         $app->setCustomer('testcustomer');
         $app->setKeyName('testkey');
         $app->setName('testname');

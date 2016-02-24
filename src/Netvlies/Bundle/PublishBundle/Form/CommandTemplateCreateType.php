@@ -30,6 +30,10 @@ class CommandTemplateCreateType extends HorizontalAbstractType
                     'required' => true
                 )
             )
+            ->add('enabledByDefault', 'checkbox', array(
+                    'label' => 'Add to application commands on creation'
+                )
+            )
             ->add('template', 'textarea', array(
                     'label' => 'Twig template *',
                     'required' => true,

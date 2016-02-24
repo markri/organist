@@ -122,7 +122,7 @@ class InitCommand implements CommandTargetInterface
             git checkout master &&
             cap ".$this->target->getEnvironment()->getType()." deploy:setup
             -Sproject='".$this->application->getName()."'
-            -Sapptype='".$this->application->getApplicationType()."'
+            -Sapptype='".$this->application->getApplicationType()->getTitle()."'
             -Sappkey='".$this->application->getKeyName()."'
             -Sgitrepo='".$this->application->getScmUrl()."'
             -Srepositorypath='".$this->repositoryPath."'

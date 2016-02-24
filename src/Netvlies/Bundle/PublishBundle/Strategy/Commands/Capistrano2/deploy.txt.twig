@@ -15,7 +15,7 @@ git checkout '{{ revision }}' && \
 \ {# Capistrano deploy #}
 cap {{ target.environment.type }} deploy:update \
 -Sproject='{{ application.name }}' \
--Sapptype='{{ application.applicationType }}' \
+-Sapptype='{{ application.applicationType.title }}' \
 -Sappkey='{{ application.keyname }}' \
 -Sgitrepo='{{ application.scmUrl }}' \
 -Srepositorypath='{{ versioning.repositoryPath(application) }}' \

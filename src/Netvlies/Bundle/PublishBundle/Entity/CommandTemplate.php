@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * CommandTemplate
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="template_idx", columns={"strategy", "title"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="template_idx", columns={"strategy_id", "title"})})
  * @ORM\Entity
  */
 class CommandTemplate
@@ -46,6 +46,13 @@ class CommandTemplate
      * @ORM\Column(name="template", type="text")
      */
     private $template;
+
+
+    /**
+     * @var bool
+     * @ORM\Column(name="enabledByDefault", type="boolean")
+     */
+    private $enabledByDefault;
 
 
 
@@ -127,4 +134,22 @@ class CommandTemplate
     {
         return $this->strategy;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabledByDefault()
+    {
+        return $this->enabledByDefault;
+    }
+
+    /**
+     * @param boolean $enabledByDefault
+     */
+    public function setEnabledByDefault($enabledByDefault)
+    {
+        $this->enabledByDefault = $enabledByDefault;
+    }
+
+
 }

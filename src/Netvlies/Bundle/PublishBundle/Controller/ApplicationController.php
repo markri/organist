@@ -10,7 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType;
+use Netvlies\Bundle\PublishBundle\Entity\ApplicationType;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CheckoutCommand;
 use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -60,7 +60,7 @@ class ApplicationController extends Controller
                  */
                 $appTypeService = $this->container->get($application->getApplicationType());
 
-                if ($userFiles = $appTypeService->getUserfiles()) {
+                if ($userFiles = $appTypeService->getUserFiles()) {
                     foreach($userFiles as $sharedFile){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);
@@ -69,7 +69,7 @@ class ApplicationController extends Controller
                         $application->addUserFile($userFile);
                     }
                 }
-                if($userDirs = $appTypeService->getUserdirs()){
+                if($userDirs = $appTypeService->getUserDirs()){
                     foreach($userDirs as $sharedDir){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);

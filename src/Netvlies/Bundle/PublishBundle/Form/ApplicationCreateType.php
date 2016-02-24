@@ -30,7 +30,9 @@ class ApplicationCreateType extends HorizontalAbstractType
                 'label'=>'Unique technical name (max 16 chars) * ',
                 'required' => true)
             )
-            ->add('applicationType', 'applicationtype_choicelist', array(
+            ->add('applicationType', 'entity', array(
+                    'class' => 'Netvlies\Bundle\PublishBundle\Entity\ApplicationType',
+                    'property' => 'title',
                     'label'=>'Application type *',
                     'attr' => array('data-help' => 'This has effect on the default shared files and folders'),
                     'required'=>true )
@@ -44,8 +46,11 @@ class ApplicationCreateType extends HorizontalAbstractType
                 'attr' => array('data-help' => 'e.g. git@bitbucket.org:netvlies/my_project.git'),
                 'required'=>true )
             )
-            ->add('deploymentStrategy', 'strategy_choicelist', array(
-                    'label' => 'Deployment strategy',
+            ->add('deploymentStrategy', 'entity', array(
+                    'label' => 'Deployment strategy *',
+                    'class' => 'Netvlies\Bundle\PublishBundle\Entity\Strategy',
+                    'property' => 'title',
+                    'required' => true
                 )
             );
     }

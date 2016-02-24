@@ -174,14 +174,17 @@ class TargetController extends Controller
                     throw new \Exception('No such type (DTAP)');
             }
 
-            switch($application->getApplicationType()){
-                case 'symfony2':
-                    $target->setWebroot($appRoot.'/web');
-                    break;
-                default:
-                    $target->setWebroot($appRoot);
-                    break;
-            }
+
+            // @todo put these variables in default application type
+            $target->setWebroot($appRoot);
+//            switch($application->getApplicationType()->getId()){
+//                case 'symfony2':
+//                    $target->setWebroot($appRoot.'/web');
+//                    break;
+//                default:
+//                    $target->setWebroot($appRoot);
+//                    break;
+//            }
 
             $target->setMysqldb($application->getKeyName());
             $target->setMysqluser($application->getKeyName());

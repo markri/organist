@@ -44,62 +44,9 @@ class NetvliesPublishExtension extends Extension
         $container->setParameter('netvlies_publish.bitbucket' , $config['externalstatus']['bitbucket']);
         $container->setParameter('netvlies_publish.github' , $config['externalstatus']['github']);
 
-        $this->processApplicationTypes($config['applicationtypes']);
-
-        $this->processStrategies($config['strategies']);
-
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
 
-    /**
-     * @param $applicationTypes
-     */
-    private function processApplicationTypes($applicationTypes)
-    {
-        $applicationTypeServices = array();
-        $applicationTypeLabels = array();
 
-        foreach ($applicationTypes as $key => $params) {
-
-            $definition = new Definition('Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType');
-            $definition->addMethodCall('setKeyname', array($key));
-            $definition->addMethodCall('setLabel', array($params['label']));
-            $definition->addMethodCall('setUserdirs', array($params['userdirs']));
-            $definition->addMethodCall('setUserfiles', array($params['userfiles']));
-
-            $containerKey = 'netvlies_publish.type.' . $key;
-
-            $this->containerBuilder->setDefinition($containerKey, $definition);
-
-            $applicationTypeServices[] = $key;
-            $applicationTypeLabels[$containerKey] = $params['label'];
-        }
-
-        $this->containerBuilder->setParameter('netvlies_publish.applicationTypeKeyLabels', $applicationTypeLabels);
-    }
-
-
-    private function processStrategies($strategies)
-    {
-        $strategyServices = array();
-        $strategyLabels = array();
-
-        foreach ($strategies as $key => $params) {
-            $definition = new Definition('Netvlies\Bundle\PublishBundle\Strategy\Strategy');
-            $definition->addMethodCall('setLabel', array($params['label']));
-            $definition->addMethodCall('setKeyname', array($key));
-            $definition->addMethodCall('setRvm', array($params['rvm']));
-            //$definition->addMethodCall('createDefaultCommands', array($params['default_commands']));
-
-            $containerKey = 'netvlies_publish.strategy.' . $key;
-
-            $this->containerBuilder->setDefinition($containerKey, $definition);
-
-            $strategyServices[] = $key;
-            $strategyLabels[$containerKey] = $params['label'];
-        }
-
-        $this->containerBuilder->setParameter('netvlies_publish.strategyKeyLabels', $strategyLabels);
-    }
 }

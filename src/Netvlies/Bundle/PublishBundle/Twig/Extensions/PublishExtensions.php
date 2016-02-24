@@ -10,7 +10,6 @@
 
 namespace Netvlies\Bundle\PublishBundle\Twig\Extensions;
 
-use Netvlies\Bundle\PublishBundle\ApplicationType\ApplicationType;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,7 +46,6 @@ class PublishExtensions extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('apptypelabel', array($this, 'getApplicationTypeLabel'), array('keyname')),
             new \Twig_SimpleFilter('timediff', array($this, 'getTimeDiff'), array('datetime'))
         );
     }
@@ -108,18 +106,6 @@ class PublishExtensions extends Twig_Extension
         ));
     }
 
-    public function getApplicationTypeLabel($keyname)
-    {
-        if ($this->container->has($keyname)) {
-            /**
-             * @var ApplicationType $applicationType
-             */
-            $applicationType = $this->container->get($keyname);
-            return $applicationType->getLabel();
-        }
-
-        return ucfirst($keyname);
-    }
 
     /**
      */

@@ -1,0 +1,33 @@
+{% extends 'NetvliesPublishBundle::layout.html.twig' %}
+{% block content %}
+
+    <h3>Application types</h3>
+    <hr>
+    <div class="table-responsive">
+
+        <table class="table table-striped table-hover">
+            <thead>
+            <th>Title</th>
+            <th>Action</th>
+            </thead>
+            <tbody>
+            {% for applicationType in applicationTypes %}
+                <tr>
+                    <td>{{ applicationType.title }}</td>
+                    <td>
+                        {#<a href="{{ path('netvlies_publish_strategy_templates', { 'strategy': strategy.id}) }}"><span class="glyphicon glyphicon-eye-open"></span> view command templates</a>#}
+                        {#{% if strategy.commandTemplates | length == 0 %}#}
+                            {#| <a onclick="confirm('Are you sure you want to delete this server?')? window.location = '{{path('netvlies_publish_strategy_delete', {'strategy': strategy.id})}}': false" href="#"><span class="glyphicon glyphicon-remove"></span> delete</a>#}
+                        {#{% endif %}#}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="3">Oops, no application types available</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {#<a href="{{ path('netvlies_publish_strategy_create') }}" class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus-sign"></span> Add application type</a>#}
+{% endblock %}
+

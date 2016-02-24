@@ -70,46 +70,46 @@ swiftmailer:
 netvlies_publish:
     repositorypath: %repository_path%
     console_port: 7779
-    strategies:
-        capistrano2:
-            label: Capistrano 2
-            rvm: ruby-1.8.7-head
-            commands:
-                deploy:
-                    default: true
-                    label: Deploy
-                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\deploy.txt.twig
-                    parameters:
-                        target:
-                            type: target_choicelist
-                            options:
-                                label: Target
-                                required: true
-                        reference:
-                            type: reference_choicelist
-                            options:
-                                label: Reference
-                                required: true
-                rollback:
-                    default: true
-                    label: Rollback
-                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\rollback.txt.twig
-                    parameters:
-                        target:
-                            type: target_choicelist
-                            options:
-                                label: Target
-                                required: true
-                setup:
-                    default: true
-                    label: Setup
-                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\init.txt.twig
-                    parameters:
-                        target:
-                            type: target_choicelist
-                            options:
-                                label: Target
-                                required: true
+#    strategies:
+#        capistrano2:
+#            label: Capistrano 2
+#            rvm: ruby-1.8.7-head
+#            commands:
+#                deploy:
+#                    default: true
+#                    label: Deploy
+#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\deploy.txt.twig
+#                    parameters:
+#                        target:
+#                            type: target_choicelist
+#                            options:
+#                                label: Target
+#                                required: true
+#                        reference:
+#                            type: reference_choicelist
+#                            options:
+#                                label: Reference
+#                                required: true
+#                rollback:
+#                    default: true
+#                    label: Rollback
+#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\rollback.txt.twig
+#                    parameters:
+#                        target:
+#                            type: target_choicelist
+#                            options:
+#                                label: Target
+#                                required: true
+#                setup:
+#                    default: true
+#                    label: Setup
+#                    template: Netvlies\Bundle\PublishBundle\Strategy\Commands\Capistrano2\init.txt.twig
+#                    parameters:
+#                        target:
+#                            type: target_choicelist
+#                            options:
+#                                label: Target
+#                                required: true
 #        capistrano3:
 #            label: Capistrano 3
 #            rvm: ruby-2.2.3
@@ -127,20 +127,20 @@ netvlies_publish:
 #    versioningservices:
 #        git:
 #            forward_key: /home/deploy/.ssh/id_rsa_bitbucket
-    applicationtypes:
-        symfony20:
-            label: Symfony 2.0
-        symfony23:
-            label: Symfony 2.3
-        symfony27:
-            label: Symfony 2.7
-        wordpress:
-            label: Wordpress
-            userdirs: [ 'wp-content/uploads' ]
-        oms:
-            label: My Fancy CMS
-            userdirs: [ 'media', 'cache', 'lucene', 'tmp' ]
-            userfiles: [ 'cms/.htpasswd', 'cms/.htaccess' ]
-        drupal:
-            label: Drupal
-            userdirs: [ 'sites/default/files' ]
+#    applicationtypes:
+#        symfony20:
+#            label: Symfony 2.0
+#        symfony23:
+#            label: Symfony 2.3
+#        symfony27:
+#            label: Symfony 2.7
+#        wordpress:
+#            label: Wordpress
+#            userdirs: [ 'wp-content/uploads' ]
+#        oms:
+#            label: My Fancy CMS
+#            userdirs: [ 'media', 'cache', 'lucene', 'tmp' ]
+#            userfiles: [ 'cms/.htpasswd', 'cms/.htaccess' ]
+#        drupal:
+#            label: Drupal
+#            userdirs: [ 'sites/default/files' ]

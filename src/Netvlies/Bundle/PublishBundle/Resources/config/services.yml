@@ -31,18 +31,6 @@ services:
         tags:
             - {name: form.type, alias: versioning_choicelist }
 
-    netvlies_publish.form.strategy_selector:
-        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\StrategyType
-        arguments: [ %netvlies_publish.strategyKeyLabels% ]
-        tags:
-            - {name: form.type, alias: strategy_choicelist }
-
-    netvlies_publish.form.applicationtype_selector:
-        class: Netvlies\Bundle\PublishBundle\Form\ChoiceList\ApplicationTypeChoiceList
-        arguments: [ %netvlies_publish.applicationTypeKeyLabels% ]
-        tags:
-            - {name: form.type, alias: applicationtype_choicelist }
-
     netvlies_publish.form.onetomany:
         class: Netvlies\Bundle\PublishBundle\Form\OneToManyType
         tags:

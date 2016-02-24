@@ -82,10 +82,11 @@ class Application
      */
     protected $targets;
 
-
     /**
-     * @var string $applicationType
-     * @ORM\Column(name="applicationType", type="string", length=255)
+     * @var ApplicationType $applicationType
+     * @Assert\NotNull(message="Application type is required")
+     * @ORM\JoinColumn(nullable=true)
+     * @ORM\ManyToOne(targetEntity="ApplicationType")
      */
     protected $applicationType;
 
@@ -108,8 +109,10 @@ class Application
     protected $buildStatusBadge2;
 
     /**
-     * @var
-     * @ORM\Column(name="deployment_strategy", type="string", length=255)
+     * @var Strategy $deploymentStrategy
+     * @Assert\NotNull(message="Strategy is required")
+     * @ORM\JoinColumn(nullable=true)
+     * @ORM\ManyToOne(targetEntity="Strategy")
      */
     protected $deploymentStrategy;
 
@@ -301,15 +304,15 @@ class Application
     }
 
     /**
-     * @param string $applicationType
+     * @param ApplicationType $applicationType
      */
-    public function setApplicationType($applicationType)
+    public function setApplicationType(ApplicationType $applicationType)
     {
         $this->applicationType = $applicationType;
     }
 
     /**
-     * @return string
+     * @return ApplicationType
      */
     public function getApplicationType()
     {

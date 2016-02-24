@@ -12,6 +12,12 @@
         {{ form_widget(form._token) }}
         {{ form_row(form.title) }}
         {{ form_row(form.strategy) }}
+
+        <div class="form-group">
+            <label class="control-label col-lg-2">{{ form.enabledByDefault.vars.label }}</label>
+            <div class="col-lg-10">{{ form_widget(form.enabledByDefault) }}</div>
+        </div>
+
         {{ form_row(form.template) }}
         {{ form_rest(form) }}
 
