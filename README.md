@@ -3,12 +3,29 @@
 Organist is an open source tool which helps you manage and execute deployments. It's built on top of Symfony2 and Capistrano/Capifony. [More @ http://organist.github.io](http://organist.github.io). I built it for Netvlies (netvlies.nl) to deploy application through through a DTAP stack. Main goal is to centralize security by not having passwords in git, but only in Organist and inject them during deployment.
 
 
+## Requirements
+
+ - PHP 5.6 (5.5?)
+ - G++ >4.8
+ 
+If you're on CentOS 6, then you will need to update your g++ compiler for compiling the required npm modules. This can be done using the scientific linux dev toolset as is explained here (https://gist.github.com/stephenturner/e3bc5cfacc2dc67eca8b)
+
+
 ## Setup ##
 
 Currently Organist is distributed within a Symfony 2.3 stack. Setup is done by
      
      git clone https://github.com/markri/organist.git
+     cp app/config/parameters.{DTAP}.yml app/config/parameters.yml
+
+Adjust your parameters in parameters.yml
+
      composer install
+     app/console doctrine:database:create
+     app/console doctrine:schema:create
+     
+
+### Deployment environment ###
      
 Organist works out of the box with Capistrano 2/3. You will need RVM to install both. Set up rvm @ https://rvm.io, install
 ruby 1.8.7 if you want to use Capistrano 2. Install current ruby for Capistrano 3.
@@ -42,7 +59,7 @@ following command (please change variables according to your setup):
     npm_package_config_idField=id  \
     npm_package_config_commandField=command \
     npm_package_config_logField=log \
-    bin/forever start node_modules/organist-term/server.js
+    bin/node node_modules/forever/bin/forever start node_modules/organist-term/server.js
 
 
 
@@ -64,34 +81,9 @@ netvlies_publish:
     versioningservices:
         git:
             forward_key: /home/deploy/.ssh/id_rsa_bitbucket
-    applicationtypes:
-        symfony23:
-            label: Symfony 2.3
-        symfony25:
-            label: Symfony 2.5
-        myapplicationtype:
-            label: My Super CMS
-            userdirs: [ 'img', 'cache', 'lucene', 'tmp' ]
-            userfiles: [ 'cms/.htpasswd', 'cms/.htaccess' ]
 
 ```
 
 ## License ##
 Organist is licensed under the MIT licence. View the LICENSE file
 
-
-## Upgrade from older versions ##
-
-Update to correct scmService in Application entity
-Update to correct application type in Application entity
-Update to correct deployment strategy in Application entity
-
-        UPDATE Application SET scmService = CONCAT('netvlies_publish.versioning', scmService);
-        UPDATE Application SET applicationType = CONCAT('netvlies_publish.type.', applicationType);
-        UPDATE Application SET deployment_strategy = CONCAT('netvlies_publish.strategy.capistrano2');
-
-
-## Todo ##
-
- - Add flexible parameter settings (per target/application/environment)
- - Please let me know by creating an issue
