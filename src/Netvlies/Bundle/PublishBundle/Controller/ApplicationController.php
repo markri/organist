@@ -110,14 +110,22 @@ class ApplicationController extends Controller
         $logs           = $logRepo->getLogsForApplication($application, 5);
         $firstDeploy    = $logRepo->getFirstDeployment($application);
         $deployCount    = $logRepo->getTimesDeployed($application);
+        $successCount   = $logRepo->getTimesSuccessfulDeployed($application);
         $deployers      = $logRepo->getDeployers($application);
+
+        $deps = array();
+        foreach ($deployers as $deployer) {
+            $deps[$deployer['user']] = $deployer['user'];
+        }
+        ksort($deps);
 
         return array(
             'logs'          => $logs,
             'application'   => $application,
             'first_deploy'  => $firstDeploy,
             'deploy_count'  => $deployCount,
-            'deployers'     => $deployers,
+            'success_count' => $successCount,
+            'deployers'     => $deps,
         );
     }
 

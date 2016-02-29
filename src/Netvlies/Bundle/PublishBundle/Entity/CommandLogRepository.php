@@ -138,6 +138,21 @@ class CommandLogRepository extends EntityRepository
      * @param $application
      * @return mixed
      */
+    public function getTimesSuccessfulDeployed($application)
+    {
+        return $this->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->where('c.application = :app')
+            ->andWhere("c.exitCode = '0'")
+            ->setParameter('app', $application)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param $application
+     * @return mixed
+     */
     public function getDeployers($application)
     {
         return $this->createQueryBuilder('c')

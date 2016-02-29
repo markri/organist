@@ -32,19 +32,6 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Top deployers</h3>
-        </div>
-        <div class="panel-body">
-            <ul class="list-group">
-                <li class="list-group-item">Sjoerd - 34</li>
-                <li class="list-group-item">Harry - 6</li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
             <h3 class="panel-title">Latest Deployments</h3>
         </div>
         <div class="panel-body">
@@ -76,8 +63,7 @@
                                 {% endif %}
                                 >
                                 <td>
-                                    {#{{ log.datetimestart.format('d-m-Y H:i') }}#}
-                                    {{ log.datetimestart|timediff }}
+                                    <span title="{{ log.datetimestart|date('d-m-Y H:i') }}">{{ log.datetimestart|timediff }}</span>
                                 </td>
                                 <td>{{ log.commandLabel }}</td>
                                 <td>
