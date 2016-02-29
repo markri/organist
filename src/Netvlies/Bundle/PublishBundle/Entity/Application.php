@@ -224,6 +224,29 @@ class Application
     }
 
     /**
+     * @return string
+     */
+    public function getCommitUrl($hash)
+    {
+        /*
+         * From: git@bitbucket.org:netvlies/fit-for-free-sportcity.git
+         * To: https://bitbucket.org/netvlies/fit-for-free-sportcity/commits/5a2104d6e341ea980a4dfcf8e195c51dd7791708
+         */
+
+        if (!empty($hash) && $hash !== 'Unknown') {
+            $url = $this->getScmUrl();
+            $url = str_replace(':', '/', $url);
+            $url = str_replace('git@', '', $url);
+            $url = str_replace('.git', '', $url);
+            $url = sprintf('https://%s/commits/%s', $url, $hash);
+
+            return $url;
+        }
+
+        return false;
+    }
+
+    /**
      * @param $customer
      */
     public function setCustomer($customer)

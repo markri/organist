@@ -73,12 +73,14 @@
 
                 {% endblock %}
 
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        {% block content %}
-                        {% endblock %}
+                {% block content_wrapper %}
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {% block content %}{% endblock %}
+                        </div>
                     </div>
-                </div>
+                {% endblock %}
+
             </div>
 
         </div>

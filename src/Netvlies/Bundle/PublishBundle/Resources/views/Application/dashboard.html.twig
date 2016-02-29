@@ -22,16 +22,27 @@
 
 {% block content %}
 
-    <h3>{{application.name}}</h3>
+    <h3>{{ application.name }}</h3>
     <hr />
-    
+
     <h4>Details</h4>
     <dl class="dl-horizontal">
-        <dt>Customer</dt> <dd>{{application.customer}}</dd>
+        <dt>Customer</dt> <dd>{{ application.customer }}</dd>
         <dt>Name</dt> <dd>{{application.name}}</dd>
-        <dt>Repository type</dt> <dd>{{application.scmService}}</dd>
-        <dt>Repository url</dt> <dd>{{application.scmUrl}}</dd>
-        <dt>Applicationtype</dt> <dd>{{application.applicationtype.title }}</dd>
+        <dt>Repository type</dt> <dd>{{ application.scmService }}</dd>
+        <dt>Repository url</dt> <dd>{{ application.scmUrl }}</dd>
+        <dt>Application type</dt> <dd>{% if application.applicationType is not empty %}{{ application.applicationType.title }}{% else %}Unknown{% endif %}</dd>
+    </dl>
+
+    <dl class="dl-horizontal">
+        <dt>First Deployed At</dt> <dd>{{ first_deploy.datetimestart.format('d M Y') }}</dd>
+        <dt>Times Deployed</dt> <dd>{{ deploy_count }} (<span style="color:red;">{{ deploy_count - success_count }}</span>)</dd>
+        <dt>Deployers</dt>
+        <dd>
+            {% for deployer in deployers %}
+                {{ deployer }}<br/>
+            {% endfor %}
+        </dd>
     </dl>
 
     {% if application.buildStatusBadge1 %}
@@ -64,16 +75,26 @@
                 {% for target in application.targets if target.environment.type == type and target.inactive is empty %}
                     {% if not loop.first %}
                         <hr>
-                    {%endif%}
+                    {% endif %}
+
                     <a href="{{ path('netvlies_publish_target_detail', { 'target': target.id}) }}">{{target.label}}</a><br>
-                    {%if target.lastDeployedTag is not empty%}
-                        {{ target.lastDeployedTag }}<br>
-                    {%elseif target.lastDeployedBranch is not empty%}
-                        {{ target.lastDeployedBranch }}<br>
-                        ({{ target.lastDeployedRevision }})<br>
+
+                    {% if target.lastDeployedRevision is not empty %}
+                        <a href="{{ application.getCommitUrl(target.lastDeployedRevision) }}" target="_blank">{{ target.lastDeployedRevision }}</a> ({{ target.lastDeployedBranch }})
                     {% else %}
                         Not yet deployed<br>
-                    {%endif%}
+                    {% endif %}
+
+
+                    {#{% if target.lastDeployedTag is not empty %}#}
+                        {#{{ target.lastDeployedTag }}<br>#}
+                    {#{% elseif target.lastDeployedBranch is not empty %}#}
+                        {#{{ target.lastDeployedBranch }}<br>#}
+                        {#({{ target.lastDeployedRevision }})<br>#}
+                    {#{% else %}#}
+                        {#Not yet deployed<br>#}
+                    {#{% endif %}#}
+
                 {% else %}
                     -
                 {% endfor %}
@@ -98,6 +119,7 @@
             <tr>
                 <th>Date</th>
                 <th>Command type</th>
+                <th>Commit</th>
                 <th>Target</th>
                 <th>User</th>
                 <th>Status</th>
@@ -106,7 +128,6 @@
             </thead>
             {% for log in logs %}
                 <tr
-
                     {% if log.exitcode is null %}
                         class="warning"
                     {% elseif log.exitcode == 0 %}
@@ -116,9 +137,16 @@
                     {% endif %}
                     >
                     <td>
-                        {{ log.datetimestart.format('d-m-Y H:i') }}
+                        <span title="{{ log.datetimestart|date('d-m-Y H:i') }}">{{ log.datetimestart|timediff }}</span>
                     </td>
                     <td>{{ log.commandLabel }}</td>
+                    <td>
+                        {% if log.commitUrl %}
+                            <a href="{{ log.commitUrl }}" target="_blank">{{ log.commitHash }}</a>
+                        {% else %}
+                            {{ log.commitHash }}
+                        {% endif %}
+                    </td>
                     <td>
                         {% if log.target is not null %}
                             {{ log.target.label }}
@@ -144,7 +172,7 @@
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="5" align="right">&nbsp;</td>
+                <td colspan="6" align="right">&nbsp;</td>
                 <td><a href="{{ path('netvlies_publish_command_listlogs', {'application': application.id}) }}">View all logs</a></td>
             </tr>
         </table>
