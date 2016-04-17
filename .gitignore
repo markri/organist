@@ -14,3 +14,5 @@
 /node_modules
 /npm-debug.log
 /app/sessions
+/docker/log
+/docker/mysql/databases
