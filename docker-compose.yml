@@ -1,9 +1,9 @@
 application:
     build: docker/application
     volumes:
-        - .:/var/www/organist
+        - .:/var/www/html/organist
         #- logs/symfony:/var/www/symfony/app/logs
-    #tty: true
+    tty: true
 
 phpfpm:
   build: docker/php-fpm-5.6
