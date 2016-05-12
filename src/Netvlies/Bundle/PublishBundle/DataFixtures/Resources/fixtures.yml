@@ -1,0 +1,101 @@
+Capistrano 2:
+    Deploy:
+        enabled: true
+        template: |
+            {# Bring repository in desired state #} \
+            git checkout '{{ revision }}' && \
+            {# Capistrano deploy #} \
+            cap {{ target.environment.type }} deploy:update \
+            -Sproject='{{ application.name }}' \
+            -Sapptype='{{ application.applicationType.title }}' \
+            -Sappkey='{{ application.keyname }}' \
+            -Sgitrepo='{{ application.scmUrl }}' \
+            -Srepositorypath='{{ versioning.repositoryPath(application) }}' \
+            -Srevision='{{ revision }}' \
+            -Susername='{{ target.username }}' \
+            -Smysqldb='{{ target.mysqldb }}' \
+            -Smysqluser='{{ target.mysqluser }}' \
+            -Smysqlpw='{{ target.mysqlpw }}' \
+            -Swebroot='{{ target.webroot }}' \
+            -Sapproot='{{ target.approot }}' \
+            -Scaproot='{{ target.caproot }}' \
+            -Sprimarydomain='{{ target.primaryDomain }}' \
+            -Shostname='{{ target.environment.hostname }}' \
+            -Ssshport='{{ target.environment.port }}' \
+            -Sdtap='{{ target.environment.type }}' \
+            -Suserfiles='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' && \
+            {# Update version script#} \
+            echo "Finished updating process. Retrieving current version ..." && \
+            cd {{ approot }} && \
+            app/console organist:updateversion --id={{ target.id }} && \
+            echo ""
+    Rollback:
+        enabled: true
+        template:  |
+            {# Capistrano deploy #} \
+            cap {{ target.environment.type }} deploy:rollback \
+            -Sproject='{{ application.name }}' \
+            -Sapptype='{{ application.applicationType.title }}' \
+            -Sappkey='{{ application.keyname }}' \
+            -Sgitrepo='{{ application.scmUrl }}' \
+            -Srepositorypath='{{ versioning.repositoryPath(application) }}' \
+            -Susername='{{ target.username }}' \
+            -Smysqldb='{{ target.mysqldb }}' \
+            -Smysqluser='{{ target.mysqluser }}' \
+            -Smysqlpw='{{ target.mysqlpw }}' \
+            -Swebroot='{{ target.webroot }}' \
+            -Sapproot='{{ target.approot }}' \
+            -Scaproot='{{ target.caproot }}' \
+            -Sprimarydomain='{{ target.primaryDomain }}' \
+            -Shostname='{{ target.environment.hostname }}' \
+            -Ssshport='{{ target.environment.port }}' \
+            -Sdtap='{{ target.environment.type }}' \
+            -Suserfiles='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' && \
+            {# Update version script#} \
+            echo "Finished updating process. Retrieving current version ..." && \
+            cd {{ approot }} && \
+            app/console organist:updateversion --id={{ target.id }} && \
+            echo ""
+    Setup:
+        enabled: true
+        template: |
+            {# Bring repository in desired state #} \
+            git checkout '{{ revision }}' && \
+            {# Capistrano deploy #} \
+            cap {{ target.environment.type }} deploy:update \
+            -Sproject='{{ application.name }}' \
+            -Sapptype='{{ application.applicationType.title }}' \
+            -Sappkey='{{ application.keyname }}' \
+            -Sgitrepo='{{ application.scmUrl }}' \
+            -Srepositorypath='{{ versioning.repositoryPath(application) }}' \
+            -Srevision='{{ revision }}' \
+            -Susername='{{ target.username }}' \
+            -Smysqldb='{{ target.mysqldb }}' \
+            -Smysqluser='{{ target.mysqluser }}' \
+            -Smysqlpw='{{ target.mysqlpw }}' \
+            -Swebroot='{{ target.webroot }}' \
+            -Sapproot='{{ target.approot }}' \
+            -Scaproot='{{ target.caproot }}' \
+            -Sprimarydomain='{{ target.primaryDomain }}' \
+            -Shostname='{{ target.environment.hostname }}' \
+            -Ssshport='{{ target.environment.port }}' \
+            -Sdtap='{{ target.environment.type }}' \
+            -Suserfiles='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Suserdirs='{% for userFile in application.userFilesFiles %}{{ userFile.path }}{% if not loop.last %},{% endif %}{% endfor %}' \
+            -Svhostaliases='{% for alias in target.domainAliases %}{{ alias.alias }}{% if not loop.last %},{% endif %}{% endfor %}' && \
+            {# Update version script#} \
+            echo "Finished updating process. Retrieving current version ..." && \
+            cd {{ approot }} && \
+            app/console organist:updateversion --id={{ target.id }} && \
+            echo ""
+#Capistrano 3:
+#    Deploy:
+#        enabled: true
+#    Rollback:
+#        enabled: true
+#    Setup:
+#        enabled: true

@@ -10,6 +10,9 @@ Organist is an open source tool which helps you manage and execute deployments. 
  
 If you're on CentOS 6, then you will need to update your g++ compiler for compiling the required npm modules. This can be done using the scientific linux dev toolset as is explained here (https://gist.github.com/stephenturner/e3bc5cfacc2dc67eca8b)
 
+## Docker ##
+
+
 
 ## Setup ##
 
@@ -86,4 +89,14 @@ netvlies_publish:
 
 ## License ##
 Organist is licensed under the MIT licence. View the LICENSE file
+
+
+
+## Todo ##
+
+- Fixtures
+- Command templates
+- Strategies
+- Refactor Organist to organist bundle and organist-extra-bundle
+- Symfony 3.x compliancy
 

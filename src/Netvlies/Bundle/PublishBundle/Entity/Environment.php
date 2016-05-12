@@ -114,7 +114,7 @@ class Environment
     }
 
     /**
-     * @param \Netvlies\Bundle\PublishBundle\Entity\SSH $port
+     * @param $port
      */
     public function setPort($port)
     {
@@ -122,7 +122,7 @@ class Environment
     }
 
     /**
-     * @return \Netvlies\Bundle\PublishBundle\Entity\SSH
+     * @return string
      */
     public function getPort()
     {

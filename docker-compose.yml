@@ -1,9 +1,12 @@
-application:
-    build: docker/application
-    volumes:
-        - .:/var/www/html/organist
-        #- logs/symfony:/var/www/symfony/app/logs
-    tty: true
+phpcli:
+  build: docker/php-cli-5.6
+  volumes:
+      - .:/var/www/html/organist
+      - ./node_modules/organist-term:/usr/src/app
+      - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
+  tty: true
+  links:
+    - mysql:mysql
 
 phpfpm:
   build: docker/php-fpm-5.6
@@ -13,11 +16,11 @@ phpfpm:
     - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
     - ./docker/log/php-fpm:/var/log/php-fpm
   volumes_from:
-   - application
+   - phpcli
   ports:
     - 9000:9000
   links:
-    - db:db
+    - mysql:mysql
 
 nginx:
   image: nginx
@@ -26,13 +29,15 @@ nginx:
     - "80:80"
   links:
     - phpfpm:phpfpm
+    - node:node
   volumes:
     - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/default.conf
     - ./docker/log/nginx:/var/log/nginx
   volumes_from:
-   - application
+   - phpcli
 
-db:
+
+mysql:
   image: mysql
   restart: always
   ports:
@@ -45,3 +50,13 @@ db:
   volumes:
     - ./docker/mysql/databases:/var/lib/mysql
     - ./docker/log/mysql:/var/log/mysql
+
+node:
+   build: docker/node
+   restart: always
+   volumes_from:
+   - phpcli
+   ports:
+     - 8080:8080
+   links:
+    - mysql:mysql
