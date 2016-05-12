@@ -6,7 +6,7 @@ CMD cd /var/www/html/organist && \
     npm_package_config_dbhost=db \
     npm_package_config_dbname=organist \
     npm_package_config_dbuser=root \
-    npm_package_config_dbpassword=vagrant \
+    npm_package_config_dbpassword=organist \
     npm_package_config_table=CommandLog \
     npm_package_config_idField=id  \
     npm_package_config_commandField=command \
