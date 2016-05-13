@@ -246,20 +246,6 @@ class CommandController extends Controller
         // Change dir to app repository
         $script .='cd '. $repoPath ." && ";
 
-        //@todo extract following hard sets into configurations for different deployment strategies with different type of settings
-        switch ($command->getApplication()->getDeploymentStrategy()) {
-            case 'capistrano2':
-                $script .='source /usr/local/rvm/scripts/rvm && ';
-                $script .='rvm use ruby-1.8.7-head && ';
-                break;
-            case 'capistrano3':
-                $script .='source /usr/local/rvm/scripts/rvm && ';
-                $script .='rvm use ruby-2.2.1 && ';
-                break;
-            default:
-                break;
-        }
-
         $script .=$command->getCommand();
 
         $commandLog->setCommandLabel($command->getLabel());
@@ -330,9 +316,7 @@ class CommandController extends Controller
      * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
      * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
-     * @todo refactor this to other route so menu can be rendered properly
-     *
-     * @Route("/console/exec/{commandlog}")
+     * @Route("/command/exec/{commandlog}")
      * @Template()
      * @param CommandLog $commandlog
      */

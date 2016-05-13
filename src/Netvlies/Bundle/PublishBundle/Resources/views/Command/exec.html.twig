@@ -1,44 +1,76 @@
 {% extends 'NetvliesPublishBundle::layout.html.twig' %}
 
-{% block content %}
+{% block head %}
+    {{ parent() }}
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/term.js"></script>
+{% endblock %}
 
-    <h3>Executing deployment
+{% block content %}
+    <h3>Executing command
         {% if command.target is not empty %}
             on ({{ command.target.environment.type }}) {{ command.target.environment.hostname }}
         {% endif %}
     </h3>
     <hr>
-
-    <script type="text/javascript" src="/console/exec/anyterm.js">
-    </script>
-
-    <script type="text/javascript">
-      // To create the terminal, just call create_term.  The paramters are:
-      //  - The id of a <div> element that will become the terminal.
-      //  - The title.  %h and %v expand to the hostname and Anyterm version.
-      //  - The number of rows and columns.
-      //  - An optional parameter which is substituted for %p in the command string.
-      //  - An optional character set.
-      //  - An option number of lines of scrollback (default 0). THIS ONE IS A BIT BUGGY
-
-      window.onload=function() {create_term("term","Console %h",22,150,"{{ command.id }}","",100);};
-
-      // When the user closes the terminal, by default they'll see a blank page.
-      // Generally you'll want to be more friendly than that.  If you set the
-      // variable on_close_goto_url to a URL, they'll be sent to that page after
-      // closing.  You could send them back to your home page, or something.
-      var on_close_goto_url = "";
-
-    </script>
-
-    <link rel="stylesheet" type="text/css" href="/console/exec/anyterm.css">
-
-
-    <div id="term"></div>
-
     <div>
         <h4>Deployment command</h4>
         <pre>{{ command.command | replace({' && ': '<br>', ' &&': '<br>', '&& ': '<br>', '&&': '<br>'}) | raw }}</pre>
     </div>
+{% endblock %}
 
+
+{% block postpanel %}
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="term"></div>
+            <script>
+                (function() {
+                    window.onload = function() {
+
+                        $.ajax({
+                            // Create remote terminal through express app (this prepares a socket listener)
+                            url: '/cmd_{{ command.id }}',
+                            success: function (result) {
+                                // Ignore returned HTML client in result, we use our own here to have more control
+                                // This way URL can be used standalone when accessing http://host/cmd_x
+
+                                // And connect to it using socket.io
+                                var socket = io.connect('/cmd_{{ command.id }}');
+
+                                socket.on('connect', function() {
+
+                                    var term = new Terminal({
+                                        cols: 140,
+                                        rows: 30,
+                                        useStyle: true,
+                                        screenKeys: true,
+                                        cursorBlink: false
+                                    });
+
+                                    term.on('data', function(data) {
+                                        socket.emit('data', data);
+                                    });
+
+                                    term.on('title', function(title) {
+                                        document.title = title;
+                                    });
+
+                                    term.open(document.getElementById('term'));
+
+                                    socket.on('data', function(data) {
+                                        term.write(data);
+                                    });
+
+                                    socket.on('disconnect', function() {
+                                        term.destroy();
+                                    });
+                                });
+                            }
+                        });
+                    };
+                }).call(this);
+            </script>
+        </div>
+    </div>
 {% endblock %}
