@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install mbstring \
 	&& docker-php-ext-install zip
 
+# additional deps
+RUN apt-get install -y git
+
 # install nodejs terminal and setup environment
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash
 RUN apt-get install -y nodejs
@@ -30,8 +33,9 @@ RUN groupmod -g 1000 www-data
 RUN usermod -u 1000 www-data
 RUN chown www-data:www-data /var/www
 
-# todo install rvm and capinist
+# Start terminal server
 USER www-data
+CMD ["/usr/bin/node", "/node_modules/organist-term/server.js", "--debug", "--allow-input"]
 
-CMD ["/usr/bin/node", "/node_modules/organist-term/server.js", "--debug"]
+# Setup organist basedir
 WORKDIR /var/www/html/organist
