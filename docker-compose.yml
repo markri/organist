@@ -1,9 +1,22 @@
 phpcli:
   build: docker/php-cli-5.6
+  restart: always
+  ports:
+    - "8080:8080"
   volumes:
-      - .:/var/www/html/organist
-      - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
+    - .:/var/www/html/organist
+    - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
   tty: true
+  environment:
+    npm_package_config_port: 8080
+    npm_package_config_dbhost: mysql
+    npm_package_config_dbname: live
+    npm_package_config_dbuser: root
+    npm_package_config_dbpassword: organist
+    npm_package_config_table: CommandLog
+    npm_package_config_idField: id
+    npm_package_config_commandField: command
+    npm_package_config_logField: log
   links:
     - mysql:mysql
 
@@ -28,7 +41,7 @@ nginx:
     - "80:80"
   links:
     - phpfpm:phpfpm
-    - node:node
+    - phpcli:phpcli
   volumes:
     - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/default.conf
     - ./docker/log/nginx:/var/log/nginx
@@ -49,23 +62,3 @@ mysql:
   volumes:
     - ./docker/mysql/databases:/var/lib/mysql
     - ./docker/log/mysql:/var/log/mysql
-
-node:
-   build: docker/node
-   restart: always
-   ports:
-     - 8080:8080
-   links:
-    - mysql:mysql
-   volumes_from:
-   - phpcli
-   environment:
-      npm_package_config_port: 8080
-      npm_package_config_dbhost: mysql
-      npm_package_config_dbname: live
-      npm_package_config_dbuser: root
-      npm_package_config_dbpassword: organist
-      npm_package_config_table: CommandLog
-      npm_package_config_idField: id
-      npm_package_config_commandField: command
-      npm_package_config_logField: log

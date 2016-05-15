@@ -1,5 +1,6 @@
 FROM php:5.6-cli
-# Install modules
+
+# Install PHP modules
 RUN apt-get update && apt-get install -y \
 	libmcrypt-dev  \
 	libicu-dev \
@@ -13,10 +14,24 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install mbstring \
 	&& docker-php-ext-install zip
 
-VOLUME /var/www/html/organist
+# install nodejs terminal and setup environment
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash
+RUN apt-get install -y nodejs
+RUN npm install organist-term
+EXPOSE 8080
+
+# setup composer
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
+
+# mount data
+VOLUME /var/www/html/organist
 RUN groupmod -g 1000 www-data
 RUN usermod -u 1000 www-data
 RUN chown www-data:www-data /var/www
+
+# todo install rvm and capinist
 USER www-data
+
+CMD ["/usr/bin/node", "/node_modules/organist-term/server.js", "--debug"]
+WORKDIR /var/www/html/organist
