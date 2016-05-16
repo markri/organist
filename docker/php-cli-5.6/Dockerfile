@@ -34,8 +34,11 @@ RUN usermod -u 1000 www-data
 RUN chown www-data:www-data /var/www
 
 # Start terminal server
+# If you want to restrict input, just remove --allow-input (remember CTRL-C, is still available)
 USER www-data
 CMD ["/usr/bin/node", "/node_modules/organist-term/server.js", "--debug", "--allow-input"]
 
 # Setup organist basedir
 WORKDIR /var/www/html/organist
+
+#@todo setup RVM
