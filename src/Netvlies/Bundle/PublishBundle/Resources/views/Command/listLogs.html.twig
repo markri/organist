@@ -39,7 +39,7 @@
                     {{ log.user }}
                 </td>
                 <td>
-                    {% if log.exitcode is null %}
+                    {% if log.log is null %}
                         <img src="{{ asset('bundles/netvliespublish/img/ajax-loader.gif') }}"> still running ...
                     {% elseif log.exitcode == 0 %}
                         success

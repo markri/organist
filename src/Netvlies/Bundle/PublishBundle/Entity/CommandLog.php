@@ -75,6 +75,7 @@ class CommandLog
     private $log;
 
     /**
+     * @todo Remove this field. It is not used with new nodejs console. Console could be interactive, therefore exit code doesnt make sense
      * @var string $exitcode
      * @ORM\Column(name="exitcode", type="string", nullable=true)
      */
