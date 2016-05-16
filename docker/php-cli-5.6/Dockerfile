@@ -40,5 +40,3 @@ CMD ["/usr/bin/node", "/node_modules/organist-term/server.js", "--debug", "--all
 
 # Setup organist basedir
 WORKDIR /var/www/html/organist
-
-#@todo setup RVM
