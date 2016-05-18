@@ -13,6 +13,7 @@ namespace Netvlies\Bundle\PublishBundle\Form\ChoiceList;
 use Symfony\Component\Form\AbstractType;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -38,7 +39,6 @@ class ReferenceChoiceList extends AbstractType
     /**
      * Loads the choice list
      * Should be implemented by child classes.
-     *
      */
     protected function getChoices(Application $app)
     {
@@ -47,16 +47,18 @@ class ReferenceChoiceList extends AbstractType
          */
         $versioningService = $this->container->get($app->getScmService());
         $references = $versioningService->getBranchesAndTags($app);
-        $choices = array();
+        $choiceKeys = array();
+        $choiceValues = array();
 
         foreach($references as $reference){
             /**
              * @var \Netvlies\Bundle\PublishBundle\Versioning\ReferenceInterface $reference
              */
-            $choices[$reference->getReference()] = $reference->getName();
+            $choiceKeys[] = $reference->getReference();
+            $choiceValues[] = $reference->getName();
         }
 
-        return $choices;
+        return new ChoiceList($choiceKeys, $choiceValues);
     }
 
 
@@ -73,13 +75,12 @@ class ReferenceChoiceList extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $options)
     {
-
         $options->setDefaults(
             array(
                 'label' => false,
                 'empty_value' => '-- Choose a reference --',
                 'app' => null,
-                'choices' => function (Options $options){
+                'choice_list' => function (Options $options){
                     return $this->getChoices($options['app']);
                 }
             ));
