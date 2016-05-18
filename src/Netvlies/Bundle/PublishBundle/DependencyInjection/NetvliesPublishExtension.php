@@ -39,8 +39,6 @@ class NetvliesPublishExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         // Some bundle parameters
-        $container->setParameter('netvlies_publish.anyterm_user', $config['anyterm_user']);
-        $container->setParameter('netvlies_publish.anyterm_exec_port', $config['anyterm_exec_port']);
         $container->setParameter('netvlies_publish.repositorypath', $config['repositorypath']);
         $container->setParameter('netvlies_publish.bitbucket' , $config['externalstatus']['bitbucket']);
         $container->setParameter('netvlies_publish.github' , $config['externalstatus']['github']);

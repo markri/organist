@@ -239,6 +239,7 @@ class CommandController extends Controller
             throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
         }
 
+        // @todo check if this is still needed for new console
         // Anyterm strips all env vars before executing exec.sh under user deploy
         // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
         $script = 'export HOME=' . $_SERVER['HOME'] . ' && ';
@@ -313,8 +314,6 @@ class CommandController extends Controller
 
 
     /**
-     * This route is fixed! Due to apache/nginx proxy setting that will redirect /console/exec/anyterm to appropriate assets
-     * This action should never be called without having used the prepareCommand (which will prepare a log entry)
      *
      * @Route("/command/exec/{commandlog}")
      * @Template()

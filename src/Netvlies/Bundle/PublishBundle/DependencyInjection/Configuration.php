@@ -32,8 +32,6 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('repositorypath')
                 ->isRequired()
             ->end()
-            ->scalarNode('anyterm_user')->end() //@todo remove once anyterm is tty.js
-            ->scalarNode('anyterm_exec_port')->end()
             ->arrayNode('strategies')
                 ->useAttributeAsKey('strategy')
                     ->prototype('array')
