@@ -18,6 +18,7 @@ phpcli:
     npm_package_config_idField: id
     npm_package_config_commandField: command
     npm_package_config_logField: log
+    npm_package_config_dateField: datetimeend
   links:
     - mysql:mysql
 
