@@ -11,6 +11,7 @@
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
 use Netvlies\Bundle\PublishBundle\Entity\Command;
+use Netvlies\Bundle\PublishBundle\Entity\CommandTemplate;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationDeployType;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationRollbackType;
 use Netvlies\Bundle\PublishBundle\Form\ApplicationSetupType;
@@ -153,10 +154,55 @@ class CommandController extends Controller
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
-        /**
-         * @var Strategy $strategy
-         */
-        $strategy = $this->container->get('netvlies_publish.strategy.capistrano2');
+
+        $commandTemplates = $strategy = $application->getDeploymentStrategy()->getCommandTemplates();
+
+
+        $twigEnvironment = $this->container->get('twig');
+
+        foreach ($commandTemplates as $template)
+        {
+            /**
+             * @var $template CommandTemplate
+             */
+
+            $twigTemplate = $twigEnvironment->createTemplate($template->getTemplate());
+            $exceptions = true;
+            $context = array();
+
+            while($exceptions) {
+                try {
+                    $twigTemplate->render($context);
+                } catch(\Twig_Error_Runtime $e) {
+                    $variable = preg_replace('/Variable "/', '', $e->getRawMessage());
+                    $variable = preg_replace('/" does not exist$/', '', $variable);
+                    $context[$variable] = new TwigDummy();
+                    continue;
+
+                }
+                $exceptions = false;
+
+            }
+
+            //@todo so now we have the main keys for the twig template, try to match inbuilt organist variables
+            // and create a form for that
+            var_dump(array_keys($context));
+            exit;
+            //$twigEnvironment->getCompiler()->gt
+
+
+        }
+
+        $context = array(
+            'application' => $application,
+            'versioning' => $versioningService,
+            'revision' => '',
+            'target' => '',
+            'approot' => $this->get('kernel')->getRootDir(),
+            'repositorypath' => $this->container->getParameter('repository_path')
+        );
+
+
 
         $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
 

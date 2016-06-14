@@ -14,6 +14,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CommandTemplate
 {
+
+    const TWIG_APPLICATION = 'application';
+    const TWIG_REVISION = 'revision';
+    const TWIG_VERSIONING = 'versioning';
+    const TWIG_TARGET = 'target';
+    const TWIG_APPROOT = 'approot';
+
     /**
      * @var integer
      *

@@ -391,7 +391,7 @@ class Application
     }
 
     /**
-     * @return mixed
+     * @return Strategy
      */
     public function getDeploymentStrategy()
     {
