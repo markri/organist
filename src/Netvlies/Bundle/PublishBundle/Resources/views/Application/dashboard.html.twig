@@ -37,12 +37,13 @@
 {% if first_deploy is not empty %}
     <dl class="dl-horizontal">
 
-        <dt>First Deployed At</dt> <dd>{{ first_deploy.datetimestart.format('d M Y') }}</dd>
+        <dt>First Deployment</dt> <dd>{{ first_deploy.datetimestart.format('d M Y') }}</dd>
         <dt>Times Deployed</dt> <dd>{{ deploy_count }} (<span style="color:red;">{{ deploy_count - success_count }}</span>)</dd>
         <dt>Deployers</dt>
         <dd>
             {% for deployer in deployers %}
-                {{ deployer }}<br/>
+                {{ deployer }}
+                {% if not loop.last %},{% endif %}
             {% endfor %}
         </dd>
     </dl>

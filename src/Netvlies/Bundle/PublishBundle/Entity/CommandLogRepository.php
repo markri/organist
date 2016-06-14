@@ -122,7 +122,7 @@ class CommandLogRepository extends EntityRepository
             return null;
         }
 
-        return $result->first();
+        return array_pop($result);
     }
 
     /**
