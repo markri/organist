@@ -34,7 +34,9 @@
         <dt>Application type</dt> <dd>{% if application.applicationType is not empty %}{{ application.applicationType.title }}{% else %}Unknown{% endif %}</dd>
     </dl>
 
+{% if first_deploy is not empty %}
     <dl class="dl-horizontal">
+
         <dt>First Deployed At</dt> <dd>{{ first_deploy.datetimestart.format('d M Y') }}</dd>
         <dt>Times Deployed</dt> <dd>{{ deploy_count }} (<span style="color:red;">{{ deploy_count - success_count }}</span>)</dd>
         <dt>Deployers</dt>
@@ -44,6 +46,7 @@
             {% endfor %}
         </dd>
     </dl>
+{% endif %}
 
     {% if application.buildStatusBadge1 %}
         <img src="{{ application.buildStatusBadge1 }}" border="0">

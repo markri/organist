@@ -55,12 +55,9 @@ class ApplicationController extends Controller
             if($form->isValid()){
                 $em = $this->container->get('doctrine.orm.entity_manager');
 
-                /**
-                 * @var ApplicationType $appTypeService
-                 */
-                $appTypeService = $this->container->get($application->getApplicationType());
+                $appType = $application->getApplicationType();
 
-                if ($userFiles = $appTypeService->getUserFiles()) {
+                if ($userFiles = $appType->getUserFiles()) {
                     foreach($userFiles as $sharedFile){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);
@@ -69,7 +66,7 @@ class ApplicationController extends Controller
                         $application->addUserFile($userFile);
                     }
                 }
-                if($userDirs = $appTypeService->getUserDirs()){
+                if($userDirs = $appType->getUserDirs()){
                     foreach($userDirs as $sharedDir){
                         $userFile = new UserFile();
                         $userFile->setApplication($application);
@@ -104,7 +101,7 @@ class ApplicationController extends Controller
     public function dashboardAction(Application $application)
     {
         /**
-         * @var CommandLogRepository
+         * @var $logRepo CommandLogRepository
          */
         $logRepo        = $this->getDoctrine()->getManager()->getRepository('NetvliesPublishBundle:CommandLog');
         $logs           = $logRepo->getLogsForApplication($application, 5);

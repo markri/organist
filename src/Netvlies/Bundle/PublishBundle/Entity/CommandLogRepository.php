@@ -116,8 +116,13 @@ class CommandLogRepository extends EntityRepository
         ')->setParameter('app', $application);
 
         $query->setMaxResults(1);
+        $result = $query->getResult();
 
-        return $query->getSingleResult();
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result->first();
     }
 
     /**

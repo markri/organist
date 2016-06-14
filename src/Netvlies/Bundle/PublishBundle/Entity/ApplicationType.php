@@ -31,14 +31,14 @@ class ApplicationType
     /**
      * @var array
      *
-     * @ORM\Column(name="userDirs", type="array")
+     * @ORM\Column(name="userDirs", type="json_array")
      */
     private $userDirs;
 
     /**
      * @var array
      *
-     * @ORM\Column(name="userFiles", type="array")
+     * @ORM\Column(name="userFiles", type="json_array")
      */
     private $userFiles;
 
@@ -96,7 +96,7 @@ class ApplicationType
      */
     public function getUserdirs()
     {
-        return $this->userdirs;
+        return $this->userDirs;
     }
 
     /**
