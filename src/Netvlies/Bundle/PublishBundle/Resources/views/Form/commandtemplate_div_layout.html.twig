@@ -1,0 +1,18 @@
+{% extends 'NetvliesPublishBundle:Form:extended_div_layout.html.twig' %}
+
+
+{# to prevent numbering collection items #}
+{% block form_label %}
+    {% set label_attr = label_attr|merge({'class': 'control-label col-lg-2'}) %}
+    {{ parent() }}
+{% endblock form_label %}
+
+{# implements twitter bootstrap horizontal forms #}
+{% block form_widget %}
+    <div class="col-lg-10">
+
+        dinges
+        {{ parent() }}
+    </div>
+{% endblock %}
+

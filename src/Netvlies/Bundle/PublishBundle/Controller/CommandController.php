@@ -20,6 +20,7 @@ use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandApplicationInterface;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTargetInterface;
 use Netvlies\Bundle\PublishBundle\Strategy\Strategy;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
@@ -157,8 +158,9 @@ class CommandController extends Controller
 
         $commandTemplates = $strategy = $application->getDeploymentStrategy()->getCommandTemplates();
 
-
         $twigEnvironment = $this->container->get('twig');
+        $forms = array();
+        $formFactory = $this->container->get('netvlies_publish.commandformfactory');
 
         foreach ($commandTemplates as $template)
         {
@@ -181,16 +183,10 @@ class CommandController extends Controller
 
                 }
                 $exceptions = false;
-
             }
+            $variables = array_keys($context);
 
-            //@todo so now we have the main keys for the twig template, try to match inbuilt organist variables
-            // and create a form for that
-            var_dump(array_keys($context));
-            exit;
-            //$twigEnvironment->getCompiler()->gt
-
-
+            $forms[] = $formFactory->createForm($template, $application, $variables)->createView();
         }
 
         $context = array(
@@ -204,67 +200,48 @@ class CommandController extends Controller
 
 
 
-        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
-
-        $deployCommand = $actionFactory->getDeployCommand();
-        $deployCommand->setApplication($application);
-        $deployCommand->setVersioningService($versioningService);
-
-        $rollbackCommand = $actionFactory->getRollbackCommand();
-        $rollbackCommand->setApplication($application);
-        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
-
-        $setupCommand = $actionFactory->getInitCommand();
-        $setupCommand->setApplication($application);
-
-        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
-        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
-        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
+//        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
+//
+//        $deployCommand = $actionFactory->getDeployCommand();
+//        $deployCommand->setApplication($application);
+//        $deployCommand->setVersioningService($versioningService);
+//
+//        $rollbackCommand = $actionFactory->getRollbackCommand();
+//        $rollbackCommand->setApplication($application);
+//        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
+//
+//        $setupCommand = $actionFactory->getInitCommand();
+//        $setupCommand->setApplication($application);
+//
+//        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
+//        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
+//        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
 
         $request = $this->getRequest();
 
         if($request->getMethod() == 'POST'){
 
-            if ($request->request->has($deployForm->getName())){
+            foreach ($forms as $form) {
+                /**
+                 * @var $form Form
+                 */
 
-                $deployForm->handleRequest($request);
+                if ($request->request->has($form->getName())) {
+                    $form->handleRequest($request);
 
-                if($deployForm->isValid()){
+                    if($form->isValid()){
 
-                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-                        'command'  => $deployCommand
-                    ));
-                }
-            }
-
-            if ($request->request->has($rollbackForm->getName())){
-                $rollbackForm->handleRequest($request);
-
-                if($rollbackForm->isValid()){
-
-                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-                        'command'  => $rollbackCommand
-                    ));
-                }
-            }
-
-            if ($request->request->has($setupForm->getName())){
-                $setupForm->handleRequest($request);
-
-                if($setupForm->isValid()){
-
-                    return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-                        'command'  => $setupCommand
-                    ));
+                        return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
+                            'command'  => $deployCommand
+                        ));
+                    }
                 }
             }
         }
 
         return array(
             'application' => $application,
-            'deployForm' => $deployForm->createView(),
-            'rollbackForm' => $rollbackForm->createView(),
-            'setupForm' => $setupForm->createView(),
+            'forms' => $forms,
             'headRevision' => $headRevision
         );
     }
