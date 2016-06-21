@@ -10,24 +10,18 @@
 
 namespace Netvlies\Bundle\PublishBundle\Controller;
 
-use Netvlies\Bundle\PublishBundle\Entity\Command;
 use Netvlies\Bundle\PublishBundle\Entity\CommandTemplate;
-use Netvlies\Bundle\PublishBundle\Form\ApplicationDeployType;
-use Netvlies\Bundle\PublishBundle\Form\ApplicationRollbackType;
-use Netvlies\Bundle\PublishBundle\Form\ApplicationSetupType;
-use Netvlies\Bundle\PublishBundle\Strategy\Commands\ActionFactory;
+use Netvlies\Bundle\PublishBundle\Entity\Target;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandApplicationInterface;
 use Netvlies\Bundle\PublishBundle\Strategy\Commands\CommandTargetInterface;
-use Netvlies\Bundle\PublishBundle\Strategy\Strategy;
+use Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManager;
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\CommandLog;
-use Netvlies\Bundle\PublishBundle\Entity\Target;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -39,104 +33,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class CommandController extends Controller
 {
-
-//    /**
-//     * @Route("/command/{application}/list")
-//     * @Template()
-//     * @param Application $application
-//     */
-//    public function commandPanelAction(Request $request, Application $application)
-//    {
-//        /**
-//         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-//         */
-//        $versioningService = $this->get($application->getScmService());
-//        $headRevision = $versioningService->getHeadRevision($application);
-//
-//        $commands = $application->getCommands();
-//        $commandFormFactory = $this->container->get('netvlies_publish.commandformfactory');
-//        $forms = array();
-//
-//        foreach ($commands as $command) {
-//            /**
-//             * @var Command $command
-//             */
-//
-//            $form = $commandFormFactory->createForm($command);
-//
-//            if ($request->getMethod() == 'POST' && $request->request->has($form->getName())) {
-//
-//                $form->handleRequest($request);
-//
-//                if ($form->isValid()) {
-//
-//                    // Render command
-//                    $twig = $this->container->get('netvlies_publish.twig.environment');
-//                    $data = $form->getData();
-//                    $data['application'] = $application;
-//                    $data['versioning'] = $this->container->get($application->getScmService());
-//                    $data['approot'] =  $this->get('kernel')->getRootDir();
-//                    $data['strategy'] = $this->container->get($application->getDeploymentStrategy());
-//
-//                    $cmd = $twig->render($command->getId(), $data);
-//
-//
-//                    // Determine follow up action
-//                    if ($form->get('preview')->isClicked()) {
-//                        return new Response($cmd);
-//                    } else {
-//
-//
-//                        // Create commandlog
-//                        $target = null;
-//
-//                        foreach($data as $value) {
-//                            if ($value instanceof Target) {
-//                                $target = $value;
-//                            }
-//                        }
-//
-//                        $commandLog = new CommandLog();
-//                        $commandLog->setCommandLabel($command->getLabel());
-//                        $commandLog->setCommand($cmd);
-//                        $commandLog->setDatetimeStart(new \DateTime());
-//
-//                        if ($target) {
-//                            $commandLog->setHost($target->getEnvironment()->getHostname());
-//                            $commandLog->setTarget($target);
-//                            $commandLog->setType($target->getEnvironment()->getType());
-//                        }
-//
-//                        if($this->get('security.context')->getToken()->getUser()!='anon.'){
-//                            $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
-//                        }
-//                        else{
-//                            $userName = 'anonymous';
-//                        }
-//
-//                        $commandLog->setUser($userName);
-//
-//                        $em = $this->getDoctrine()->getManager();
-//                        $em->persist($command);
-//                        $em->flush();
-//
-//                        return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $commandLog->getId())));
-//                    }
-//                }
-//            }
-//
-//            $forms[] = $form->createView();
-//        }
-//
-//        return array(
-//            'headRevision' => $headRevision,
-//            'application' => $application,
-//            'forms' => $forms
-//        );
-//    }
-
-
-
     /**
      * @Route("/command/{application}/list")
      * @Template()
@@ -155,19 +51,20 @@ class CommandController extends Controller
             return $this->redirect($this->generateUrl('netvlies_publish_application_checkoutrepository', array('application' => $application->getId())));
         }
 
-
         $commandTemplates = $strategy = $application->getDeploymentStrategy()->getCommandTemplates();
 
         $twigEnvironment = $this->container->get('twig');
         $forms = array();
         $formFactory = $this->container->get('netvlies_publish.commandformfactory');
 
+
+        // Form generation is based on missing template variables
+        // @todo currently there is no way to order fields, or to add custom fields like foreign keys
         foreach ($commandTemplates as $template)
         {
             /**
              * @var $template CommandTemplate
              */
-
             $twigTemplate = $twigEnvironment->createTemplate($template->getTemplate());
             $exceptions = true;
             $context = array();
@@ -184,9 +81,10 @@ class CommandController extends Controller
                 }
                 $exceptions = false;
             }
+
             $variables = array_keys($context);
 
-            $forms[] = $formFactory->createForm($template, $application, $variables)->createView();
+            $forms[$template->getId()] = $formFactory->createForm($template, $application, $variables);
         }
 
         $context = array(
@@ -199,29 +97,12 @@ class CommandController extends Controller
         );
 
 
-
-//        $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
-//
-//        $deployCommand = $actionFactory->getDeployCommand();
-//        $deployCommand->setApplication($application);
-//        $deployCommand->setVersioningService($versioningService);
-//
-//        $rollbackCommand = $actionFactory->getRollbackCommand();
-//        $rollbackCommand->setApplication($application);
-//        $rollbackCommand->setRepositoryPath($versioningService->getRepositoryPath($application));
-//
-//        $setupCommand = $actionFactory->getInitCommand();
-//        $setupCommand->setApplication($application);
-//
-//        $deployForm = $this->createForm(new ApplicationDeployType(), $deployCommand, array('app' => $application));
-//        $rollbackForm = $this->createForm(new ApplicationRollbackType(), $rollbackCommand, array('app' => $application));
-//        $setupForm = $this->createForm(new ApplicationSetupType(), $setupCommand, array('app' => $application));
-
         $request = $this->getRequest();
+        $em = $this->get('doctrine.orm.entity_manager');
 
         if($request->getMethod() == 'POST'){
 
-            foreach ($forms as $form) {
+            foreach ($forms as $id => $form) {
                 /**
                  * @var $form Form
                  */
@@ -230,18 +111,30 @@ class CommandController extends Controller
                     $form->handleRequest($request);
 
                     if($form->isValid()){
+                        /**
+                         *
+                         */
+                        $template = $em->getRepository('NetvliesPublishBundle:CommandTemplate')->find($id);
+                        $context = array_merge($context, $form->getData());
 
                         return $this->forward('NetvliesPublishBundle:Command:execTargetCommand', array(
-                            'command'  => $deployCommand
+                              'template' => $template,
+                              'context' => $context
                         ));
                     }
                 }
             }
         }
 
+        $formViews = array();
+        foreach ($forms as $form)
+        {
+            $formViews[] = $form->createView();
+        }
+
         return array(
             'application' => $application,
-            'forms' => $forms,
+            'forms' => $formViews,
             'headRevision' => $headRevision
         );
     }
@@ -252,45 +145,41 @@ class CommandController extends Controller
      * @throws \Exception
      * @return Response
      */
-    public function execTargetCommandAction(CommandTargetInterface $command)
+    public function execTargetCommandAction(CommandTemplate $template, array $context)
     {
+        /**
+         * @var Application $application
+         */
+        $application = $context['application'];
+
+        /**
+         * @var VersioningInterface $versioningService
+         */
+        $versioningService = $context['versioning'];
+
+        /**
+         * @var Target $target;
+         */
+        $target = $context['target'];
+
         $commandLog = new CommandLog();
-        $versioningService = $this->container->get($command->getApplication()->getScmService());
-        $repoPath = $versioningService->getRepositoryPath($command->getApplication());
+
+        $repoPath = $versioningService->getRepositoryPath($application);
 
         if(!file_exists($repoPath)){
             throw new \Exception('This shouldnt happen! Target cant be executed when repo isnt there. GUI flow should prevent this');
         }
 
-        // Anyterm strips all env vars before executing exec.sh under user deploy
-        // So we need to add it manually in order to find the appropiate keys for git repos and remote servers to deploy to
-        $script = 'export HOME=' . $_SERVER['HOME'] . ' && ';
+        $twigEnvironment = $this->container->get('twig');
+        $twigTemplate = $twigEnvironment->createTemplate($template->getTemplate());
+        $script = $twigTemplate->render($context);
 
-        // Change dir to app repository
-        $script .='cd '. $repoPath ." && ";
-
-        //@todo extract following hard sets into configurations for different deployment strategies with different type of settings
-        switch ($command->getApplication()->getDeploymentStrategy()) {
-            case 'capistrano2':
-                $script .='source /usr/local/rvm/scripts/rvm && ';
-                $script .='rvm use ruby-1.8.7-head && ';
-                break;
-            case 'capistrano3':
-                $script .='source /usr/local/rvm/scripts/rvm && ';
-                $script .='rvm use ruby-2.2.1 && ';
-                break;
-            default:
-                break;
-        }
-
-        $script .=$command->getCommand();
-
-        $commandLog->setCommandLabel($command->getLabel());
+        $commandLog->setCommandLabel($template->getTitle());
         $commandLog->setCommand($script);
         $commandLog->setDatetimeStart(new \DateTime());
-        $commandLog->setHost($command->getTarget()->getEnvironment()->getHostname());
-        $commandLog->setTarget($command->getTarget());
-        $commandLog->setType($command->getTarget()->getEnvironment()->getType());
+        $commandLog->setHost($target->getEnvironment()->getHostname());
+        $commandLog->setTarget($target);
+        $commandLog->setType($target->getEnvironment()->getType());
 
         if($this->get('security.context')->getToken()->getUser()!='anon.'){
             $userName = $this->get('security.context')->getToken()->getUser()->getUsername();
@@ -434,33 +323,4 @@ class CommandController extends Controller
 
         return $this->redirect($this->generateUrl('netvlies_publish_command_exec', array('commandlog' => $newCommand->getId())));
     }
-
-
-//    /**
-//     * @Route("/command/loadchangeset/{target}/{revision}")
-//     * @Template()
-//     * @param \Netvlies\Bundle\PublishBundle\Entity\Target $target
-//     * @param $revision
-//     */
-//    public function loadChangesetAction(Target $target, $revision)
-//    {
-//        /**
-//         * @var \Netvlies\Bundle\PublishBundle\Versioning\VersioningInterface $versioningService
-//         */
-//        $versioningService = $this->get($target->getApplication()->getScmService());
-//        $errorMsg = '';
-//        $messages = array();
-//
-//        try{
-//            $messages = $versioningService->getChangesets($target->getApplication(), $target->getLastDeployedRevision(), $revision);
-//        }
-//        catch(\Exception $e){
-//            $errorMsg = $e->getMessage();
-//        }
-//
-//        return array(
-//            'errorMsg' => $errorMsg,
-//            'messages' => $messages
-//        );
-//    }
 }

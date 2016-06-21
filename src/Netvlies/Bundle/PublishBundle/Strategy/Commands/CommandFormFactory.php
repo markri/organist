@@ -10,7 +10,6 @@ namespace Netvlies\Bundle\PublishBundle\Strategy\Commands;
 
 
 use Netvlies\Bundle\PublishBundle\Entity\Application;
-use Netvlies\Bundle\PublishBundle\Entity\Command;
 use Netvlies\Bundle\PublishBundle\Entity\CommandTemplate;
 use Symfony\Component\Form\FormFactory;
 
@@ -39,9 +38,22 @@ class CommandFormFactory
      */
     public function createForm(CommandTemplate $template, Application $app, array $fields)
     {
-        $formBuilder = $this->formFactory->createNamedBuilder('command_form_' . $template->getId(), 'form', null, array('label' => $template->getTitle()));
+        $formBuilder = $this->formFactory->createNamedBuilder(
+            'command_form_' . $template->getId(),
+            'form',
+            null,
+            array(
 
-        foreach ($fields as $key => $field) {
+                'label' => $template->getTitle(),
+                'attr' => array(
+                    'data-horizontal' => true,
+                    'class' => 'form-horizontal',
+                    'name' => 'command_form_' . $template->getId(),
+                )
+            )
+        );
+
+        foreach ($fields as $field) {
 
             $fieldType = null;
             $label = null;
@@ -56,12 +68,13 @@ class CommandFormFactory
                     $fieldType = 'target_choicelist';
                     break;
                 default:
+                    // @todo text field?
                     break;
             }
 
-             if(!$fieldType) {
-                 continue;
-             }
+            if(!$fieldType) {
+                continue;
+            }
 
             $options = array(
                 'label' => $label,
@@ -69,12 +82,10 @@ class CommandFormFactory
                 'app' => $app
             );
 
-            $formBuilder->add($key, $fieldType, $options);
+            $formBuilder->add($field, $fieldType, $options);
         }
 
-        $formBuilder->add('run', 'submit', array('label' => 'Run', 'attr' => array('class' => 'btn btn-default pull-right')));
-//        $formBuilder->add('preview', 'submit', array('label' => 'Preview', 'attr' => array('class' => 'btn btn-default pull-right')));
-        //$formBuilder->getForm()->
+        $formBuilder->add('run', 'submit', array('label' => $template->getTitle(), 'attr' => array('class' => 'btn btn-default pull-right')));
 
         return $formBuilder->getForm();
     }
