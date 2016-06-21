@@ -10,7 +10,6 @@ phpcli:
 
 phpfpm:
   build: docker/php-fpm-5.6
-  restart: always
   volumes:
     - ./docker/php-fpm-5.6/php-fpm.conf:/usr/local/etc/php-fpm.conf
     - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
@@ -24,7 +23,6 @@ phpfpm:
 
 nginx:
   image: nginx
-  restart: always
   ports:
     - "80:80"
   links:
@@ -39,7 +37,6 @@ nginx:
 
 mysql:
   image: mysql
-  restart: always
   ports:
     - "3306:3306"
   environment:
@@ -53,7 +50,6 @@ mysql:
 
 node:
    build: docker/node
-   restart: always
    volumes_from:
    - phpcli
    ports:

@@ -12,6 +12,10 @@ RUN apt-get update && apt-get install -y \
 	&& docker-php-ext-install opcache \
 	&& docker-php-ext-install mbstring \
 	&& docker-php-ext-install zip
+
+# Used for git read only
+RUN apt-get install -y git
+
 RUN groupmod -g 1000 www-data
 RUN usermod -u 1000 www-data
 RUN chown www-data:www-data /var/www

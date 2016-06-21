@@ -240,7 +240,7 @@ class CommandController extends Controller
 
     /**
      *
-     * @Route("/console/exec/{commandlog}")
+     * @Route("/command/exec/{commandlog}")
      * @Template()
      * @param CommandLog $commandlog
      */
