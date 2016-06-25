@@ -21,8 +21,6 @@ framework:
 twig:
     debug:            true
     strict_variables: %kernel.debug%
-    globals:
-        console_proxy: %console_proxy%
 
 # Assetic Configuration
 assetic:
