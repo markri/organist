@@ -1,0 +1,20 @@
+{
+  "name": "organist-docker",
+  "dependencies": {
+    "organist-term": "0.0.5"
+  },
+  "scripts": {
+    "start": "node node_modules/organist-term/server.js"
+  },
+  "config": {
+    "port": 8080,
+    "dbhost": "mysql",
+    "dbname": "organist",
+    "dbuser": "root",
+    "dbpassword": "organist",
+    "table": "CommandLog",
+    "idField": "id",
+    "commandField": "command",
+    "logField": "log"
+  }
+}

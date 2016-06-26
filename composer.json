@@ -21,9 +21,7 @@
         "sensio/generator-bundle": "2.3.*",
         "cypresslab/gitelephant": "1.0.*",
         "hwi/oauth-bundle": "0.3.6",
-        "symfony/icu": "1.1.*",
-        "mouf/nodejs-installer": "^1.0",
-        "koala-framework/composer-extra-assets": "^2.0"
+        "symfony/icu": "1.1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
@@ -50,18 +48,6 @@
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
-        "symfony-assets-install": "symlink",
-        "mouf": {
-            "nodejs": {
-                "version": "4.3.*",
-                "targetDir": "vendor/nodejs/nodejs",
-                "forceLocal": true
-            }
-        },
-        "require-npm": {
-            "organist-term": "0.0.3",
-            "forever": "0.15.1"
-        },
-        "expose-npm-packages": true
+        "symfony-assets-install": "symlink"
     }
 }

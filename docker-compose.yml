@@ -2,7 +2,6 @@ phpcli:
   build: docker/php-cli-5.6
   volumes:
       - .:/var/www/html/organist
-      - ./node_modules/organist-term:/usr/src/app
       - ./docker/php-fpm-5.6/php.ini:/usr/local/etc/php/php.ini
   tty: true
   links:
