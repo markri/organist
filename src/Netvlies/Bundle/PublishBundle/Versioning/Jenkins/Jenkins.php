@@ -44,6 +44,7 @@ class Jenkins implements VersioningInterface
 
     function checkoutRevision(Application $app, $revision)
     {
+
         $builds = $this->fetchJenkins($app);
         $artifact = null;
 
@@ -67,13 +68,21 @@ class Jenkins implements VersioningInterface
             throw  new \Exception('Couldnt find artifact on Jenkins');
         }
 
+     	$destination = $this->getRepositoryPath($app) . DIRECTORY_SEPARATOR . 'tarbal.tar.gz';
+
+        if (file_exists($destination)) {
+            unlink($destination);
+        }
+
         $artifactUrl = $app->getScmUrl() . '/' . $revision . '/artifact/' . $artifact ; // e.g. http://jenkins.build.nvsotap.nl/job/Armarium/41/artifact/build.tar.gz
-        $original = GuzzleHttp\Stream\create(fopen($artifactUrl, 'r'));
-        $local = GuzzleHttp\Stream\create(fopen($this->getRepositoryPath($app) . DIRECTORY_SEPARATOR . 'tarbal.tar.gz', 'w'));
-        $local->write($original->getContents());
-
-        exec(sprintf('cd %s && tar -zxf tarbal.tar.gz  --strip 1', $this->getRepositoryPath($app)));
-
+        $client = new GuzzleHttp\Client();
+        $client->request('GET', $artifactUrl, [
+	    'sink' => $destination
+        ]);
+    
+        # don't extract tarball for deployment descriptors, we put deployment descriptors right here
+        # currently no way to manage these DD, except in own repository, maybe manage these DD in organist self (future release)
+        # exec(sprintf('cd %s && tar -zxf tarbal.tar.gz  --strip 1', $this->getRepositoryPath($app)));
     }
 
     function getChangesets(Application $app, $fromRef, $toRef)
