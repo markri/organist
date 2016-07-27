@@ -118,8 +118,7 @@ class InitCommand implements CommandTargetInterface
         }
 
         //@todo there is dtap and otap, otap is still there for BC
-        return trim(preg_replace('/\s\s+/', ' ', "
-            git checkout master &&
+        $command = trim(preg_replace('/\s\s+/', ' ', "
             cap ".$this->target->getEnvironment()->getType()." deploy:setup
             -Sproject='".$this->application->getName()."'
             -Sapptype='".$this->application->getApplicationType()."'
@@ -145,6 +144,13 @@ class InitCommand implements CommandTargetInterface
             -Suserdirs='".implode(',', $dirs)."'
             -Svhostaliases='".implode(',', $vhostAliases)."'"
         ));
+
+        if ($this->application->getScmService() != 'jenkins') {
+            //@todo should be done through versionnigService
+            $command = "git checkout '" . $this->revision . "' && " . $command;
+        }
+
+        return $command;
     }
 
     /**
