@@ -77,3 +77,9 @@ services:
         arguments: [%repository_path%, %private_key%]
         tags:
           - {name: netvlies_publish.versioning, alias: git}
+
+    jenkins:
+        class: Netvlies\Bundle\PublishBundle\Versioning\Jenkins\Jenkins
+        arguments: [ %repository_path%]
+        tags:
+        - {name: netvlies_publish.versioning, alias: jenkins}

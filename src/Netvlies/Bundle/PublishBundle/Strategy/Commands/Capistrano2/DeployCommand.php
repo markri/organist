@@ -140,9 +140,8 @@ class DeployCommand extends BaseUpdateCommand
         $updateVersionScript = $this->getUpdateVersionScript();
 
         //@todo there is dtap and otap, otap is still there for BC, remove otap and add this in library
-        return trim(preg_replace('/\s\s+/', ' ', "
+        $command =  trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
-            git checkout '".$this->revision."' &&
             cap ".$this->target->getEnvironment()->getType()." deploy:update
             -Sproject='".$this->application->getName()."'
             -Sapptype='".$this->application->getApplicationType()."'
@@ -170,6 +169,15 @@ class DeployCommand extends BaseUpdateCommand
             $updateVersionScript
             $keyForwardClose
             "));
+
+        if ($this->application->getScmService() != 'jenkins') {
+            //@todo should be done through versionnigService
+            $command = "git checkout '" . $this->revision . "' &&" . $command;
+        } else {
+            $this->versioningService->checkoutRevision($this->application, $this->revision);
+        }
+
+        return $command;
     }
 
 
