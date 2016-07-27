@@ -56,7 +56,7 @@ class Jenkins implements VersioningInterface
         $jenkinsBaseUrl = $app->getScmUrl(); // something like: http://jenkins.build.nvsotap.nl/job/Armarium
         $buildsUrl = $jenkinsBaseUrl . '/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],fullDisplayName,number,timestamp]';
 
-        $client = ew \GuzzleHttp\Client();
+        $client = new GuzzleHttp\Client();
         $res = $client->request('GET', $buildsUrl);
 
         if ($res->getStatusCode() != '200') {
