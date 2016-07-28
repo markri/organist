@@ -71,6 +71,8 @@
                     {%elseif target.lastDeployedBranch is not empty%}
                         {{ target.lastDeployedBranch }}<br>
                         ({{ target.lastDeployedRevision }})<br>
+                    {%elseif target.lastDeployedRevision is not empty%}
+                        {{ target.lastDeployedRevision }}<br>
                     {% else %}
                         Not yet deployed<br>
                     {%endif%}

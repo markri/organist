@@ -77,7 +77,11 @@ class UpdateVersionCommand extends ContainerAwareCommand
                 }
 
                 $target->setLastDeployedTag($reference->getName());
-                break;
+                $target->setLastDeployedBranch(null);
+
+                $em->flush();
+
+                return;
             }
 
             // Find branch
@@ -91,11 +95,13 @@ class UpdateVersionCommand extends ContainerAwareCommand
                 }
 
                 $target->setLastDeployedBranch($reference->getName());
+                $target->setLastDeployedTag(null);
+
+                $em->flush();
+
+                return;
                 break;
             }
-
-            $em->persist($target);
-            $em->flush();
         }
     }
 }
