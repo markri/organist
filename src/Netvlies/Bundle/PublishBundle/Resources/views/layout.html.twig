@@ -7,7 +7,7 @@
         <meta name="author" content="markri">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Organist deployment tool</title>
+        <title>Organist deployment tool {% if application is not empty%} - {{application.name}}{% endif %}</title>
 
         <link href="{{ asset('bundles/netvliespublish/css/jquery.liveFilter.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/netvliespublish/select2-3.4.2/select2.css') }}" rel="stylesheet"/>
