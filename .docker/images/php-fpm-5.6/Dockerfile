@@ -18,5 +18,6 @@ RUN apt-get update && \
 #COPY resources/conf/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 RUN rm /usr/local/etc/php-fpm.conf
+RUN apt-get install -y git
 
 CMD ["php-fpm"]
