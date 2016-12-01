@@ -11,6 +11,9 @@ Organist is executed in a Docker environment
     docker exec -ti organist_phpcli
     ./setup.sh
 
+For Demo data you could use:
+
+    app/console doctrine:fixtures:load -n
 
 ## Notes ##
 
