@@ -23,7 +23,8 @@ class ApplicationControllerTest extends WebTestCase
     public function testCreateApplication()
     {
         $this->loadFixtures(array());
-        $client = static::createClient();
+        $client = static::makeClient();
+
         $crawler = $client->request('GET', $this->getUrl('netvlies_publish_application_create'));
 
         $this->assertTrue($crawler->filter('html:contains("Versioning service")')->count() > 0);
