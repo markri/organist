@@ -90,15 +90,12 @@ class NetvliesPublishExtension extends Extension
             $definition = new Definition('Netvlies\Bundle\PublishBundle\Strategy\Strategy');
             $definition->addMethodCall('setLabel', array($params['label']));
             $definition->addMethodCall('setKeyname', array($key));
-            $definition->addMethodCall('setRvm', array($params['rvm']));
-            //$definition->addMethodCall('createDefaultCommands', array($params['default_commands']));
+            #$definition->addMethodCall('setRvm', array($params['rvm']));
 
-            $containerKey = 'netvlies_publish.strategy.' . $key;
-
-            $this->containerBuilder->setDefinition($containerKey, $definition);
+            $this->containerBuilder->setDefinition($key, $definition);
 
             $strategyServices[] = $key;
-            $strategyLabels[$containerKey] = $params['label'];
+            $strategyLabels[$key] = $params['label'];
         }
 
         $this->containerBuilder->setParameter('netvlies_publish.strategyKeyLabels', $strategyLabels);

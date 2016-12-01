@@ -10,6 +10,7 @@
 
 namespace Netvlies\Bundle\PublishBundle\Form;
 
+use Netvlies\Bundle\PublishBundle\Form\ChoiceList\StrategyType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ApplicationEditType extends HorizontalAbstractType
@@ -32,14 +33,7 @@ class ApplicationEditType extends HorizontalAbstractType
                 'label' => 'Build badge 2',
                 'required' => false)
             )
-            ->add('deploymentStrategy', 'choice', array(
-                'label' => 'Deployment strategy',
-                'required' => true,
-                'choices' => array(
-                        'Capistrano2' => 'Capistrano 2',
-                        'Capistrano3' => 'Capistrano 3'
-                    )
-                )
+            ->add('deploymentStrategy', StrategyType::class
             )
             ->add('userFiles', 'onetomany', array(
                 'label' => 'Shared files and directories',

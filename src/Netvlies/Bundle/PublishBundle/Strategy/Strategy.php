@@ -14,7 +14,7 @@ class Strategy {
 
     private $label;
 
-    private $rvm;
+//    private $rvm;
 
     private $defaultCommands;
 
@@ -33,22 +33,22 @@ class Strategy {
     {
         $this->label = $label;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getRvm()
-    {
-        return $this->rvm;
-    }
-
-    /**
-     * @param mixed $rvm
-     */
-    public function setRvm($rvm)
-    {
-        $this->rvm = $rvm;
-    }
+//
+//    /**
+//     * @return mixed
+//     */
+//    public function getRvm()
+//    {
+//        return $this->rvm;
+//    }
+//
+//    /**
+//     * @param mixed $rvm
+//     */
+//    public function setRvm($rvm)
+//    {
+//        $this->rvm = $rvm;
+//    }
 
     /**
      * @return mixed
