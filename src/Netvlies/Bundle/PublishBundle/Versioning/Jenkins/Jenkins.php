@@ -26,7 +26,7 @@ class Jenkins implements VersioningInterface
 
     public function __construct($baseRepositoryPath)
     {
-        //http://jenkins.build.nvsotap.nl/job/Armarium/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],fullDisplayName,number,timestamp,result]
+        //http://jenkins.build.nvsotap.nl/job/Armarium/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],displayName,number,timestamp,result]
         //
         $this->baseRepositoryPath = $baseRepositoryPath;
     }
@@ -110,11 +110,9 @@ class Jenkins implements VersioningInterface
                 continue;
             }
 
-            $artifact = $build['artifacts'][0]['relativePath'];
-
             $reference = new Reference();
             $reference->setReference($build['number']);
-            $reference->setName($artifact);
+            $reference->setName($build['displayName']);
             $this->references[] = $reference;
         }
 
@@ -143,10 +141,10 @@ class Jenkins implements VersioningInterface
         $build = $builds['builds'][0];
 
         $commit = new Commit();
-        $commit->setMessage($build['fullDisplayName']);
+        $commit->setMessage($build['displayName']);
         $commit->setReference($build['number']);
         $commit->setAuthor('jenkins');
-        $commit->setDateTime(new \DateTime('@' . $build['timestamp']));
+        $commit->setDateTime(new \DateTime('@' . intval($build['timestamp']/1000)));
 
         return $commit;
     }
@@ -166,7 +164,7 @@ class Jenkins implements VersioningInterface
     private function fetchJenkins(Application $app)
     {
         $jenkinsBaseUrl = $app->getScmUrl(); // something like: http://jenkins.build.nvsotap.nl/job/Armarium
-        $buildsUrl = $jenkinsBaseUrl . '/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],fullDisplayName,number,timestamp,result]';
+        $buildsUrl = $jenkinsBaseUrl . '/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],displayName,number,timestamp,result]';
 
         $client = new GuzzleHttp\Client();
         $res = $client->request('GET', $buildsUrl);

@@ -59,6 +59,7 @@ class UpdateVersionCommand extends ContainerAwareCommand
 
         if (!empty($revision)) {
             $target->setLastDeployedRevision($revision);
+            $em->flush();
 
             /**
              * @var VersioningInterface $versioningService
