@@ -1,0 +1,59 @@
+version: '2'
+
+services:
+
+  data:
+    container_name: organist_data
+    build: .docker/images/data
+    volumes:
+        - .:/var/www/html/organist:rw
+
+  nginx:
+    container_name: organist_nginx
+    build: .docker/images/nginx
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - php-fpm
+      - mariadb
+    volumes:
+      - ./.docker/images/nginx/resources/organist.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./.docker/log/nginx:/var/log/nginx:rw
+    volumes_from:
+      - data
+    environment:
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=443
+
+  mariadb:
+    container_name: organist_mariadb
+    build: .docker/images/mariadb
+    ports:
+      - 3306:3306
+    environment:
+        MYSQL_ROOT_PASSWORD: organist
+        MYSQL_USER: organist
+        MYSQL_PASSWORD: organist
+        MYSQL_DATABASE: organist
+    volumes:
+      - ./.docker/data/mariadb:/var/lib/mysql
+
+  php-cli:
+    container_name: organist_phpcli
+    build: .docker/images/php-cli-5.6
+    volumes_from:
+      - data
+    tty: true
+    volumes:
+      - ./.docker/images/php-cli-5.6/resources/php.ini:/usr/local/etc/php/php.ini:ro
+
+  php-fpm:
+    container_name: organist_phpfpm
+    build: .docker/images/php-fpm-5.6
+    volumes:
+      - ./.docker/images/php-fpm-5.6/resources/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
+      - ./.docker/images/php-fpm-5.6/resources/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./.docker/log/php-fpm:/var/log/php-fpm:rw
+    volumes_from:
+      - data
