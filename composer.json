@@ -8,8 +8,8 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "symfony/symfony": "2.3.*",
-        "doctrine/orm": ">=2.2.3,<2.4-dev",
+        "symfony/symfony": "^2.3.37",
+        "doctrine/orm": "^2.3.6",
         "doctrine/doctrine-bundle": "1.2.*",
         "doctrine/doctrine-fixtures-bundle": "2.2.0",
         "twig/extensions": "1.0.*",
