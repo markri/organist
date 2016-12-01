@@ -7,6 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Netvlies\Bundle\PublishBundle\Entity\Application;
 use Netvlies\Bundle\PublishBundle\Entity\Environment;
 use Netvlies\Bundle\PublishBundle\Entity\Target;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class LoadDemoData implements FixtureInterface
 {
@@ -45,6 +48,21 @@ class LoadDemoData implements FixtureInterface
         $target->setLabel('testtarget');
         $manager->persist($target);
         $manager->flush();
+
+
+        $fs = new Filesystem();
+        $gitrepo = '/var/www/html/organist/web/repos/testkey';
+        $fs->mkdir($gitrepo);
+
+        $process = new Process(sprintf('cd %s && git init', $gitrepo));
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+
+        echo $process->getOutput();
     }
 
 

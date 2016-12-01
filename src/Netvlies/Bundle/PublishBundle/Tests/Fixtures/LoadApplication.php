@@ -25,13 +25,13 @@ class LoadApplication implements FixtureInterface
     function load(ObjectManager $manager)
     {
         $app = new Application();
-        $app->setApplicationType('netvlies_publish.type.symfony23');
+        $app->setApplicationType('netvlies_publish.type.symfony');
         $app->setCustomer('testcustomer');
         $app->setKeyName('testkey');
         $app->setName('testname');
         $app->setScmService('netvlies_publish.versioning.git');
         $app->setScmUrl('https://github.com/organist/puppet.git');
-        $app->setDeploymentStrategy('netvlies_publish.strategy.capistrano2');
+        $app->setDeploymentStrategy('capistrano2');
 
         $manager->persist($app);
         $manager->flush();

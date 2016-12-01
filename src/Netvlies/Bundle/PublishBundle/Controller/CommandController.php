@@ -156,7 +156,7 @@ class CommandController extends Controller
         /**
          * @var Strategy $strategy
          */
-        $strategy = $this->container->get('netvlies_publish.strategy.capistrano2');
+        $strategy = $this->container->get(strtolower($application->getDeploymentStrategy()));
 
         $actionFactory = new ActionFactory(ucfirst($strategy->getKeyname()));
 
