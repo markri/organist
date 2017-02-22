@@ -18,7 +18,6 @@ use Netvlies\Bundle\PublishBundle\Entity\UserFile;
 /**
  * Class InitCommand
  * @package Netvlies\Bundle\PublishBundle\Action\Capistrano3
- * @todo fix Capistrano 3 command
  */
 class InitCommand implements CommandTargetInterface
 {
@@ -122,34 +121,35 @@ class InitCommand implements CommandTargetInterface
             $vhostAliases[] = $alias->getAlias();
         }
 
-        //@todo there is dtap and otap, otap is still there for BC
-        return trim(preg_replace('/\s\s+/', ' ', "
+        $command = trim(preg_replace('/\s\s+/', ' ', "
             git checkout master &&
             cap ".$this->target->getEnvironment()->getType()." deploy:setup
-            -Sproject='".$this->application->getName()."'
-            -Sapptype='".$this->application->getApplicationType()."'
-            -Sappkey='".$this->application->getKeyName()."'
-            -Sgitrepo='".$this->application->getScmUrl()."'
-            -Srepositorypath='".$this->repositoryPath."'
-            -Ssudouser='deploy'
-            -Srevision='".$this->revision."'
-            -Susername='".$this->target->getUsername()."'
-            -Smysqldb='".$this->target->getMysqldb()."'
-            -Smysqluser='".$this->target->getMysqluser()."'
-            -Smysqlpw='".$this->target->getMysqlpw()."'
-            -Swebroot='".$this->target->getWebroot()."'
-            -Sapproot='".$this->target->getApproot()."'
-            -Scaproot='".$this->target->getCaproot()."'
-            -Sprimarydomain='".$this->target->getPrimaryDomain()."'
-            -ShomedirsBase='/home'
-            -Shostname='".$this->target->getEnvironment()->getHostname()."'
-            -Ssshport='".$this->target->getEnvironment()->getPort()."'
-            -Sotap='".$this->target->getEnvironment()->getType()."'
-            -Sdtap='".$this->target->getEnvironment()->getType()."'
-            -Suserfiles='".implode(',', $files)."'
-            -Suserdirs='".implode(',', $dirs)."'
-            -Svhostaliases='".implode(',', $vhostAliases)."'"
+            project='".$this->application->getName()."'
+            apptype='".$this->application->getApplicationType()."'
+            appkey='".$this->application->getKeyName()."'
+            gitrepo='".$this->application->getScmUrl()."'
+            repositorypath='".$this->repositoryPath."'
+            sudouser='deploy'
+            revision='".$this->revision."'
+            username='".$this->target->getUsername()."'
+            mysqldb='".$this->target->getMysqldb()."'
+            mysqluser='".$this->target->getMysqluser()."'
+            mysqlpw='".$this->target->getMysqlpw()."'
+            webroot='".$this->target->getWebroot()."'
+            approot='".$this->target->getApproot()."'
+            caproot='".$this->target->getCaproot()."'
+            primarydomain='".$this->target->getPrimaryDomain()."'
+            homedirsBase='/home'
+            hostname='".$this->target->getEnvironment()->getHostname()."'
+            sshport='".$this->target->getEnvironment()->getPort()."'
+            otap='".$this->target->getEnvironment()->getType()."'
+            userfiles='".implode(',', $files)."'
+            userdirs='".implode(',', $dirs)."'
+            Svhostaliases='".implode(',', $vhostAliases)."'"
         ));
+
+
+        return $command;
     }
 
     /**

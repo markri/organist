@@ -146,7 +146,7 @@ class DeployCommand extends BaseUpdateCommand
 
         $command =  trim(preg_replace('/\s\s+/', ' ', "
             $keyForwardOpen
-            cap ".$this->target->getEnvironment()->getType()." deploy:update
+            cap ".$this->target->getEnvironment()->getType()." deploy
             project='".$this->application->getName()."'
             apptype='".$this->application->getApplicationType()."'
             appkey='".$this->application->getKeyName()."'
