@@ -1,0 +1,12 @@
+    <select id="appselect" style="width: 250px;">
+        <option></option>
+        {% for app in apps %}
+            {% set url = dashboardurl|format(app.id) %}
+
+            {% if current is not empty and current.name == app.name %}
+                <option value="{{ url }}" selected=selected><a href="{{ path('markri_organist_application_dashboard', {'application': app.id }) }}">{{ app.name }}</a></option>
+            {% else %}
+                <option value="{{ url }}"><a href="{{ path('markri_organist_application_dashboard', {'application': app.id }) }}">{{ app.name }}</a></option>
+            {% endif %}
+        {% endfor %}
+    </select>

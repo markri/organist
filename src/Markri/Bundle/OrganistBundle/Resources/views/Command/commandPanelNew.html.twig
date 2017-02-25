@@ -1,0 +1,27 @@
+{% extends 'OrganistBundle::layout.html.twig' %}
+{#{% form_theme form 'OrganistBundle:Form:extended_div_layout.html.twig' %}#}
+{#{% form_theme rollbackForm 'OrganistBundle:Form:extended_div_layout.html.twig' %}#}
+{#{% form_theme setupForm 'OrganistBundle:Form:extended_div_layout.html.twig' %}#}
+
+{% block content %}
+    <h3>{{application.name}}</h3>
+    <hr />
+
+    <h4>Last update</h4>
+    <dl class="dl-horizontal">
+        <dt>Last commit</dt> <dd>{{headRevision.datetime|timediff}} ({{ headRevision.datetime|date('Y-m-d H:i:s') }})</dd>
+        <dt>Author</dt> <dd>{{headRevision.author}}</dd>
+        <dt>Revision</dt> <dd>{{headRevision.reference}}</dd>
+        <dt>Commit message</dt> <dd>{{ headRevision.message }}</dd>
+        <dt></dt><dd><br><a href="{{ path('markri_organist_application_updaterepository', {'application': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
+    </dl>
+
+    {% for form in forms %}
+        {% form_theme form 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+        <h4>{{ form_label(form) }}</h4>
+        {{ form(form) }}
+    {% endfor %}
+
+
+{% endblock %}
+

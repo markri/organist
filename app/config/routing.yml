@@ -6,8 +6,8 @@ hwi_oauth_redirect:
     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
     prefix:   /connect
 
-NetvliesPublishBundle:
-    resource: "@NetvliesPublishBundle/Controller/"
+OrganistBundle:
+    resource: "@OrganistBundle/Controller/"
     type:     annotation
     prefix:   /
 

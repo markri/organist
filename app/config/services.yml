@@ -1,8 +1,8 @@
 services:
 
-    netvlies_publish.versioning.git:
-        class: Netvlies\Bundle\PublishBundle\Versioning\Git\Git
-        arguments: [ %netvlies_publish.repositorypath%, '/home/deploy/.ssh/id_rsa_bitbucket' ]
+    organist.versioning.git:
+        class: Markri\Bundle\OrganistBundle\Versioning\Git\Git
+        arguments: [ "%organist.repositorypath%", '/home/deploy/.ssh/id_rsa_bitbucket' ]
         tags:
-          - { name: netvlies_publish.versioning, alias: Git }
+          - { name: organist.versioning, alias: Git }
 

@@ -19,7 +19,7 @@ swiftmailer:
 doctrine:
     dbal:
         driver:   pdo_sqlite
-        path:     %kernel.cache_dir%/test.db
+        path:     "%kernel.cache_dir%/test.db"
 
-netvlies_publish:
-    repositorypath: %kernel.cache_dir%/repos
+organist:
+    repositorypath: "%kernel.cache_dir%/repos"

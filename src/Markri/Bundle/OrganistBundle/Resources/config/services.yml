@@ -1,0 +1,85 @@
+services:
+
+    # form types
+    organist.form.environment_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\EnvironmentType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: environment_choicelist }
+
+    organist.form.target_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\TargetChoiceList
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: target_choicelist }
+
+    organist.form.reference_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\ReferenceChoiceList
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: form.type, alias: reference_choicelist }
+
+    organist.form.branch_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\BranchChoiceList
+        arguments: [ "@service_container" ]
+        tags:
+            - { name: form.type, alias: branch_choicelist }
+
+    organist.form.versioning_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\VersioningChoiceList
+        arguments: [ "%organist.versioningKeyLabels%" ]
+        tags:
+            - {name: form.type, alias: versioning_choicelist }
+
+    organist.form.strategy_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\StrategyType
+        arguments: [ "%organist.strategyKeyLabels%" ]
+        tags:
+            - {name: form.type, alias: strategy_choicelist }
+
+    organist.form.applicationtype_selector:
+        class: Markri\Bundle\OrganistBundle\Form\ChoiceList\ApplicationTypeChoiceList
+        arguments: [ "%organist.applicationTypeKeyLabels%" ]
+        tags:
+            - {name: form.type, alias: applicationtype_choicelist }
+
+    organist.form.onetomany:
+        class: Markri\Bundle\OrganistBundle\Form\OneToManyType
+        tags:
+            - { name: form.type, alias: onetomany }
+
+    markri_organist_twig_extensions:
+        class: Markri\Bundle\OrganistBundle\Twig\Extensions\PublishExtensions
+        calls:
+            - [ setContainer, [ "@service_container" ] ]
+        tags:
+            - { name: twig.extension }
+
+    organist.userprovider:
+        class: Markri\Bundle\OrganistBundle\Security\UserProvider
+        arguments: [ "%oauth_mail_regex%" ]
+
+    organist.commandformfactory:
+        class: Markri\Bundle\OrganistBundle\Strategy\Commands\CommandFormFactory
+        calls:
+            - [ setFormFactory, ["@form.factory"]]
+
+    organist.twig.loader:
+        class: Markri\Bundle\OrganistBundle\Strategy\Commands\CommandTwigLoader
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    organist.twig.environment:
+        class: Twig_Environment
+        arguments: ["@organist.twig.loader"]
+
+    git:
+        class: Markri\Bundle\OrganistBundle\Versioning\Git\Git
+        arguments: ["%repository_path%", "%private_key%"]
+        tags:
+          - {name: organist.versioning, alias: git}
+
+    jenkins:
+        class: Markri\Bundle\OrganistBundle\Versioning\Jenkins\Jenkins
+        arguments: [ "%repository_path%" ]
+        tags:
+        - {name: organist.versioning, alias: jenkins}

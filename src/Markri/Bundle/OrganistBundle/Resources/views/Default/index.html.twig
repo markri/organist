@@ -1,0 +1,30 @@
+{% extends 'OrganistBundle::layout.html.twig' %}
+
+{% block content %}
+
+    <h3>Dashboard</h3>
+    <hr>
+
+    {% if apps|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                <th>Top applications</th>
+
+                </thead>
+                {% for app in favourites %}
+                    <tr>
+                        <td><a href="{{ path('markri_organist_application_dashboard', {'application': app.id }) }}">{{ app.name }}<a/></td>
+
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        Oops! There are no applications present. Try adding one with button below
+        <br>
+        <br>
+        <a href="{{path('markri_organist_application_create')}}" class="btn btn-default">Add new application</a>
+    {% endif %}
+
+{% endblock %}

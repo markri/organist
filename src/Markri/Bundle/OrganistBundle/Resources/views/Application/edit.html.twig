@@ -1,0 +1,41 @@
+{% extends 'OrganistBundle::layout.html.twig' %}
+{% form_theme form 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+
+{% block messages %}
+
+    {{ parent() }}
+
+    {% for overlap in usercontentoverlap(application.id) %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Warning!</strong> User content also in repository for "{{ overlap }}". Please remove from <a href="{{ path('markri_organist_application_edit', {'application': application.id}) }}" class="alert-link">settings</a> or from repository
+        </div>
+    {% endfor %}
+{% endblock %}
+
+
+
+
+{% block content %}
+    <h3>{{application.name}}</h3>
+    <hr />
+
+    <form action="" method="POST" class="form-horizontal">
+
+        {{ form_errors(form) }}
+        {{ form_widget(form) }}
+
+        <br/>
+        <div class="pull-right">
+            <a href="{{ path('markri_organist_application_dashboard', {'application': application.id}) }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+
+        <br>
+        <br>
+        <a onclick="confirm('Are you sure you want to delete this application?')? window.location='{{path('markri_organist_application_delete', {'application': application.id})}}': false" href="#" class="btn btn-danger">Delete application</a>
+
+
+    </form>
+
+{% endblock %}

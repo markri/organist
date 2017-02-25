@@ -1,0 +1,30 @@
+{% extends 'OrganistBundle::layout.html.twig' %}
+{% form_theme form 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+
+{% block content %}
+
+    <h3>Create application</h3>
+    <hr />
+
+    <form action="" method="POST" class="form-horizontal">
+
+        {{ form_widget(form._token) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.customer) }}
+        {{ form_row(form.keyname) }}
+        {{ form_row(form.applicationType) }}
+        {{ form_row(form.scmService) }}
+        {{ form_row(form.scmUrl) }}
+        {{ form_rest(form) }}
+
+        <br/>
+
+        <div class="pull-right">
+            <a href="{{ path('markri_organist_default_index') }}" class="btn btn-warning">Cancel</a>
+            <input type="submit" value="Save" class="btn btn-default"/>
+        </div>
+
+    </form>
+
+
+{% endblock %}

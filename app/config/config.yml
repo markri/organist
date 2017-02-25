@@ -53,7 +53,7 @@ doctrine:
             default:
                 connection: default
                 mappings:
-                    NetvliesPublishBundle: ~
+                    OrganistBundle: ~
                 #auto_generate_proxy_classes: %kernel.debug%
                 #auto_mapping: true
 
@@ -66,8 +66,8 @@ swiftmailer:
     spool:     { type: memory }
 
 
-netvlies_publish:
-    repositorypath: %repository_path%
+organist:
+    repositorypath: "%repository_path%"
     anyterm_user: deploy   # this local user is used for connecting to remote hosts for deployment and git user
     anyterm_exec_port: 7778 # anyterm port
     strategies:

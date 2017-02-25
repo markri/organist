@@ -1,0 +1,91 @@
+{% extends 'OrganistBundle::layout.html.twig' %}
+{% form_theme deployForm 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+{% form_theme rollbackForm 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+{% form_theme setupForm 'OrganistBundle:Form:extended_div_layout.html.twig' %}
+
+{% block content %}
+    <h3>{{application.name}}</h3>
+    <hr />
+
+    <h4>Last update</h4>
+    <dl class="dl-horizontal">
+        <dt>Last commit</dt> <dd>{{headRevision.datetime|timediff}} ({{ headRevision.datetime|date('Y-m-d H:i:s') }})</dd>
+        <dt>Author</dt> <dd>{{headRevision.author}}</dd>
+        <dt>Revision</dt> <dd>{{headRevision.reference}}</dd>
+        <dt>Commit message</dt> <dd>{{ headRevision.message }}</dd>
+        <dt></dt><dd><br><a href="{{ path('markri_organist_application_updaterepository', {'application': application.id}) }}" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></dd>
+    </dl>
+
+    {#{% for cmd in application.commands %}#}
+        {##}
+    {#{% endif %}#}
+
+    <h4>Deploy</h4>
+    <form id="#deploy_form" name="deploy_form" method="POST" class="form-horizontal">
+        {{ form_errors(deployForm) }}
+        <div class="form-group">
+            {{ form_label(deployForm.target, 'Target *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            <div class="col-lg-10">
+                {{ form_widget(deployForm.target, { 'attr': {'class': 'form-control'}} ) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(deployForm.revision, 'Revision *', { 'label_attr': {'class': 'control-label col-lg-2'}} ) }}
+            <div class="col-lg-10">
+                {% if deployForm.revision.vars.choices | length > 10 %}
+                    {{ form_widget(deployForm.revision, { 'attr': {'class': 'bigrevisionselect', 'style': 'width: 100%;'}} ) }}
+                {% else %}
+                    {{ form_widget(deployForm.revision, { 'attr': {'class': 'form-control'}} ) }}
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">
+                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span>Deploy</button>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div id="loadchangeset" data-env="{{ app.environment }}"></div>
+        </div>
+
+        {{ form_rest(deployForm) }}
+        <br>
+    </form>
+    <hr />
+
+    <h4>Rollback</h4>
+    <form id="#rollback_form" name="rollback_form" method="POST" class="form-horizontal">
+        {{ form_errors(rollbackForm) }}
+        {{ form_widget(rollbackForm) }}
+
+        <div class="form-group">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">
+                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Rollback</button>
+            </div>
+        </div>
+    </form>
+
+    <hr />
+
+
+    <h4>Setup</h4>
+    <form id="#setup_form" name="setup_form" method="POST" class="form-horizontal">
+        {{ form_errors(setupForm) }}
+        {{ form_widget(setupForm) }}
+        <div class="form-group">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-10">
+                <button type="submit" class="btn btn-default pull-right"><span class="glyphicon glyphicon-transfer"></span> Setup</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+

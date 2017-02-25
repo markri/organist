@@ -8,7 +8,7 @@ security:
 
     providers:
         oauth:
-            id: netvlies_publish.userprovider
+            id: organist.userprovider
 
     firewalls:
         dev:
@@ -24,10 +24,10 @@ security:
                 login_path:        /connect/google
                 failure_path:      /connect-fail
                 oauth_user_provider:
-                    service: netvlies_publish.userprovider
+                    service: organist.userprovider
 
     access_control:
         - { path: ^/connect-fail, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/connect/google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login/check-google, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: %minimum_security_role% }
+        - { path: ^/, roles: "%minimum_security_role%" }
