@@ -28,3 +28,6 @@ parameters:
 
     # Optional check when using oauth to restrict e-mail adresses from certain domain
     oauth_mail_regex: /@netvlies.net$/i
+
+    jenkins_user:
+    jenkins_password:

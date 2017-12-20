@@ -24,11 +24,16 @@ class Jenkins implements VersioningInterface
 
     private $references;
 
-    public function __construct($baseRepositoryPath)
+    private $jenkinsUser;
+
+    private $jenkinsPassword;
+
+
+    public function __construct($baseRepositoryPath, $user = null, $password = null)
     {
-        //http://jenkins.build.nvsotap.nl/job/Armarium/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],displayName,number,timestamp,result]
-        //
         $this->baseRepositoryPath = $baseRepositoryPath;
+        $this->jenkinsUser = $user;
+        $this->jenkinsPassword = $password;
     }
 
     function updateRepository(Application $app)
@@ -76,9 +81,13 @@ class Jenkins implements VersioningInterface
 
         $artifactUrl = $app->getScmUrl() . '/' . $revision . '/artifact/' . $artifact ; // e.g. http://jenkins.build.nvsotap.nl/job/Armarium/41/artifact/build.tar.gz
         $client = new GuzzleHttp\Client();
-        $client->request('GET', $artifactUrl, [
-	    'sink' => $destination
-        ]);
+        $params = [ 'sink' => $destination ];
+
+        if ($this->jenkinsUser) {
+            $params['auth'] = [$this->jenkinsUser, $this->jenkinsPassword];
+        }
+
+        $client->request('GET', $artifactUrl, $params);
     
         # don't extract tarball for deployment descriptors, we put deployment descriptors right here
         # currently no way to manage these DD, except in own repository, maybe manage these DD in organist self (future release)
@@ -167,7 +176,14 @@ class Jenkins implements VersioningInterface
         $buildsUrl = $jenkinsBaseUrl . '/api/json?pretty=true&depth=2&tree=builds[artifacts[relativePath],displayName,number,timestamp,result]';
 
         $client = new GuzzleHttp\Client();
-        $res = $client->request('GET', $buildsUrl);
+
+        $params = [];
+
+        if ($this->jenkinsUser) {
+            $params['auth'] = [$this->jenkinsUser, $this->jenkinsPassword];
+        }
+
+        $res = $client->request('GET', $buildsUrl, $params);
 
         if ($res->getStatusCode() != '200') {
             return array();

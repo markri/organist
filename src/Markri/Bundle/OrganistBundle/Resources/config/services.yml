@@ -80,6 +80,6 @@ services:
 
     jenkins:
         class: Markri\Bundle\OrganistBundle\Versioning\Jenkins\Jenkins
-        arguments: [ "%repository_path%" ]
+        arguments: [ "%repository_path%", "%jenkins_user%", "%jenkins_password%" ]
         tags:
         - {name: organist.versioning, alias: jenkins}
